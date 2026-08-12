@@ -793,6 +793,12 @@ class OpicSimulatorApp {
             this.evaluations = []; // Clear previous evaluations
             this.switchSection('simulator-section', document.getElementById('nav-sim'));
             this.startTotalTimer();
+            
+            // Unlock Chrome Web Speech Synthesis user activation
+            if ('speechSynthesis' in window) {
+                try { window.speechSynthesis.resume(); } catch(e) {}
+            }
+            
             this.loadQuestion(0);
         });
 
