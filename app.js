@@ -568,7 +568,7 @@ const ROLEPLAY_POOLS = [
         q12: {
             question: "You reserved a hotel room, but due to a scheduling emergency, you cannot check in on the reserved date. Call the hotel, explain your situation, and propose two solutions.",
             kor: "[🎭 롤플레이 Q12] (호텔을 예약했는데 일정이 생겨 당일 체크인을 할 수 없게 되었습니다. 호텔에 전화해 상황을 설명하고 2가지 해결책을 제시하세요.)",
-            modelAnswer: "Hi, I have a reservation under the name DongHwa for tonight. I'm so sorry, but my flight was delayed due to severe weather, so I won't be able to check in today. Could you please postpone my reservation start date to tomorrow night instead? Or if full room changes aren't allowed, could you hold the room for late check-in tomorrow morning? Please help me out!"
+        modelAnswer: "Hi, I have a reservation under the name DongHwa for tonight. I'm so sorry, but my flight was delayed due to severe weather, so I won't be able to check in today. Could you please postpone my reservation start date to tomorrow night instead? Or if full room changes aren't allowed, could you hold the room for late check-in tomorrow morning? Please help me out!"
         },
         q13: {
             question: "Tell me about a time when you experienced flight delays or hotel booking changes during a trip in the past.",
@@ -674,7 +674,17 @@ class OpicSimulatorApp {
             statPast: document.getElementById('stat-past'),
             statLength: document.getElementById('stat-length'),
             statFiller: document.getElementById('stat-filler'),
-            statRoleplay: document.getElementById('stat-roleplay')
+            statRoleplay: document.getElementById('stat-roleplay'),
+
+            // New Feature UI Elements
+            alHintBtn: document.getElementById('al-hint-btn'),
+            finishTestBtn: document.getElementById('finish-test-btn'),
+            alHintModal: document.getElementById('al-hint-modal'),
+            closeHintModal: document.getElementById('close-hint-modal'),
+            alHintContent: document.getElementById('al-hint-content'),
+            timerProgressFill: document.getElementById('timer-progress-fill'),
+            timerZoneLabel: document.getElementById('timer-zone-label'),
+            scorecardTableBody: document.getElementById('scorecard-table-body')
         };
 
         this.init();
@@ -688,7 +698,8 @@ class OpicSimulatorApp {
     bindEvents() {
         // Navigation Tab Switching
         this.ui.navBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
                 const targetId = btn.id.replace('nav-', '') + '-section';
                 this.switchSection(targetId, btn);
             });
@@ -732,10 +743,10 @@ class OpicSimulatorApp {
             });
         }
 
-        // Start Test Button (100% Dynamic Randomizer with Zero Bias!)
+        // Start Test Button
         this.ui.startTestBtn.addEventListener('click', () => {
             this.generateRandomExamPaper();
-            this.evaluations = []; // Clear previous evaluations
+            this.evaluations = [];
             this.switchSection('simulator-section', document.getElementById('nav-sim'));
             this.startTotalTimer();
             this.loadQuestion(0);
@@ -756,6 +767,28 @@ class OpicSimulatorApp {
             }
         });
 
+        // AL Hint Modal Button Event
+        if (this.ui.alHintBtn) {
+            this.ui.alHintBtn.addEventListener('click', () => {
+                this.showALHintModal();
+            });
+        }
+        if (this.ui.closeHintModal) {
+            this.ui.closeHintModal.addEventListener('click', () => {
+                if (this.ui.alHintModal) this.ui.alHintModal.classList.add('hidden');
+            });
+        }
+
+        // Finish Test Button Event
+        if (this.ui.finishTestBtn) {
+            this.ui.finishTestBtn.addEventListener('click', () => {
+                if (confirm("실전 시험을 종료하고 15문항 최종 성적표를 확인하시겠습니까?")) {
+                    this.renderFinalReport();
+                    this.switchSection('stats-section', document.getElementById('nav-stats'));
+                }
+            });
+        }
+
         // Mic Record Toggle Button
         this.ui.micToggleBtn.addEventListener('click', () => {
             this.toggleRecording();
@@ -767,11 +800,52 @@ class OpicSimulatorApp {
         });
     }
 
-    // 100% Dynamic Survey-to-Exam Paper Randomization Engine
+    showALHintModal() {
+        if (!this.ui.alHintModal || !this.ui.alHintContent) return;
+
+        const qData = this.activeExamPaper[this.currentQuestionIndex] || {};
+        const cat = qData.category || "";
+
+        let hints = [];
+        if (cat.includes("자기소개")) {
+            hints = [
+                { title: "만능 첫인상 오프닝", phrase: "Hello Eva, it's a great pleasure to meet you today. I am taking this test to challenge my English speaking skills.", kor: "안녕하세요 에바, 오늘 만나서 반갑습니다. 제 영어 스피킹 능력을 도전하기 위해 이 시험을 봅니다." },
+                { title: "AL 세부 묘사 템플릿", phrase: "Speaking of my current situation, I've been deeply focused on my professional field while making time for personal growth.", kor: "제 현재 상황에 대해 말씀드리자면, 제 전문 분야에 깊이 집중하면서 개인적인 성장의 시간을 갖고 있습니다." },
+                { title: "자연스러운 마무리", phrase: "Overall, I'm quite excited to share my story with you today, so let's get started!", kor: "전반적으로 오늘 제 이야기를 공유하게 되어 기대되며, 바로 시작해 보죠!" }
+            ];
+        } else if (cat.includes("롤플레이")) {
+            hints = [
+                { title: "롤플레이 11번 (상황 문의 템플릿)", phrase: "Hi there! I'm calling to inquire about the details regarding your service. Could you please give me some options?", kor: "안녕하세요! 서비스 세부사항 문의차 전화드렸습니다. 몇 가지 선택지를 주시겠어요?" },
+                { title: "롤플레이 12번 (문제발생 & 대안제시)", phrase: "I'm really sorry, but an unexpected issue came up. How about we reschedule our meeting to next weekend instead?", kor: "정말 죄송하지만 예기치 않은 문제가 생겼습니다. 대신 다음 주말로 약속을 변경하는 것은 어떨까요?" },
+                { title: "롤플레이 13번 (유사경험 대처)", phrase: "To be completely honest, a very similar situation happened to me last year. What I did was...", kor: "솔직히 말씀드리면, 작년에 매우 유사한 상황이 저에게 있었습니다. 제가 했던 조치는..." }
+            ];
+        } else if (cat.includes("돌발")) {
+            hints = [
+                { title: "돌발 질문 당황 방지 오프닝", phrase: "Well, that's a very interesting and unexpected question! Let me think about that for a second...", kor: "와, 정말 흥미롭고 예상치 못한 질문이네요! 잠시 생각할 시간을 주세요..." },
+                { title: "돌발 이유 제시 템플릿", phrase: "The main reason why this topic is so significant nowadays is that people's lifestyles have shifted dramatically.", kor: "요즘 이 주제가 중요한 주요 이유는 사람들의 라이프스타일이 극적으로 바뀌었기 때문입니다." }
+            ];
+        } else {
+            hints = [
+                { title: "AL 고득점 3단 구성 템플릿", phrase: "First and foremost, one of the key aspects of this topic is how it affects my daily routine.", kor: "무엇보다도 이 주제의 핵심 측면 중 하나는 제 일상에 미치는 영향입니다." },
+                { title: "과거 경험 에피소드 연결", phrase: "I distinctly recall a specific experience I had two years ago, which completely changed my perspective.", kor: "2년 전 제가 겪었던 특정 경험이 생생히 기억나는데, 제 관점을 완전히 바꿔놓았습니다." },
+                { title: "자연스러운 요약 마무리", phrase: "All in all, that is the main reason why I consider this activity so meaningful in my life.", kor: "대체로 그것이 제가 이 활동을 제 삶에서 매우 의미 있게 생각하는 주요 이유입니다." }
+            ];
+        }
+
+        let html = hints.map(h => `
+            <div class="hint-card">
+                <h4><i class="fa-solid fa-star text-yellow"></i> ${h.title}</h4>
+                <div class="hint-phrase">"${h.phrase}"</div>
+                <div class="hint-kor">(${h.kor})</div>
+            </div>
+        `).join('');
+
+        this.ui.alHintContent.innerHTML = html;
+        this.ui.alHintModal.classList.remove('hidden');
+    }
+
     generateRandomExamPaper() {
         const paper = [];
-        
-        // 1. Collect all checked topics from the survey UI
         const userCheckedKeys = [];
         document.querySelectorAll('.topic-checkbox input:checked').forEach(inp => {
             const val = inp.value;
@@ -780,28 +854,19 @@ class OpicSimulatorApp {
             }
         });
 
-        // Always add housing as an option in the pool if available
         if (SURVEY_TOPICS['housing'] && !userCheckedKeys.includes('housing')) {
             userCheckedKeys.push('housing');
         }
 
-        // Shuffle ALL user checked topics 100% randomly
         const shuffledUserTopics = [...new Set(userCheckedKeys)].sort(() => Math.random() - 0.5);
-
-        // Select Topic 1 & Topic 2 randomly from user's selection
         const topic1Key = shuffledUserTopics[0] || "movie";
         const topic2Key = shuffledUserTopics[1] || (shuffledUserTopics[0] !== "park" ? "park" : "travel");
 
-        // Shuffle unexpected topics randomly
         const shuffledUnexpected = [...UNEXPECTED_TOPICS].sort(() => Math.random() - 0.5);
-        // Shuffle role-play randomly
         const randomRoleplay = ROLEPLAY_POOLS[Math.floor(Math.random() * ROLEPLAY_POOLS.length)];
-        // Shuffle advanced issue randomly
         const randomIssue = ADVANCED_ISSUE_POOLS[Math.floor(Math.random() * ADVANCED_ISSUE_POOLS.length)];
 
-        // Dynamic Q1 Model Answer
-        const t1Obj = SURVEY_TOPICS[topic1Key];
-        const hobbyText = t1Obj ? t1Obj.name.replace(/.*:\s*/, '') : "exploring new hobbies";
+        const hobbyText = SURVEY_TOPICS[topic1Key] ? SURVEY_TOPICS[topic1Key].name.replace(/.*:\s*/, '') : "exploring new hobbies";
 
         paper.push({
             id: 1,
@@ -812,35 +877,29 @@ class OpicSimulatorApp {
             modelAnswer: `Hello Eva, it's a pleasure to meet you. My name is DongHwa. I am currently working as a plasma engineering researcher. In my free time, I really enjoy ${hobbyText} and exploring new activities. I'm taking this OPIc test to challenge myself and achieve an AL grade.`
         });
 
-        // Set 1 (Q2 ~ Q4): 3-Combo from User Checked Survey Topic 1
         const t1 = SURVEY_TOPICS[topic1Key];
-        paper.push({ id: 2, category: `${t1.name} [선택서베이 동적반영]`, tag: "Question 2 [3콤보 1/3]", ...t1.q1 });
-        paper.push({ id: 3, category: `${t1.name} [선택서베이 동적반영]`, tag: "Question 3 [3콤보 2/3]", ...t1.q2 });
-        paper.push({ id: 4, category: `${t1.name} [선택서베이 동적반영]`, tag: "Question 4 [3콤보 3/3]", ...t1.q3 });
+        paper.push({ id: 2, category: `${t1.name} [선택서베이]`, tag: "Question 2 [3콤보 1/3]", ...t1.q1 });
+        paper.push({ id: 3, category: `${t1.name} [선택서베이]`, tag: "Question 3 [3콤보 2/3]", ...t1.q2 });
+        paper.push({ id: 4, category: `${t1.name} [선택서베이]`, tag: "Question 4 [3콤보 3/3]", ...t1.q3 });
 
-        // Set 2 (Q5 ~ Q7): 🚨 UNEXPECTED TOPIC 3-Combo! (서베이 미선택 돌발)
         const unexp = shuffledUnexpected[0];
-        paper.push({ id: 5, category: `🚨 ${unexp.name} [서베이 미선택 돌발]`, tag: "Question 5 [🚨 돌발 3콤보 1/3]", ...unexp.q1 });
-        paper.push({ id: 6, category: `🚨 ${unexp.name} [서베이 미선택 돌발]`, tag: "Question 6 [🚨 돌발 3콤보 2/3]", ...unexp.q2 });
-        paper.push({ id: 7, category: `🚨 ${unexp.name} [서베이 미선택 돌발]`, tag: "Question 7 [🚨 돌발 3콤보 3/3]", ...unexp.q3 });
+        paper.push({ id: 5, category: `🚨 ${unexp.name} [돌발]`, tag: "Question 5 [🚨 3콤보 1/3]", ...unexp.q1 });
+        paper.push({ id: 6, category: `🚨 ${unexp.name} [돌발]`, tag: "Question 6 [🚨 3콤보 2/3]", ...unexp.q2 });
+        paper.push({ id: 7, category: `🚨 ${unexp.name} [돌발]`, tag: "Question 7 [🚨 3콤보 3/3]", ...unexp.q3 });
 
-        // Set 3 (Q8 ~ Q10): 3-Combo from User Checked Survey Topic 2
         const t2 = SURVEY_TOPICS[topic2Key];
-        paper.push({ id: 8, category: `${t2.name} [선택서베이 동적반영]`, tag: "Question 8 [3콤보 1/3]", ...t2.q1 });
-        paper.push({ id: 9, category: `${t2.name} [선택서베이 동적반영]`, tag: "Question 9 [3콤보 2/3]", ...t2.q2 });
-        paper.push({ id: 10, category: `${t2.name} [선택서베이 동적반영]`, tag: "Question 10 [3콤보 3/3]", ...t2.q3 });
+        paper.push({ id: 8, category: `${t2.name} [선택서베이]`, tag: "Question 8 [3콤보 1/3]", ...t2.q1 });
+        paper.push({ id: 9, category: `${t2.name} [선택서베이]`, tag: "Question 9 [3콤보 2/3]", ...t2.q2 });
+        paper.push({ id: 10, category: `${t2.name} [선택서베이]`, tag: "Question 10 [3콤보 3/3]", ...t2.q3 });
 
-        // Set 4 (Q11 ~ Q13): 🎭 ROLE-PLAY 3-Combo
-        paper.push({ id: 11, category: `🎭 롤플레이 (${randomRoleplay.name})`, tag: "Question 11 [🎭 롤플레이 문의]", ...randomRoleplay.q11 });
-        paper.push({ id: 12, category: `🎭 롤플레이 (${randomRoleplay.name})`, tag: "Question 12 [🎭 롤플레이 대안제시]", ...randomRoleplay.q12 });
-        paper.push({ id: 13, category: `🎭 롤플레이 (${randomRoleplay.name})`, tag: "Question 13 [🎭 롤플레이 경험]", ...randomRoleplay.q13 });
+        paper.push({ id: 11, category: `🎭 롤플레이 (${randomRoleplay.name})`, tag: "Question 11 [🎭 문의]", ...randomRoleplay.q11 });
+        paper.push({ id: 12, category: `🎭 롤플레이 (${randomRoleplay.name})`, tag: "Question 12 [🎭 대안제시]", ...randomRoleplay.q12 });
+        paper.push({ id: 13, category: `🎭 롤플레이 (${randomRoleplay.name})`, tag: "Question 13 [🎭 경험]", ...randomRoleplay.q13 });
 
-        // Set 5 (Q14 ~ Q15): 🔥 ADVANCED 2-Combo
-        paper.push({ id: 14, category: `🔥 고난도 이슈 (${randomIssue.name})`, tag: "Question 14 [🔥 고난도 트렌드비교]", ...randomIssue.q14 });
-        paper.push({ id: 15, category: `🔥 고난도 이슈 (${randomIssue.name})`, tag: "Question 15 [🔥 고난도 사회적이슈]", ...randomIssue.q15 });
+        paper.push({ id: 14, category: `🔥 고난도 (${randomIssue.name})`, tag: "Question 14 [🔥 트렌드비교]", ...randomIssue.q14 });
+        paper.push({ id: 15, category: `🔥 고난도 (${randomIssue.name})`, tag: "Question 15 [🔥 사회적이슈]", ...randomIssue.q15 });
 
         this.activeExamPaper = paper;
-        console.log("🎲 완전 무작위 15문항 오픽 실전 시험지 생성 완료:", paper);
     }
 
     switchSection(sectionId, activeBtn) {
@@ -859,11 +918,9 @@ class OpicSimulatorApp {
             this.recognition.interimResults = true;
             this.recognition.lang = 'en-US';
 
-            // Fixed STT duplicated text bug by indexing full results array cleanly
             this.recognition.onresult = (event) => {
                 let fullFinal = '';
                 let interimTranscript = '';
-
                 for (let i = 0; i < event.results.length; ++i) {
                     const phrase = event.results[i][0].transcript;
                     if (event.results[i].isFinal) {
@@ -872,18 +929,12 @@ class OpicSimulatorApp {
                         interimTranscript += phrase;
                     }
                 }
-
                 this.recordedText = fullFinal.trim();
                 const totalText = (this.recordedText + ' ' + interimTranscript).trim();
                 if (this.ui.transcriptInput) {
                     this.ui.transcriptInput.value = totalText;
                 }
                 this.ui.evalAnswerBtn.disabled = (totalText.length === 0);
-            };
-
-            this.recognition.onerror = (e) => {
-                console.error("Speech Recognition Error:", e.error);
-                this.stopRecording();
             };
         }
     }
@@ -899,8 +950,8 @@ class OpicSimulatorApp {
         this.ui.questionKor.textContent = qData.kor;
         this.ui.modelText.textContent = `"${qData.modelAnswer}"`;
 
-        // Reset Answer & Audio Player State
         this.stopRecording();
+        this.resetTimerProgressBar();
         this.recordedText = "";
         if (this.ui.transcriptInput) this.ui.transcriptInput.value = "";
         if (this.ui.audioPlaybackBox) this.ui.audioPlaybackBox.classList.add('hidden');
@@ -908,8 +959,34 @@ class OpicSimulatorApp {
         this.ui.evalAnswerBtn.disabled = true;
         this.ui.feedbackDrawer.classList.add('hidden');
 
-        // Automatically Speak Question with TTS
         setTimeout(() => this.speakQuestion(), 500);
+    }
+
+    resetTimerProgressBar() {
+        if (this.ui.timerProgressFill) {
+            this.ui.timerProgressFill.style.width = '0%';
+            this.ui.timerProgressFill.style.backgroundColor = '#10b981';
+        }
+        if (this.ui.timerZoneLabel) {
+            this.ui.timerZoneLabel.textContent = '답변 시작 전 (클릭 시 녹음 시작)';
+        }
+    }
+
+    updateTimerProgressBar(seconds) {
+        if (!this.ui.timerProgressFill || !this.ui.timerZoneLabel) return;
+        const pct = Math.min(100, Math.round((seconds / 90) * 100));
+        this.ui.timerProgressFill.style.width = `${pct}%`;
+
+        if (seconds < 45) {
+            this.ui.timerProgressFill.style.backgroundColor = '#10b981';
+            this.ui.timerZoneLabel.textContent = `기초 발화 진행 중 (${seconds}초 / 권장 45초 이상)`;
+        } else if (seconds <= 90) {
+            this.ui.timerProgressFill.style.backgroundColor = '#f59e0b';
+            this.ui.timerZoneLabel.textContent = `★ AL 권장 답변 분량 달성! (${seconds}초 - 훌륭합니다)`;
+        } else {
+            this.ui.timerProgressFill.style.backgroundColor = '#ef4444';
+            this.ui.timerZoneLabel.textContent = `답변 마무리 권장 시간 (${seconds}초 - 다음 문제 이동 추천)`;
+        }
     }
 
     speakQuestion() {
@@ -919,12 +996,8 @@ class OpicSimulatorApp {
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.lang = 'en-US';
             utterance.rate = 0.95;
-
             this.ui.evaWave.style.opacity = '1';
-            utterance.onend = () => {
-                this.ui.evaWave.style.opacity = '0';
-            };
-
+            utterance.onend = () => { this.ui.evaWave.style.opacity = '0'; };
             window.speechSynthesis.speak(utterance);
         }
     }
@@ -941,56 +1014,38 @@ class OpicSimulatorApp {
         this.isRecording = true;
         this.ui.micToggleBtn.classList.add('recording');
         this.ui.recIndicator.classList.add('recording-active');
-        this.ui.recStatusText.textContent = "녹음 진행 중... (실제 음성이 파일로 저장됩니다)";
+        this.ui.recStatusText.textContent = "녹음 진행 중...";
         
         this.responseSeconds = 0;
         this.ui.responseTimer.textContent = "00:00";
+        this.updateTimerProgressBar(0);
+
         this.responseTimerInterval = setInterval(() => {
             this.responseSeconds++;
             const mins = String(Math.floor(this.responseSeconds / 60)).padStart(2, '0');
             const secs = String(this.responseSeconds % 60).padStart(2, '0');
             this.ui.responseTimer.textContent = `${mins}:${secs}`;
+            this.updateTimerProgressBar(this.responseSeconds);
         }, 1000);
 
-        // 1. Start STT Speech Recognition
-        if (this.recognition) {
-            try {
-                this.recognition.start();
-            } catch(e) {}
-        }
+        if (this.recognition) try { this.recognition.start(); } catch(e) {}
 
-        // 2. Start Real Voice MediaRecorder
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
             navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
                 this.mediaRecorder = new MediaRecorder(stream);
                 this.audioChunks = [];
-
-                this.mediaRecorder.ondataavailable = (event) => {
-                    if (event.data.size > 0) {
-                        this.audioChunks.push(event.data);
-                    }
-                };
-
+                this.mediaRecorder.ondataavailable = (event) => { if (event.data.size > 0) this.audioChunks.push(event.data); };
                 this.mediaRecorder.onstop = () => {
                     this.audioBlob = new Blob(this.audioChunks, { type: 'audio/webm' });
-                    if (this.audioUrl) URL.revokeObjectURL(this.audioUrl);
                     this.audioUrl = URL.createObjectURL(this.audioBlob);
-                    
-                    if (this.ui.voiceAudioPlayer) {
-                        this.ui.voiceAudioPlayer.src = this.audioUrl;
-                    }
+                    if (this.ui.voiceAudioPlayer) this.ui.voiceAudioPlayer.src = this.audioUrl;
                     if (this.ui.downloadAudioBtn) {
                         this.ui.downloadAudioBtn.href = this.audioUrl;
                         this.ui.downloadAudioBtn.download = `OPIC_Q${this.currentQuestionIndex + 1}_VoiceAnswer.webm`;
                     }
-                    if (this.ui.audioPlaybackBox) {
-                        this.ui.audioPlaybackBox.classList.remove('hidden');
-                    }
+                    if (this.ui.audioPlaybackBox) this.ui.audioPlaybackBox.classList.remove('hidden');
                 };
-
                 this.mediaRecorder.start();
-            }).catch(err => {
-                console.warn("Microphone access error for MediaRecorder:", err);
             });
         }
     }
@@ -999,35 +1054,19 @@ class OpicSimulatorApp {
         this.isRecording = false;
         this.ui.micToggleBtn.classList.remove('recording');
         this.ui.recIndicator.classList.remove('recording-active');
-        this.ui.recStatusText.textContent = "녹음 완료! (아래에서 내 음성을 들어보고 AI 평가를 받아보세요)";
-
-        if (this.responseTimerInterval) {
-            clearInterval(this.responseTimerInterval);
-        }
-
-        if (this.recognition) {
-            try {
-                this.recognition.stop();
-            } catch(e) {}
-        }
-
-        if (this.mediaRecorder && this.mediaRecorder.state !== 'inactive') {
-            try {
-                this.mediaRecorder.stop();
-            } catch(e) {}
-        }
+        if (this.responseTimerInterval) clearInterval(this.responseTimerInterval);
+        if (this.recognition) try { this.recognition.stop(); } catch(e) {}
+        if (this.mediaRecorder && this.mediaRecorder.state !== 'inactive') try { this.mediaRecorder.stop(); } catch(e) {}
     }
 
-    // AI Real-Time Grade & Speech Evaluation Engine
     evaluateUserAnswer() {
         const text = (this.ui.transcriptInput ? this.ui.transcriptInput.value : "").trim();
         const wordCount = text ? text.split(/\s+/).filter(w => w.length > 0).length : 0;
-        
-        // Count Fillers (like, you know, actually, I mean, well, to be honest, speaking of which)
+        const durSecs = Math.max(1, this.responseSeconds);
+        const wpm = Math.round((wordCount / durSecs) * 60);
+
         const fillerMatches = text.match(/\b(like|you know|actually|I mean|well|to be honest|speaking of which)\b/gi) || [];
         const fillerCount = fillerMatches.length;
-
-        // Count Past Tense Verbs (went, bought, spent, watched, enjoyed, called, had, was, were, decided, visited, took, learned, resolved)
         const pastVerbs = text.match(/\b(went|bought|spent|watched|enjoyed|called|had|was|were|decided|visited|took|learned|resolved)\b/gi) || [];
         const pastCount = pastVerbs.length;
 
