@@ -684,9 +684,12 @@ class OpicSimulatorApp {
             alHintContent: document.getElementById('al-hint-content'),
             timerProgressFill: document.getElementById('timer-progress-fill'),
             timerZoneLabel: document.getElementById('timer-zone-label'),
-            scorecardTableBody: document.getElementById('scorecard-table-body')
+            scorecardTableBody: document.getElementById('scorecard-table-body'),
+            ttsVolumeRange: document.getElementById('tts-volume-range'),
+            volumeValText: document.getElementById('volume-val-text')
         };
 
+        this.ttsVolume = 0.5; // Default 50% comfortable volume
         this.init();
     }
 
@@ -696,6 +699,16 @@ class OpicSimulatorApp {
     }
 
     bindEvents() {
+        // TTS Volume Slider Listener
+        if (this.ui.ttsVolumeRange) {
+            this.ui.ttsVolumeRange.addEventListener('input', () => {
+                const val = parseInt(this.ui.ttsVolumeRange.value);
+                this.ttsVolume = val / 100;
+                if (this.ui.volumeValText) {
+                    this.ui.volumeValText.textContent = `${val}%`;
+                }
+            });
+        }
         // Navigation Tab Switching
         this.ui.navBtns.forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -999,7 +1012,7 @@ class OpicSimulatorApp {
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.lang = 'en-US';
             utterance.rate = 0.95;
-            utterance.volume = 0.5; // Set comfortable 50% volume to prevent sudden loud ear-blasting audio
+            utterance.volume = (this.ttsVolume !== undefined) ? this.ttsVolume : 0.5; // Dynamic Volume Slider Control
             this.ui.evaWave.style.opacity = '1';
             utterance.onend = () => { this.ui.evaWave.style.opacity = '0'; };
             utterance.onerror = () => { this.ui.evaWave.style.opacity = '0'; };
