@@ -1012,36 +1012,35 @@ class OpicSimulatorApp {
     }
 
     speakQuestion() {
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel();
-            
-            setTimeout(() => {
-                const qObj = (this.activeExamPaper && this.activeExamPaper[this.currentQuestionIndex]) ? this.activeExamPaper[this.currentQuestionIndex] : null;
-                const text = qObj ? qObj.question : "";
-                if (!text) return;
+        if (!('speechSynthesis' in window)) return;
 
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = 'en-US';
-                utterance.rate = 0.95;
-                
-                // [1안] Comfortable volume control: default 0.3 (30%) to prevent sudden ear blasting
-                const vol = this.isMuted ? 0 : (this.ttsVolume !== undefined ? this.ttsVolume : 0.3);
-                utterance.volume = Math.max(0, Math.min(1.0, vol));
+        window.speechSynthesis.cancel();
+        
+        const qObj = (this.activeExamPaper && this.activeExamPaper[this.currentQuestionIndex]) ? this.activeExamPaper[this.currentQuestionIndex] : null;
+        const text = qObj ? qObj.question : "";
+        if (!text) return;
 
-                // Find English voice
-                const voices = window.speechSynthesis.getVoices();
-                if (voices && voices.length > 0) {
-                    const enVoice = voices.find(v => v.lang.startsWith('en') || v.lang.includes('US') || v.lang.includes('GB'));
-                    if (enVoice) utterance.voice = enVoice;
-                }
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-US';
+        utterance.rate = 0.95;
 
-                if (this.ui.evaWave) this.ui.evaWave.style.opacity = '1';
-                utterance.onend = () => { if (this.ui.evaWave) this.ui.evaWave.style.opacity = '0'; };
-                utterance.onerror = () => { if (this.ui.evaWave) this.ui.evaWave.style.opacity = '0'; };
-
-                window.speechSynthesis.speak(utterance);
-            }, 50);
+        // Dynamic Volume: Default 50% (0.5) volume level
+        let vol = 0.5;
+        if (this.isMuted) {
+            vol = 0;
+        } else if (typeof this.ttsVolume === 'number' && !isNaN(this.ttsVolume)) {
+            vol = this.ttsVolume;
         }
+        utterance.volume = Math.max(0, Math.min(1.0, vol));
+
+        if (this.ui.evaWave) this.ui.evaWave.style.opacity = '1';
+        utterance.onend = () => { if (this.ui.evaWave) this.ui.evaWave.style.opacity = '0'; };
+        utterance.onerror = (e) => { 
+            console.warn("TTS Synthesis Error:", e);
+            if (this.ui.evaWave) this.ui.evaWave.style.opacity = '0'; 
+        };
+
+        window.speechSynthesis.speak(utterance);
     }
 
     toggleRecording() {
