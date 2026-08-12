@@ -25,7 +25,7 @@
             <div class="logo">
                 <i class="fa-solid fa-microphone-lines logo-icon"></i>
                 <span class="logo-text">OPIC <span class="accent-text">AI Master</span></span>
-                <span class="version-badge">PRO v4.0 (STT수정완료)</span>
+                <span class="version-badge">v5.0 AL Ultra (음량/힌트/성적표 완공)</span>
             </div>
             <nav class="nav-links">
                 <button id="nav-survey" class="nav-btn active"><i class="fa-solid fa-sliders"></i> 백그라운드 서베이</button>
@@ -256,6 +256,9 @@
                         <div class="question-header">
                             <span class="badge-tag" id="q-tag">Question 1</span>
                             <span class="target-time-tag" id="target-time-tag"><i class="fa-regular fa-clock"></i> 권장 답변: 1분 ~ 1분 30초</span>
+                            <button id="al-hint-btn" class="hint-highlight-btn">
+                                <i class="fa-solid fa-lightbulb text-yellow"></i> 💡 AL 킬러 힌트 팝업
+                            </button>
                         </div>
                         <h2 class="question-text" id="question-text">
                             "Let's start the interview. Please tell me a little bit about yourself."
@@ -263,6 +266,15 @@
                         <p class="question-kor" id="question-kor">
                             (인터뷰를 시작합니다. 자기소개를 간단히 해주세요.)
                         </p>
+
+                        <!-- TTS Volume Control Slider (Visible on All Devices) -->
+                        <div class="tts-volume-box">
+                            <div class="volume-label-row">
+                                <span><i class="fa-solid fa-volume-low text-blue"></i> 🔊 질문 읽기 음량 (TTS Volume)</span>
+                                <strong id="volume-val-text">50%</strong>
+                            </div>
+                            <input type="range" id="tts-volume-range" min="0" max="100" value="50" class="volume-slider">
+                        </div>
                     </div>
 
                     <!-- Recording & Speech Recognition Box -->
