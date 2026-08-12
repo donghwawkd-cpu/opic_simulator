@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OPIC AI Master - 실전 오픽 음성 스피킹 시뮬레이터</title>
+    <meta name="description" content="AI 기반 OPIc 실전 음성 인터뷰 시뮬레이터. 실시간 음성 인식, AL/IH 등급 평가, 피드백 및 모범 답변 제공">
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app-background">
+        <div class="glow-orb orb-1"></div>
+        <div class="glow-orb orb-2"></div>
+    </div>
+
+    <!-- Header Bar -->
+    <header class="app-header">
+        <div class="header-container">
+            <div class="logo">
+                <i class="fa-solid fa-microphone-lines logo-icon"></i>
+                <span class="logo-text">OPIC <span class="accent-text">AI Master</span></span>
+                <span class="version-badge">PRO v4.0 (STT수정완료)</span>
+            </div>
+            <nav class="nav-links">
+                <button id="nav-survey" class="nav-btn active"><i class="fa-solid fa-sliders"></i> 백그라운드 서베이</button>
+                <button id="nav-sim" class="nav-btn"><i class="fa-solid fa-headset"></i> 실전 시뮬레이터</button>
+                <button id="nav-stats" class="nav-btn"><i class="fa-solid fa-chart-line"></i> 성적 및 분석</button>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <main class="main-content">
+
+        <!-- STEP 1: Full Background Survey -->
+        <section id="survey-section" class="view-section active">
+            <div class="section-hero">
+                <h1 class="hero-title">실전 <span class="gradient-text">OPIc AL/IH</span> 등급 정복 시뮬레이터</h1>
+                <p class="hero-sub">실제 오픽 시험장과 동일한 환경에서 AI 인터뷰어와 음성으로 대화하고 실시간 등급 평가를 받으세요.</p>
+            </div>
+
+            <div class="survey-card glass-card">
+                <div class="card-header">
+                    <h2><i class="fa-solid fa-list-check"></i> OPIc 백그라운드 서베이 (Background Survey)</h2>
+                    <span class="step-badge">1 / 2</span>
+                </div>
+
+                <!-- 1. 직업 종사 여부 -->
+                <div class="form-group">
+                    <label class="group-label">1. 1-1. 현재 귀하는 어느 분야에 종사하고 계십니까?</label>
+                    <div class="survey-options-grid">
+                        <label class="survey-radio"><input type="radio" name="work" value="office"><span>사업 / 회사</span></label>
+                        <label class="survey-radio"><input type="radio" name="work" value="home"><span>재택근무 / 재택사업</span></label>
+                        <label class="survey-radio"><input type="radio" name="work" value="teacher"><span>교사 / 교육자</span></label>
+                        <label class="survey-radio"><input type="radio" name="work" value="military"><span>군 복무</span></label>
+                        <label class="survey-radio checked"><input type="radio" name="work" value="none" checked><span>★ 일 경험 없음 (추천 선택)</span></label>
+                    </div>
+                </div>
+
+                <!-- 2. 학생 여부 & 강의 수강 -->
+                <div class="form-group">
+                    <label class="group-label">2. 2-1. 현재 귀하는 학생이십니까?</label>
+                    <div class="survey-options-grid">
+                        <label class="survey-radio"><input type="radio" name="student" value="yes"><span>네</span></label>
+                        <label class="survey-radio checked"><input type="radio" name="student" value="no" checked><span>★ 아니오 (추천 선택)</span></label>
+                    </div>
+                    <label class="sub-label">2-3. 최근 어떤 강의를 수강했습니까?</label>
+                    <div class="survey-options-grid">
+                        <label class="survey-radio"><input type="radio" name="lecture" value="degree"><span>학위 과정 수업</span></label>
+                        <label class="survey-radio"><input type="radio" name="lecture" value="skill"><span>전문 기술 향상 평생 학습</span></label>
+                        <label class="survey-radio"><input type="radio" name="lecture" value="lang"><span>어학 수업</span></label>
+                        <label class="survey-radio checked"><input type="radio" name="lecture" value="pass5yr" checked><span>★ 수업 등록 후 5년 이상 지남</span></label>
+                    </div>
+                </div>
+
+                <!-- 3. 주거 형태 -->
+                <div class="form-group">
+                    <label class="group-label">3. 3-1. 현재 귀하는 어디에 살고 계십니까?</label>
+                    <div class="survey-options-grid">
+                        <label class="survey-radio checked"><input type="radio" name="housing" value="alone_apt" checked><span>★ 개인주택이나 아파트에 홀로 거주</span></label>
+                        <label class="survey-radio"><input type="radio" name="housing" value="roommate"><span>친구/룸메이트와 아파트 거주</span></label>
+                        <label class="survey-radio"><input type="radio" name="housing" value="family"><span>가족과 함께 아파트 거주</span></label>
+                        <label class="survey-radio"><input type="radio" name="housing" value="dorm"><span>학교 기숙사</span></label>
+                        <label class="survey-radio"><input type="radio" name="housing" value="military_barrack"><span>군대 막사</span></label>
+                    </div>
+                </div>
+
+                <!-- 4. 여가 활동 -->
+                <div class="form-group">
+                    <label class="group-label">4. 귀하는 여가 활동으로 주로 무엇을 하십니까? (두 개 이상 선택)</label>
+                    <div class="topic-grid">
+                        <label class="topic-checkbox checked"><input type="checkbox" value="movie" checked><i class="fa-solid fa-film"></i><span>★ 영화 보기</span></label>
+                        <label class="topic-checkbox checked"><input type="checkbox" value="tv" checked><i class="fa-solid fa-tv"></i><span>★ TV 보기</span></label>
+                        <label class="topic-checkbox"><input type="checkbox" value="reality_tv"><i class="fa-solid fa-display"></i><span>리얼리티쇼 시청하기</span></label>
+                        <label class="topic-checkbox"><input type="checkbox" value="news"><i class="fa-solid fa-newspaper"></i><span>뉴스 보거나 듣기</span></label>
+                        <label class="topic-checkbox"><input type="checkbox" value="cooking_show"><i class="fa-solid fa-utensils"></i><span>요리 관련 프로그램 시청하기</span></label>
+                        <label class="topic-checkbox checked"><input type="checkbox" value="show" checked><i class="fa-solid fa-masks-theater"></i><span>★ 공연 보기</span></label>
+                        <label class="topic-checkbox checked"><input type="checkbox" value="concert" checked><i class="fa-solid fa-ticket"></i><span>★ 콘서트 보기</span></label>
+                        <label class="topic-checkbox checked"><input type="checkbox" value="park" checked><i class="fa-solid fa-tree"></i><span>★ 공원 가기</span></label>
+                        <label class="topic-checkbox checked"><input type="checkbox" value="camping" checked><i class="fa-solid fa-campground"></i><span>★ 캠핑 가기</span></label>
+                        <label class="topic-checkbox checked"><input type="checkbox" value="beach" checked><i class="fa-solid fa-umbrella-beach"></i><span>★ 해변 가기</span></label>
+                        <label class="topic-checkbox"><input type="checkbox" value="shopping"><i class="fa-solid fa-cart-shopping"></i><span>쇼핑하기</span></label>
+                        <label class="topic-checkbox"><input type="checkbox" value="driving"><i class="fa-solid fa-car"></i><span>차 드라이브하기</span></label>
+                        <label class="topic-checkbox"><input type="checkbox" value="spa"><i class="fa-solid fa-spa"></i><span>스파 / 마사지샵 가기</span></label>
+                        <label class="topic-checkbox"><input type="checkbox" value="job_hunting"><i class="fa-solid fa-briefcase"></i><span>구직 활동하기</span></label>
+                        <label class="topic-checkbox"><input type="checkbox" value="volunteer"><i class="fa-solid fa-hand-holding-heart"></i><span>자원봉사하기</span></label>
+                        <label class="topic-checkbox"><input type="checkbox" value="club"><i class="fa-solid fa-champagne-glasses"></i><span>클럽/나이트클럽 가기</span></label>
+                        <label class="topic-checkbox"><input type="checkbox" value="museum"><i class="fa-solid fa-building-columns"></i><span>박물관 가기</span></label>
+                        <label class="topic-checkbox"><input type="checkbox" value="sports_watch"><i class="fa-solid fa-trophy"></i><span>스포츠 관람</span></label>
+                        <label class="topic-checkbox"><input type="checkbox" value="home_improve"><i class="fa-solid fa-wrench"></i><span>주거 개선</span></label>
+                        <label class="topic-checkbox"><input type="checkbox" value="bar"><i class="fa-solid fa-wine-glass"></i><span>술집 / 바에 가기</span></label>
+                        <label class="topic-checkbox"><input type="checkbox" value="cafe"><i class="fa-solid fa-mug-hot"></i><span>카페 / 커피전문점 가기</span></label>
+                        <label class="topic-checkbox"><input type="checkbox" value="game"><i class="fa-solid fa-gamepad"></i><span>게임하기</span></label>
+                        <label class="topic-checkbox"><input type="checkbox" value="billiards"><i class="fa-solid fa-bowling-ball"></i><span>당구치기</span></label>
+                        <label class="topic-checkbox"><input type="checkbox" value="texting"><i class="fa-solid fa-comments"></i><span>친구들과 문자 대화하기</span></label>
+                    </div>
+                </div>
+
+                <!-- 5. 취미 / 관심사 -->
+                <div class="form-group">
+                    <label class="group-label">5. 귀하의 취미나 관심사는 무엇입니까? (한 개 이상 선택)</label>
+                    <div class="topic-grid">
+                        <label class="topic-checkbox"><input type="checkbox" value="read_book"><i class="fa-solid fa-book"></i><span>아이에게 책 읽어주기</span></label>
+                        <label class="topic-checkbox checked"><input type="checkbox" value="music" checked><i class="fa-solid fa-music"></i><span>★ 음악 감상하기</span></label>
+                        <label class="topic-checkbox"><input type="checkbox" value="dance"><i class="fa-solid fa-child-reaching"></i><span>춤추기</span></label>
+                        <label class="topic-checkbox"><input type="checkbox" value="instrument"><i class="fa-solid fa-guitar"></i><span>악기 연주하기</span></label>
+                        <label class="topic-checkbox"><input type="checkbox" value="writing"><i class="fa-solid fa-pen-nib"></i><span>글쓰기</span></label>
+                        <label class="topic-checkbox"><input type="checkbox" value="drawing"><i class="fa-solid fa-palette"></i><span>그림 그리기</span></label>
+                        <label class="topic-checkbox"><input type="checkbox" value="cooking"><i class="fa-solid fa-utensils"></i><span>요리하기</span></label>
+                        <label class="topic-checkbox"><input type="checkbox" value="travel_blog"><i class="fa-solid fa-blog"></i><span>여행 블로그 읽기</span></label>
+                        <label class="topic-checkbox"><input type="checkbox" value="singing"><i class="fa-solid fa-microphone"></i><span>혼자 노래 부르기</span></label>
+                    </div>
+                </div>
+
+                <!-- 6. 운동 / 스포츠 -->
+                <div class="form-group">
+                    <label class="group-label">6. 귀하는 주로 어떤 운동을 즐기십니까? (한 개 이상 선택)</label>
+                    <div class="topic-grid">
+                        <label class="topic-checkbox"><input type="checkbox" value="basketball"><i class="fa-solid fa-basketball"></i><span>농구 / 배드민턴</span></label>
+                        <label class="topic-checkbox checked"><input type="checkbox" value="walking" checked><i class="fa-solid fa-person-walking"></i><span>★ 걷기</span></label>
+                        <label class="topic-checkbox"><input type="checkbox" value="yoga"><i class="fa-solid fa-person-dots-from-line"></i><span>요가</span></label>
+                        <label class="topic-checkbox checked"><input type="checkbox" value="jogging" checked><i class="fa-solid fa-person-running"></i><span>★ 조깅</span></label>
+                        <label class="topic-checkbox"><input type="checkbox" value="taekwondo"><i class="fa-solid fa-hand-fist"></i><span>태권도 / 낚시</span></label>
+                        <label class="topic-checkbox checked"><input type="checkbox" value="no_exercise" checked><i class="fa-solid fa-bed"></i><span>★ 운동을 전혀 하지 않음</span></label>
+                    </div>
+                </div>
+
+                <!-- 7. 휴가 / 여행 -->
+                <div class="form-group">
+                    <label class="group-label">7. 귀하는 어떤 휴가나 출장을 다녀온 경험이 있습니까? (한 개 이상 선택)</label>
+                    <div class="topic-grid">
+                        <label class="topic-checkbox"><input type="checkbox" value="dom_biz"><i class="fa-solid fa-briefcase"></i><span>국내출장</span></label>
+                        <label class="topic-checkbox"><input type="checkbox" value="overseas_biz"><i class="fa-solid fa-plane-departure"></i><span>해외출장</span></label>
+                        <label class="topic-checkbox"><input type="checkbox" value="staycation"><i class="fa-solid fa-couch"></i><span>집에서 보내는 휴가</span></label>
+                        <label class="topic-checkbox checked"><input type="checkbox" value="dom_travel" checked><i class="fa-solid fa-bus"></i><span>★ 국내 여행</span></label>
+                        <label class="topic-checkbox checked"><input type="checkbox" value="overseas_travel" checked><i class="fa-solid fa-plane"></i><span>★ 해외 여행</span></label>
+                    </div>
+                </div>
+
+                <!-- Self Assessment Level -->
+                <div class="form-group">
+                    <label class="group-label">⚡ 자가 진단 난이도 (Self-Assessment)</label>
+                    <div class="level-selector">
+                        <button class="level-btn active" data-level="5-5">
+                            <span class="level-num">★ 난이도 5 - 5 단계</span>
+                            <span class="level-tag">IH & AL 목표 추천</span>
+                        </button>
+                        <button class="level-btn" data-level="6-6">
+                            <span class="level-num">난이도 6 - 6 단계</span>
+                            <span class="level-tag">돌발 문제 비중 극대화</span>
+                        </button>
+                        <button class="level-btn" data-level="4-4">
+                            <span class="level-num">난이도 4 - 4 단계</span>
+                            <span class="level-tag">IM/IH 목표</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="card-footer">
+                    <button id="start-test-btn" class="primary-btn glow-btn">
+                        <i class="fa-solid fa-play"></i> 실전 오픽 인터뷰 시작하기
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- STEP 2: Live Interview Simulator -->
+        <section id="simulator-section" class="view-section">
+            <div class="sim-layout">
+                
+                <!-- Left Control Panel -->
+                <div class="sim-panel glass-card">
+                    <!-- Avatar Area -->
+                    <div class="interviewer-box">
+                        <div class="avatar-circle">
+                            <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&auto=format&fit=crop&q=80" alt="EVA Interviewer" class="avatar-img">
+                            <div class="speaking-wave" id="eva-wave"></div>
+                        </div>
+                        <h3 class="interviewer-name">EVA <span class="status-dot"></span></h3>
+                        <p class="interviewer-title">OPIc Virtual Examiner</p>
+                    </div>
+
+                    <!-- Progress & Status -->
+                    <div class="sim-meta">
+                        <div class="meta-item">
+                            <span class="meta-label">질문 번호</span>
+                            <span class="meta-value" id="q-number">Q 01 / 15</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">전체 남은 시간</span>
+                            <span class="meta-value timer-alert" id="total-timer">39:50</span>
+                        </div>
+                        <div class="meta-item">
+                            <span class="meta-label">질문 카테고리</span>
+                            <span class="meta-valuebadge" id="q-category">자기소개</span>
+                        </div>
+                    </div>
+
+                    <!-- Action Controls -->
+                    <div class="control-actions">
+                        <button id="listen-q-btn" class="secondary-btn">
+                            <i class="fa-solid fa-volume-high"></i> 질문 다시 듣기 (Play)
+                        </button>
+                        <button id="next-q-btn" class="secondary-btn">
+                            다음 질문으로 <i class="fa-solid fa-arrow-right"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Right Question & Voice Response Panel -->
+                <div class="sim-main glass-card">
+                    <!-- Question Box -->
+                    <div class="question-container">
+                        <div class="question-header">
+                            <span class="badge-tag" id="q-tag">Question 1</span>
+                            <span class="target-time-tag"><i class="fa-regular fa-clock"></i> 권장 답변: 1분 ~ 1분 30초</span>
+                        </div>
+                        <h2 class="question-text" id="question-text">
+                            "Let's start the interview. Please tell me a little bit about yourself."
+                        </h2>
+                        <p class="question-kor" id="question-kor">
+                            (인터뷰를 시작합니다. 자기소개를 간단히 해주세요.)
+                        </p>
+                    </div>
+
+                    <!-- Recording & Speech Recognition Box -->
+                    <div class="recording-box">
+                        <div class="record-status-bar">
+                            <div class="rec-indicator" id="rec-indicator">
+                                <span class="rec-dot"></span>
+                                <span id="rec-status-text">음성 답변 준비 완료 (버튼을 눌러 녹음 시작)</span>
+                            </div>
+                            <div class="response-timer" id="response-timer">00:00</div>
+                        </div>
+
+                        <!-- Live Transcript & Direct Editable Text Area -->
+                        <div class="transcript-box" id="transcript-box">
+                            <textarea id="live-transcript-input" class="transcript-textarea" placeholder="마이크 버튼을 누르고 영어로 말씀하시면 실제 음성이 파일로 저장되며 바로 다시 들어보실 수 있습니다. 오인식된 단어는 직접 수정 가능합니다..."></textarea>
+                        </div>
+
+                        <!-- Real Audio Playback Box -->
+                        <div id="audio-playback-box" class="audio-playback-box hidden">
+                            <div class="audio-header">
+                                <span><i class="fa-solid fa-file-audio text-green"></i> <strong>실제 내 음성 녹음본 바로 다시듣기</strong></span>
+                                <a id="download-audio-btn" href="#" class="download-link" download="opic_speech_answer.webm"><i class="fa-solid fa-download"></i> 녹음 파일 저장 (.webm)</a>
+                            </div>
+                            <audio id="voice-audio-player" controls class="voice-audio-player"></audio>
+                        </div>
+
+                        <!-- Mic Control Button -->
+                        <div class="mic-controls">
+                            <button id="mic-toggle-btn" class="mic-btn">
+                                <i class="fa-solid fa-microphone"></i>
+                            </button>
+                            <button id="eval-answer-btn" class="primary-btn eval-btn" disabled>
+                                <i class="fa-solid fa-wand-magic-sparkles"></i> AI 등급 실시간 평가 받기
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- AI Instant Feedback Result Drawer -->
+                    <div id="ai-feedback-drawer" class="feedback-drawer hidden">
+                        <div class="feedback-header">
+                            <h3><i class="fa-solid fa-award"></i> AI 실시간 답변 심층 평가 및 예측 등급</h3>
+                            <span class="est-grade-badge" id="est-grade">예상 등급: --</span>
+                        </div>
+
+                        <div class="feedback-grid">
+                            <div class="fb-card">
+                                <h4><i class="fa-solid fa-gauge-high"></i> 발화량 & 유창성 (Fluency & Length)</h4>
+                                <div class="score-bar"><div class="bar-fill" id="bar-fluency" style="width: 0%"></div></div>
+                                <p class="fb-desc" id="fb-fluency">음성 발화량이 검출되지 않았습니다.</p>
+                            </div>
+                            <div class="fb-card">
+                                <h4><i class="fa-solid fa-spell-check"></i> 시제 & 문법 일치 (Grammar & Tense)</h4>
+                                <div class="score-bar"><div class="bar-fill" id="bar-vocab" style="width: 0%"></div></div>
+                                <p class="fb-desc" id="fb-vocab">음성 발화량이 검출되지 않았습니다.</p>
+                            </div>
+                        </div>
+
+                        <!-- Model Answer & Suggestions -->
+                        <div class="model-answer-box">
+                            <h4><i class="fa-solid fa-lightbulb"></i> AL/IH 모범 답안 (Model Answer)</h4>
+                            <p class="model-text" id="model-text">
+                                "Hello Eva, it's a pleasure to meet you. My name is DongHwa..."
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </section>
+
+        <!-- STEP 3: Overall Performance & Scorecard -->
+        <section id="stats-section" class="view-section">
+            <div class="section-hero">
+                <h1 class="hero-title">OPIc AI <span class="gradient-text">최종 성적 종합 리포트</span></h1>
+                <p class="hero-sub">전체 15문항 발화 분석 기반 최종 예측 등급 및 AL 달성 전략입니다.</p>
+            </div>
+
+            <div class="report-grid">
+                <!-- Grade Summary Card -->
+                <div class="report-card glass-card grade-summary">
+                    <div class="overall-grade-box">
+                        <span class="report-label">AI 종합 예측 등급 (Estimated Grade)</span>
+                        <div class="big-grade" id="final-grade-text">--</div>
+                        <span class="grade-subtext" id="final-grade-sub">답변을 완료하면 최종 등급이 산출됩니다.</span>
+                    </div>
+                    <div class="score-breakdown">
+                        <div class="score-item">
+                            <span>과거 시제 정교성 (Past Tense)</span>
+                            <strong id="stat-past">-- / 100</strong>
+                        </div>
+                        <div class="score-item">
+                            <span>발화량 & 유창성 (Length & Flow)</span>
+                            <strong id="stat-length">-- / 100</strong>
+                        </div>
+                        <div class="score-item">
+                            <span>필러(Filler Words) 자연스러움</span>
+                            <strong id="stat-filler">-- / 100</strong>
+                        </div>
+                        <div class="score-item">
+                            <span>롤플레이 대처 및 대안 제시</span>
+                            <strong id="stat-roleplay">-- / 100</strong>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Weakness & Recommendation Card -->
+                <div class="report-card glass-card">
+                    <h3><i class="fa-solid fa-chart-pie"></i> AL 합격 전략 가이드</h3>
+                    <ul class="tip-list">
+                        <li><i class="fa-solid fa-circle-check text-green"></i> <strong>발화 속도(Speed) 및 분량 확보</strong>: 문법이나 발음 완벽성보다 막힘없이 빠른 속도와 충분한 발화량이 AL 수여의 핵심입니다.</li>
+                        <li><i class="fa-solid fa-triangle-exclamation text-yellow"></i> <strong>Filler Words 활용</strong>: 답변 중간 머뭇거릴 때 `umm...` 보다는 `You know`, `I mean`, `Actually`, `To be honest` 를 입에 입혀 이질감을 없애야 합니다.</li>
+                        <li><i class="fa-solid fa-lightbulb text-blue"></i> <strong>돌발 및 롤플레이 13번 대응</strong>: 예상치 못한 질문이 나와도 당황하지 말고 `Well, that's a tough question, but let me see...` 로 자연스럽게 시간을 번 뒤 2~3가지 대안이나 비슷한 에피소드를 연결하세요.</li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Scripts -->
+    <script src="app.js"></script>
+</body>
+</html>
