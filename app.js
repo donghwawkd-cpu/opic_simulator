@@ -674,9 +674,20 @@ class OpicSimulatorApp {
             statPast: document.getElementById('stat-past'),
             statLength: document.getElementById('stat-length'),
             statFiller: document.getElementById('stat-filler'),
-            statRoleplay: document.getElementById('stat-roleplay')
+            statRoleplay: document.getElementById('stat-roleplay'),
+
+            // New Feature UI Elements
+            ttsVolumeSlider: document.getElementById('tts-volume-slider'),
+            ttsVolText: document.getElementById('tts-vol-text'),
+            ttsMuteBtn: document.getElementById('tts-mute-btn'),
+            muteIcon: document.getElementById('mute-icon'),
+            timerProgressFill: document.getElementById('timer-progress-fill'),
+            timerZoneLabel: document.getElementById('timer-zone-label'),
+            fillerCountNum: document.getElementById('filler-count-num')
         };
 
+        this.ttsVolume = 0.3; // Default 30% quiet & comfortable volume
+        this.isMuted = false;
         this.init();
     }
 
@@ -686,6 +697,40 @@ class OpicSimulatorApp {
     }
 
     bindEvents() {
+        // [1안] TTS Volume Slider Listener
+        if (this.ui.ttsVolumeSlider) {
+            this.ui.ttsVolumeSlider.addEventListener('input', () => {
+                const val = parseInt(this.ui.ttsVolumeSlider.value);
+                this.ttsVolume = val / 100;
+                if (this.ui.ttsVolText) {
+                    this.ui.ttsVolText.textContent = `${val}%`;
+                }
+                if (val === 0) {
+                    this.isMuted = true;
+                    if (this.ui.muteIcon) this.ui.muteIcon.className = "fa-solid fa-volume-xmark text-red";
+                } else {
+                    this.isMuted = false;
+                    if (this.ui.muteIcon) this.ui.muteIcon.className = "fa-solid fa-volume-high text-blue";
+                }
+            });
+        }
+
+        // [1안] TTS Mute Toggle Button
+        if (this.ui.ttsMuteBtn) {
+            this.ui.ttsMuteBtn.addEventListener('click', () => {
+                this.isMuted = !this.isMuted;
+                if (this.isMuted) {
+                    if (this.ui.muteIcon) this.ui.muteIcon.className = "fa-solid fa-volume-xmark text-red";
+                    if (this.ui.ttsMuteBtn) this.ui.ttsMuteBtn.classList.add('muted');
+                    if (this.ui.ttsVolText) this.ui.ttsVolText.textContent = "0% (음소거)";
+                } else {
+                    if (this.ui.muteIcon) this.ui.muteIcon.className = "fa-solid fa-volume-high text-blue";
+                    if (this.ui.ttsMuteBtn) this.ui.ttsMuteBtn.classList.remove('muted');
+                    const val = Math.round(this.ttsVolume * 100);
+                    if (this.ui.ttsVolText) this.ui.ttsVolText.textContent = `${val}%`;
+                }
+            });
+        }
         // Navigation Tab Switching
         this.ui.navBtns.forEach(btn => {
             btn.addEventListener('click', () => {
@@ -878,6 +923,7 @@ class OpicSimulatorApp {
                 if (this.ui.transcriptInput) {
                     this.ui.transcriptInput.value = totalText;
                 }
+                this.updateFillerCounter(totalText);
                 this.ui.evalAnswerBtn.disabled = (totalText.length === 0);
             };
 
@@ -901,6 +947,8 @@ class OpicSimulatorApp {
 
         // Reset Answer & Audio Player State
         this.stopRecording();
+        this.resetTimerProgressBar();
+        this.resetFillerCounter();
         this.recordedText = "";
         if (this.ui.transcriptInput) this.ui.transcriptInput.value = "";
         if (this.ui.audioPlaybackBox) this.ui.audioPlaybackBox.classList.add('hidden');
@@ -908,24 +956,81 @@ class OpicSimulatorApp {
         this.ui.evalAnswerBtn.disabled = true;
         this.ui.feedbackDrawer.classList.add('hidden');
 
-        // Automatically Speak Question with TTS
-        setTimeout(() => this.speakQuestion(), 500);
+        // Cancel previous speech synthesis
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+        }
+    }
+
+    resetTimerProgressBar() {
+        if (this.ui.timerProgressFill) {
+            this.ui.timerProgressFill.style.width = '0%';
+            this.ui.timerProgressFill.style.backgroundColor = '#10b981';
+        }
+        if (this.ui.timerZoneLabel) {
+            this.ui.timerZoneLabel.textContent = '답변 시간 0초 (권장: 45초 ~ 90초)';
+        }
+    }
+
+    updateTimerProgressBar(seconds) {
+        if (!this.ui.timerProgressFill || !this.ui.timerZoneLabel) return;
+        const pct = Math.min(100, Math.round((seconds / 90) * 100));
+        this.ui.timerProgressFill.style.width = `${pct}%`;
+
+        if (seconds < 45) {
+            this.ui.timerProgressFill.style.backgroundColor = '#10b981';
+            this.ui.timerZoneLabel.textContent = `기초 발화 진행 중 (${seconds}초 / 권장 45초 이상)`;
+        } else if (seconds <= 90) {
+            this.ui.timerProgressFill.style.backgroundColor = '#f59e0b';
+            this.ui.timerZoneLabel.textContent = `★ AL 최적 답변 분량 달성! (${seconds}초 - 훌륭합니다)`;
+        } else {
+            this.ui.timerProgressFill.style.backgroundColor = '#ef4444';
+            this.ui.timerZoneLabel.textContent = `답변 마무리 권장 시간 (${seconds}초 - 다음 문제 이동 추천)`;
+        }
+    }
+
+    resetFillerCounter() {
+        if (this.ui.fillerCountNum) {
+            this.ui.fillerCountNum.textContent = '0';
+        }
+    }
+
+    updateFillerCounter(text) {
+        if (!this.ui.fillerCountNum) return;
+        const fillerMatches = text.match(/\b(like|you know|actually|I mean|well|to be honest|speaking of which)\b/gi) || [];
+        this.ui.fillerCountNum.textContent = String(fillerMatches.length);
     }
 
     speakQuestion() {
         if ('speechSynthesis' in window) {
             window.speechSynthesis.cancel();
-            const text = this.activeExamPaper[this.currentQuestionIndex].question;
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'en-US';
-            utterance.rate = 0.95;
+            
+            setTimeout(() => {
+                const qObj = (this.activeExamPaper && this.activeExamPaper[this.currentQuestionIndex]) ? this.activeExamPaper[this.currentQuestionIndex] : null;
+                const text = qObj ? qObj.question : "";
+                if (!text) return;
 
-            this.ui.evaWave.style.opacity = '1';
-            utterance.onend = () => {
-                this.ui.evaWave.style.opacity = '0';
-            };
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.95;
+                
+                // [1안] Comfortable volume control: default 0.3 (30%) to prevent sudden ear blasting
+                const vol = this.isMuted ? 0 : (this.ttsVolume !== undefined ? this.ttsVolume : 0.3);
+                utterance.volume = Math.max(0, Math.min(1.0, vol));
 
-            window.speechSynthesis.speak(utterance);
+                // Find English voice
+                const voices = window.speechSynthesis.getVoices();
+                if (voices && voices.length > 0) {
+                    const enVoice = voices.find(v => v.lang.startsWith('en') || v.lang.includes('US') || v.lang.includes('GB'));
+                    if (enVoice) utterance.voice = enVoice;
+                }
+
+                if (this.ui.evaWave) this.ui.evaWave.style.opacity = '1';
+                utterance.onend = () => { if (this.ui.evaWave) this.ui.evaWave.style.opacity = '0'; };
+                utterance.onerror = () => { if (this.ui.evaWave) this.ui.evaWave.style.opacity = '0'; };
+
+                window.speechSynthesis.speak(utterance);
+            }, 50);
         }
     }
 
@@ -945,11 +1050,14 @@ class OpicSimulatorApp {
         
         this.responseSeconds = 0;
         this.ui.responseTimer.textContent = "00:00";
+        this.resetTimerProgressBar();
+
         this.responseTimerInterval = setInterval(() => {
             this.responseSeconds++;
             const mins = String(Math.floor(this.responseSeconds / 60)).padStart(2, '0');
             const secs = String(this.responseSeconds % 60).padStart(2, '0');
             this.ui.responseTimer.textContent = `${mins}:${secs}`;
+            this.updateTimerProgressBar(this.responseSeconds);
         }, 1000);
 
         // 1. Start STT Speech Recognition

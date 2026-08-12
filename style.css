@@ -1012,3 +1012,124 @@ body {
         grid-template-columns: 1fr;
     }
 }
+
+/* --------------------------------------------------------------------------
+   New Features: Inline TTS Volume Control, Timer Progress Bar, Filler Badge
+   -------------------------------------------------------------------------- */
+.tts-volume-inline-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 8px 14px;
+    margin-top: 14px;
+    margin-bottom: 10px;
+}
+
+.mute-toggle-btn {
+    background: transparent;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: #38bdf8;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.mute-toggle-btn:hover {
+    background: rgba(56, 189, 248, 0.15);
+    border-color: #38bdf8;
+}
+
+.mute-toggle-btn.muted {
+    color: #ef4444;
+    border-color: rgba(239, 68, 68, 0.4);
+}
+
+.vol-label {
+    font-size: 12px;
+    color: var(--text-sub);
+    white-space: nowrap;
+}
+
+.vol-slider {
+    flex: 1;
+    height: 6px;
+    border-radius: 3px;
+    background: rgba(255, 255, 255, 0.15);
+    outline: none;
+    accent-color: #6366f1;
+    cursor: pointer;
+}
+
+.vol-text {
+    font-size: 12px;
+    color: #38bdf8;
+    min-width: 36px;
+    text-align: right;
+}
+
+/* Visual Timer Progress Bar */
+.timer-progress-container {
+    position: relative;
+    width: 100%;
+    height: 22px;
+    background: rgba(15, 23, 42, 0.8);
+    border-radius: 11px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    margin-top: 4px;
+}
+
+.timer-progress-fill {
+    height: 100%;
+    width: 0%;
+    background: #10b981;
+    transition: width 0.4s ease, background-color 0.4s ease;
+}
+
+.timer-zone-label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 11px;
+    font-weight: 600;
+    color: #ffffff;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+    pointer-events: none;
+}
+
+/* Real-time Filler Words Badge */
+.filler-counter-badge {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(245, 158, 11, 0.1);
+    border: 1px solid rgba(245, 158, 11, 0.3);
+    border-radius: 10px;
+    padding: 8px 14px;
+    margin-bottom: 10px;
+    font-size: 12px;
+    color: #fef08a;
+}
+
+.filler-counter-badge strong {
+    color: #fbbf24;
+    font-size: 14px;
+}
+
+.filler-hint-sub {
+    font-size: 11px;
+    color: rgba(254, 240, 138, 0.7);
+}

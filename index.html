@@ -25,7 +25,7 @@
             <div class="logo">
                 <i class="fa-solid fa-microphone-lines logo-icon"></i>
                 <span class="logo-text">OPIC <span class="accent-text">AI Master</span></span>
-                <span class="version-badge">PRO v4.0 (STT수정완료)</span>
+                <span class="version-badge">v5.0 AL Master Edition</span>
             </div>
             <nav class="nav-links">
                 <button id="nav-survey" class="nav-btn active"><i class="fa-solid fa-sliders"></i> 백그라운드 서베이</button>
@@ -247,6 +247,22 @@
                         <p class="question-kor" id="question-kor">
                             (인터뷰를 시작합니다. 자기소개를 간단히 해주세요.)
                         </p>
+
+                        <!-- [1안] Inline TTS Volume & Mute Bar -->
+                        <div class="tts-volume-inline-box">
+                            <button id="tts-mute-btn" class="mute-toggle-btn" title="음소거">
+                                <i class="fa-solid fa-volume-high" id="mute-icon"></i>
+                            </button>
+                            <span class="vol-label"><i class="fa-solid fa-sliders text-blue"></i> 질문 읽기 음량:</span>
+                            <input type="range" id="tts-volume-slider" min="0" max="100" value="30" class="vol-slider">
+                            <strong id="tts-vol-text" class="vol-text">30%</strong>
+                        </div>
+
+                        <!-- [3안] Visual Timer Progress Bar -->
+                        <div class="timer-progress-container">
+                            <div class="timer-progress-fill" id="timer-progress-fill"></div>
+                            <span class="timer-zone-label" id="timer-zone-label">답변 시간 0초 (권장: 45초 ~ 90초)</span>
+                        </div>
                     </div>
 
                     <!-- Recording & Speech Recognition Box -->
