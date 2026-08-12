@@ -697,7 +697,7 @@ class OpicSimulatorApp {
     }
 
     bindEvents() {
-        // [1안] TTS Volume Slider Listener
+        // [1안] TTS Volume Slider Listener (Real-Time Mid-Speech Volume Update)
         if (this.ui.ttsVolumeSlider) {
             this.ui.ttsVolumeSlider.addEventListener('input', () => {
                 const val = parseInt(this.ui.ttsVolumeSlider.value);
@@ -711,6 +711,11 @@ class OpicSimulatorApp {
                 } else {
                     this.isMuted = false;
                     if (this.ui.muteIcon) this.ui.muteIcon.className = "fa-solid fa-volume-high text-blue";
+                }
+
+                // If TTS is currently speaking, restart speech immediately at the new volume level!
+                if ('speechSynthesis' in window && window.speechSynthesis.speaking) {
+                    this.speakQuestion();
                 }
             });
         }
@@ -728,6 +733,11 @@ class OpicSimulatorApp {
                     if (this.ui.ttsMuteBtn) this.ui.ttsMuteBtn.classList.remove('muted');
                     const val = Math.round(this.ttsVolume * 100);
                     if (this.ui.ttsVolText) this.ui.ttsVolText.textContent = `${val}%`;
+                }
+
+                // If TTS is currently speaking, update speech state immediately!
+                if ('speechSynthesis' in window && window.speechSynthesis.speaking) {
+                    this.speakQuestion();
                 }
             });
         }
