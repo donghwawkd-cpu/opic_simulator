@@ -959,7 +959,10 @@ class OpicSimulatorApp {
         this.ui.evalAnswerBtn.disabled = true;
         this.ui.feedbackDrawer.classList.add('hidden');
 
-        setTimeout(() => this.speakQuestion(), 500);
+        // Cancel any active TTS speech to prevent sudden audio overlap
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+        }
     }
 
     resetTimerProgressBar() {
@@ -996,8 +999,10 @@ class OpicSimulatorApp {
             const utterance = new SpeechSynthesisUtterance(text);
             utterance.lang = 'en-US';
             utterance.rate = 0.95;
+            utterance.volume = 0.5; // Set comfortable 50% volume to prevent sudden loud ear-blasting audio
             this.ui.evaWave.style.opacity = '1';
             utterance.onend = () => { this.ui.evaWave.style.opacity = '0'; };
+            utterance.onerror = () => { this.ui.evaWave.style.opacity = '0'; };
             window.speechSynthesis.speak(utterance);
         }
     }
