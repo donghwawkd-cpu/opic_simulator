@@ -3,10 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-    <meta http-equiv="Pragma" content="no-cache">
-    <meta http-equiv="Expires" content="0">
-    <title>OPIC AI Master - 실전 오픽 음성 스피킹 시뮬레이터 v5.0</title>
+    <title>OPIC AI Master - 실전 오픽 음성 스피킹 시뮬레이터</title>
     <meta name="description" content="AI 기반 OPIc 실전 음성 인터뷰 시뮬레이터. 실시간 음성 인식, AL/IH 등급 평가, 피드백 및 모범 답변 제공">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,7 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css?v=5.0">
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="app-background">
@@ -28,7 +25,7 @@
             <div class="logo">
                 <i class="fa-solid fa-microphone-lines logo-icon"></i>
                 <span class="logo-text">OPIC <span class="accent-text">AI Master</span></span>
-                <span class="version-badge">v5.0 AL Ultra (음량/힌트/성적표 완공)</span>
+                <span class="version-badge">PRO v4.0 (STT수정완료)</span>
             </div>
             <nav class="nav-links">
                 <button id="nav-survey" class="nav-btn active"><i class="fa-solid fa-sliders"></i> 백그라운드 서베이</button>
@@ -230,24 +227,8 @@
                         <button id="listen-q-btn" class="secondary-btn">
                             <i class="fa-solid fa-volume-high"></i> 질문 다시 듣기 (Play)
                         </button>
-                        
-                        <!-- TTS Volume Control Slider -->
-                        <div class="tts-volume-box">
-                            <div class="volume-label-row">
-                                <span><i class="fa-solid fa-volume-low text-blue"></i> 질문 음량 (TTS Volume)</span>
-                                <strong id="volume-val-text">50%</strong>
-                            </div>
-                            <input type="range" id="tts-volume-range" min="0" max="100" value="50" class="volume-slider">
-                        </div>
-
-                        <button id="al-hint-btn" class="secondary-btn hint-highlight-btn">
-                            <i class="fa-solid fa-lightbulb text-yellow"></i> AL 킬러 힌트 팝업
-                        </button>
                         <button id="next-q-btn" class="secondary-btn">
                             다음 질문으로 <i class="fa-solid fa-arrow-right"></i>
-                        </button>
-                        <button id="finish-test-btn" class="danger-btn full-width-btn">
-                            <i class="fa-solid fa-flag-checkered"></i> 시험 종료 & 15문항 최종 성적표
                         </button>
                     </div>
                 </div>
@@ -258,10 +239,7 @@
                     <div class="question-container">
                         <div class="question-header">
                             <span class="badge-tag" id="q-tag">Question 1</span>
-                            <span class="target-time-tag" id="target-time-tag"><i class="fa-regular fa-clock"></i> 권장 답변: 1분 ~ 1분 30초</span>
-                            <button id="al-hint-btn" class="hint-highlight-btn">
-                                <i class="fa-solid fa-lightbulb text-yellow"></i> 💡 AL 킬러 힌트 팝업
-                            </button>
+                            <span class="target-time-tag"><i class="fa-regular fa-clock"></i> 권장 답변: 1분 ~ 1분 30초</span>
                         </div>
                         <h2 class="question-text" id="question-text">
                             "Let's start the interview. Please tell me a little bit about yourself."
@@ -269,15 +247,6 @@
                         <p class="question-kor" id="question-kor">
                             (인터뷰를 시작합니다. 자기소개를 간단히 해주세요.)
                         </p>
-
-                        <!-- TTS Volume Control Slider (Visible on All Devices) -->
-                        <div class="tts-volume-box">
-                            <div class="volume-label-row">
-                                <span><i class="fa-solid fa-volume-low text-blue"></i> 🔊 질문 읽기 음량 (TTS Volume)</span>
-                                <strong id="volume-val-text">50%</strong>
-                            </div>
-                            <input type="range" id="tts-volume-range" min="0" max="100" value="50" class="volume-slider">
-                        </div>
                     </div>
 
                     <!-- Recording & Speech Recognition Box -->
@@ -288,12 +257,6 @@
                                 <span id="rec-status-text">음성 답변 준비 완료 (버튼을 눌러 녹음 시작)</span>
                             </div>
                             <div class="response-timer" id="response-timer">00:00</div>
-                        </div>
-
-                        <!-- Visual Timer Progress Bar (0~45s: Green, 45~90s: Gold AL Zone, 90s+: Wrap Up) -->
-                        <div class="timer-progress-container">
-                            <div id="timer-progress-fill" class="timer-progress-fill" style="width: 0%;"></div>
-                            <span class="timer-zone-label" id="timer-zone-label">답변 시작 전 (클릭 시 녹음 시작)</span>
                         </div>
 
                         <!-- Live Transcript & Direct Editable Text Area -->
@@ -335,7 +298,7 @@
                                 <p class="fb-desc" id="fb-fluency">음성 발화량이 검출되지 않았습니다.</p>
                             </div>
                             <div class="fb-card">
-                                <h4><i class="fa-solid fa-bolt"></i> 발화 속도 WPM & 시제 일치 (Speed & Grammar)</h4>
+                                <h4><i class="fa-solid fa-spell-check"></i> 시제 & 문법 일치 (Grammar & Tense)</h4>
                                 <div class="score-bar"><div class="bar-fill" id="bar-vocab" style="width: 0%"></div></div>
                                 <p class="fb-desc" id="fb-vocab">음성 발화량이 검출되지 않았습니다.</p>
                             </div>
@@ -358,33 +321,33 @@
         <!-- STEP 3: Overall Performance & Scorecard -->
         <section id="stats-section" class="view-section">
             <div class="section-hero">
-                <h1 class="hero-title">OPIc AI <span class="gradient-text">15문항 최종 성적 종합 리포트</span></h1>
-                <p class="hero-sub">전체 15문항 발화 분석 기반 최종 예측 등급 및 AL 달성 종합 성적표입니다.</p>
+                <h1 class="hero-title">OPIc AI <span class="gradient-text">최종 성적 종합 리포트</span></h1>
+                <p class="hero-sub">전체 15문항 발화 분석 기반 최종 예측 등급 및 AL 달성 전략입니다.</p>
             </div>
 
             <div class="report-grid">
                 <!-- Grade Summary Card -->
                 <div class="report-card glass-card grade-summary">
                     <div class="overall-grade-box">
-                        <span class="report-label">AI 종합 최종 예측 등급 (Final Estimated Grade)</span>
+                        <span class="report-label">AI 종합 예측 등급 (Estimated Grade)</span>
                         <div class="big-grade" id="final-grade-text">--</div>
                         <span class="grade-subtext" id="final-grade-sub">답변을 완료하면 최종 등급이 산출됩니다.</span>
                     </div>
                     <div class="score-breakdown">
                         <div class="score-item">
-                            <span>과거 시제 및 문장 정교성</span>
+                            <span>과거 시제 정교성 (Past Tense)</span>
                             <strong id="stat-past">-- / 100</strong>
                         </div>
                         <div class="score-item">
-                            <span>총 발화량 및 평균 WPM</span>
+                            <span>발화량 & 유창성 (Length & Flow)</span>
                             <strong id="stat-length">-- / 100</strong>
                         </div>
                         <div class="score-item">
-                            <span>필러(Filler Words) 습관 및 자연스러움</span>
+                            <span>필러(Filler Words) 자연스러움</span>
                             <strong id="stat-filler">-- / 100</strong>
                         </div>
                         <div class="score-item">
-                            <span>돌발/롤플레이 대처 완결성</span>
+                            <span>롤플레이 대처 및 대안 제시</span>
                             <strong id="stat-roleplay">-- / 100</strong>
                         </div>
                     </div>
@@ -394,53 +357,17 @@
                 <div class="report-card glass-card">
                     <h3><i class="fa-solid fa-chart-pie"></i> AL 합격 전략 가이드</h3>
                     <ul class="tip-list">
-                        <li><i class="fa-solid fa-circle-check text-green"></i> <strong>발화 속도(Speed: 110~130 WPM) 및 분량 확보</strong>: 문법이나 발음 완벽성보다 막힘없이 빠른 속도와 충분한 발화량이 AL 수여의 핵심입니다.</li>
+                        <li><i class="fa-solid fa-circle-check text-green"></i> <strong>발화 속도(Speed) 및 분량 확보</strong>: 문법이나 발음 완벽성보다 막힘없이 빠른 속도와 충분한 발화량이 AL 수여의 핵심입니다.</li>
                         <li><i class="fa-solid fa-triangle-exclamation text-yellow"></i> <strong>Filler Words 활용</strong>: 답변 중간 머뭇거릴 때 `umm...` 보다는 `You know`, `I mean`, `Actually`, `To be honest` 를 입에 입혀 이질감을 없애야 합니다.</li>
                         <li><i class="fa-solid fa-lightbulb text-blue"></i> <strong>돌발 및 롤플레이 13번 대응</strong>: 예상치 못한 질문이 나와도 당황하지 말고 `Well, that's a tough question, but let me see...` 로 자연스럽게 시간을 번 뒤 2~3가지 대안이나 비슷한 에피소드를 연결하세요.</li>
                     </ul>
-                </div>
-            </div>
-
-            <!-- 15 Question Detailed Breakdown Table -->
-            <div class="glass-card table-card">
-                <h3><i class="fa-solid fa-list-check"></i> 문항별 상세 발화 분석 및 평가표</h3>
-                <div class="table-responsive">
-                    <table class="score-table">
-                        <thead>
-                            <tr>
-                                <th>Q#</th>
-                                <th>카테고리</th>
-                                <th>답변 시간</th>
-                                <th>발화 단어수</th>
-                                <th>WPM 속도</th>
-                                <th>필러 횟수</th>
-                                <th>예상 등급</th>
-                            </tr>
-                        </thead>
-                        <tbody id="scorecard-table-body">
-                            <tr><td colspan="7" class="text-center">인터뷰를 진행하시면 문항별 평가표가 여기에 기록됩니다.</td></tr>
-                        </tbody>
-                    </table>
                 </div>
             </div>
         </section>
 
     </main>
 
-    <!-- AL Hint Modal -->
-    <div id="al-hint-modal" class="modal-overlay hidden">
-        <div class="modal-box glass-card">
-            <div class="modal-header">
-                <h3><i class="fa-solid fa-wand-magic-sparkles text-yellow"></i> AL 고득점 만능 표현 Cheat-Sheet</h3>
-                <button id="close-hint-modal" class="close-btn">&times;</button>
-            </div>
-            <div class="modal-body" id="al-hint-content">
-                <!-- Dynamic Content Loaded in App.js -->
-            </div>
-        </div>
-    </div>
-
     <!-- Scripts -->
-    <script src="app.js?v=5.0"></script>
+    <script src="app.js"></script>
 </body>
 </html>
