@@ -1008,15 +1008,35 @@ class OpicSimulatorApp {
     speakQuestion() {
         if ('speechSynthesis' in window) {
             window.speechSynthesis.cancel();
-            const text = this.activeExamPaper[this.currentQuestionIndex].question;
-            const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'en-US';
-            utterance.rate = 0.95;
-            utterance.volume = (this.ttsVolume !== undefined) ? this.ttsVolume : 0.5; // Dynamic Volume Slider Control
-            this.ui.evaWave.style.opacity = '1';
-            utterance.onend = () => { this.ui.evaWave.style.opacity = '0'; };
-            utterance.onerror = () => { this.ui.evaWave.style.opacity = '0'; };
-            window.speechSynthesis.speak(utterance);
+            
+            setTimeout(() => {
+                const qObj = (this.activeExamPaper && this.activeExamPaper[this.currentQuestionIndex]) ? this.activeExamPaper[this.currentQuestionIndex] : null;
+                const text = qObj ? qObj.question : "";
+                if (!text) return;
+
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = 'en-US';
+                utterance.rate = 0.95;
+                
+                const vol = (this.ttsVolume !== undefined) ? this.ttsVolume : 0.7;
+                utterance.volume = Math.max(0.05, Math.min(1.0, vol));
+
+                // Find English Voice if available on PC/Mobile browser
+                const voices = window.speechSynthesis.getVoices();
+                if (voices && voices.length > 0) {
+                    const enVoice = voices.find(v => v.lang.startsWith('en') || v.lang.includes('US') || v.lang.includes('GB'));
+                    if (enVoice) utterance.voice = enVoice;
+                }
+
+                if (this.ui.evaWave) this.ui.evaWave.style.opacity = '1';
+                utterance.onend = () => { if (this.ui.evaWave) this.ui.evaWave.style.opacity = '0'; };
+                utterance.onerror = (e) => { 
+                    console.warn("TTS Playback Warning:", e);
+                    if (this.ui.evaWave) this.ui.evaWave.style.opacity = '0'; 
+                };
+
+                window.speechSynthesis.speak(utterance);
+            }, 50);
         }
     }
 
