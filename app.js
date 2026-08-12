@@ -966,8 +966,8 @@ class OpicSimulatorApp {
         this.ui.evalAnswerBtn.disabled = true;
         this.ui.feedbackDrawer.classList.add('hidden');
 
-        // Automatically speak question in clear English at comfortable 30% volume
-        setTimeout(() => this.speakQuestion(), 500);
+        // Speak question synchronously in clear English at comfortable volume
+        this.speakQuestion();
     }
 
     resetTimerProgressBar() {
