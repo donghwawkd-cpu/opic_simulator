@@ -1014,7 +1014,7 @@ class OpicSimulatorApp {
         this.isRecording = true;
         this.ui.micToggleBtn.classList.add('recording');
         this.ui.recIndicator.classList.add('recording-active');
-        this.ui.recStatusText.textContent = "녹음 진행 중...";
+        this.ui.recStatusText.textContent = "녹음 진행 중... (실제 음성이 파일로 저장됩니다)";
         
         this.responseSeconds = 0;
         this.ui.responseTimer.textContent = "00:00";
@@ -1028,24 +1028,49 @@ class OpicSimulatorApp {
             this.updateTimerProgressBar(this.responseSeconds);
         }, 1000);
 
-        if (this.recognition) try { this.recognition.start(); } catch(e) {}
+        // 1. Start STT Speech Recognition
+        if (this.recognition) {
+            try {
+                this.recognition.start();
+            } catch(e) {
+                console.warn("STT Speech Recognition Start:", e);
+            }
+        }
 
+        // 2. Start Real Voice MediaRecorder
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
             navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
+                this.currentAudioStream = stream;
                 this.mediaRecorder = new MediaRecorder(stream);
                 this.audioChunks = [];
-                this.mediaRecorder.ondataavailable = (event) => { if (event.data.size > 0) this.audioChunks.push(event.data); };
+
+                this.mediaRecorder.ondataavailable = (event) => {
+                    if (event.data && event.data.size > 0) {
+                        this.audioChunks.push(event.data);
+                    }
+                };
+
                 this.mediaRecorder.onstop = () => {
                     this.audioBlob = new Blob(this.audioChunks, { type: 'audio/webm' });
+                    if (this.audioUrl) URL.revokeObjectURL(this.audioUrl);
                     this.audioUrl = URL.createObjectURL(this.audioBlob);
-                    if (this.ui.voiceAudioPlayer) this.ui.voiceAudioPlayer.src = this.audioUrl;
+                    
+                    if (this.ui.voiceAudioPlayer) {
+                        this.ui.voiceAudioPlayer.src = this.audioUrl;
+                    }
                     if (this.ui.downloadAudioBtn) {
                         this.ui.downloadAudioBtn.href = this.audioUrl;
                         this.ui.downloadAudioBtn.download = `OPIC_Q${this.currentQuestionIndex + 1}_VoiceAnswer.webm`;
                     }
-                    if (this.ui.audioPlaybackBox) this.ui.audioPlaybackBox.classList.remove('hidden');
+                    if (this.ui.audioPlaybackBox) {
+                        this.ui.audioPlaybackBox.classList.remove('hidden');
+                    }
                 };
-                this.mediaRecorder.start();
+
+                this.mediaRecorder.start(200);
+            }).catch(err => {
+                console.error("Microphone access error for MediaRecorder:", err);
+                alert("마이크 접근 권한이 필요합니다. 브라우저 주소창에서 마이크 허용을 확인해 주세요!");
             });
         }
     }
@@ -1054,9 +1079,30 @@ class OpicSimulatorApp {
         this.isRecording = false;
         this.ui.micToggleBtn.classList.remove('recording');
         this.ui.recIndicator.classList.remove('recording-active');
-        if (this.responseTimerInterval) clearInterval(this.responseTimerInterval);
-        if (this.recognition) try { this.recognition.stop(); } catch(e) {}
-        if (this.mediaRecorder && this.mediaRecorder.state !== 'inactive') try { this.mediaRecorder.stop(); } catch(e) {}
+        this.ui.recStatusText.textContent = "녹음 완료! (아래에서 내 음성을 들어보고 AI 평가를 받아보세요)";
+
+        if (this.responseTimerInterval) {
+            clearInterval(this.responseTimerInterval);
+        }
+
+        if (this.recognition) {
+            try {
+                this.recognition.stop();
+            } catch(e) {}
+        }
+
+        if (this.mediaRecorder && this.mediaRecorder.state !== 'inactive') {
+            try {
+                this.mediaRecorder.stop();
+            } catch(e) {}
+        }
+
+        if (this.currentAudioStream) {
+            try {
+                this.currentAudioStream.getTracks().forEach(track => track.stop());
+            } catch(e) {}
+            this.currentAudioStream = null;
+        }
     }
 
     evaluateUserAnswer() {
