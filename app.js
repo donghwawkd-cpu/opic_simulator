@@ -966,10 +966,8 @@ class OpicSimulatorApp {
         this.ui.evalAnswerBtn.disabled = true;
         this.ui.feedbackDrawer.classList.add('hidden');
 
-        // Cancel previous speech synthesis
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel();
-        }
+        // Automatically speak question in clear English at comfortable 30% volume
+        setTimeout(() => this.speakQuestion(), 500);
     }
 
     resetTimerProgressBar() {
