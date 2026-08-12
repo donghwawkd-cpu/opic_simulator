@@ -1114,6 +1114,10 @@ body {
     background: rgba(245, 158, 11, 0.25) !important;
 }
 
+.hidden {
+    display: none !important;
+}
+
 /* Modal Overlay & Box */
 .modal-overlay {
     position: fixed;
@@ -1128,6 +1132,10 @@ body {
     align-items: center;
     justify-content: center;
     padding: 20px;
+}
+
+.modal-overlay.hidden {
+    display: none !important;
 }
 
 .modal-box {
