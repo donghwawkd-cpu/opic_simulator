@@ -1005,8 +1005,23 @@ class OpicSimulatorApp {
             };
 
             this.recognition.onerror = (e) => {
-                console.error("Speech Recognition Error:", e.error);
-                this.stopRecording();
+                console.warn("Speech Recognition notice:", e.error);
+                if (e.error === 'no-speech') {
+                    // Normal brief silence - DO NOT abort recording session
+                    return;
+                }
+                if (e.error === 'network') {
+                    // Network STT dropped, real voice recording continues safely
+                    if (this.ui.recStatusText && this.isRecording) {
+                        this.ui.recStatusText.textContent = "음성 녹음 진행 중 (STT 네트워크 일시 지연 - 음성 파일은 정상 녹음 중)";
+                    }
+                    return;
+                }
+                if (e.error === 'not-allowed') {
+                    if (this.ui.recStatusText) {
+                        this.ui.recStatusText.innerHTML = '<span style="color:#ef4444;font-weight:700;"><i class="fa-solid fa-triangle-exclamation"></i> 마이크 접근 권한이 차단되어 있습니다. 주소창 좌측 자물쇠에서 마이크를 허용해주세요!</span>';
+                    }
+                }
             };
         }
     }
@@ -1243,8 +1258,42 @@ class OpicSimulatorApp {
 
         // 2. Start Real Voice MediaRecorder
         if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-            navigator.mediaDevices.getUserMedia({ audio: true }).then(stream => {
-                this.mediaRecorder = new MediaRecorder(stream);
+            navigator.mediaDevices.getUserMedia({ 
+                audio: { 
+                    echoCancellation: true, 
+                    noiseSuppression: true, 
+                    autoGainControl: true 
+                } 
+            }).then(stream => {
+                this.currentStream = stream;
+
+                // Auto-detect optimal audio codec for browser (Safari mp4 / Chrome webm)
+                let mimeType = 'audio/webm';
+                let fileExt = 'webm';
+                if (window.MediaRecorder && typeof MediaRecorder.isTypeSupported === 'function') {
+                    if (MediaRecorder.isTypeSupported('audio/webm;codecs=opus')) {
+                        mimeType = 'audio/webm;codecs=opus';
+                        fileExt = 'webm';
+                    } else if (MediaRecorder.isTypeSupported('audio/mp4')) {
+                        mimeType = 'audio/mp4';
+                        fileExt = 'mp4';
+                    } else if (MediaRecorder.isTypeSupported('audio/webm')) {
+                        mimeType = 'audio/webm';
+                        fileExt = 'webm';
+                    } else if (MediaRecorder.isTypeSupported('audio/aac')) {
+                        mimeType = 'audio/aac';
+                        fileExt = 'aac';
+                    }
+                }
+
+                try {
+                    this.mediaRecorder = new MediaRecorder(stream, mimeType ? { mimeType } : undefined);
+                } catch(recErr) {
+                    console.warn("Fallback to default MediaRecorder options:", recErr);
+                    this.mediaRecorder = new MediaRecorder(stream);
+                    mimeType = this.mediaRecorder.mimeType || 'audio/webm';
+                }
+
                 this.audioChunks = [];
 
                 this.mediaRecorder.ondataavailable = (event) => {
@@ -1254,7 +1303,7 @@ class OpicSimulatorApp {
                 };
 
                 this.mediaRecorder.onstop = () => {
-                    const blob = new Blob(this.audioChunks, { type: 'audio/webm' });
+                    const blob = new Blob(this.audioChunks, { type: mimeType });
                     const url = URL.createObjectURL(blob);
                     const qIdx = this.currentQuestionIndex;
                     const duration = this.responseSeconds;
@@ -1284,7 +1333,7 @@ class OpicSimulatorApp {
                     }
                     if (this.ui.downloadAudioBtn) {
                         this.ui.downloadAudioBtn.href = url;
-                        this.ui.downloadAudioBtn.download = `OPIC_Q${String(qIdx + 1).padStart(2, '0')}_VoiceAnswer.webm`;
+                        this.ui.downloadAudioBtn.download = `OPIC_Q${String(qIdx + 1).padStart(2, '0')}_VoiceAnswer.${fileExt}`;
                     }
                     if (this.ui.audioPlaybackBox) {
                         this.ui.audioPlaybackBox.classList.remove('hidden');
@@ -1294,6 +1343,18 @@ class OpicSimulatorApp {
                 this.mediaRecorder.start();
             }).catch(err => {
                 console.warn("Microphone access error for MediaRecorder:", err);
+                this.isRecording = false;
+                this.ui.micToggleBtn.classList.remove('recording');
+                this.ui.recIndicator.classList.remove('recording-active');
+                if (this.responseTimerInterval) {
+                    clearInterval(this.responseTimerInterval);
+                    this.responseTimerInterval = null;
+                }
+                const isDenied = (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError');
+                const errMsg = isDenied 
+                    ? '마이크 권한이 차단되어 있습니다! 주소창 왼쪽 자물쇠(설정) 아이콘을 눌러 "마이크: 허용"으로 변경해주세요.'
+                    : `마이크 연결 오류: ${err.message || '마이크 장치 설정을 확인해주세요'}`;
+                this.ui.recStatusText.innerHTML = `<span style="color:#ef4444;font-weight:700;"><i class="fa-solid fa-triangle-exclamation"></i> ${errMsg}</span>`;
             });
         }
     }
@@ -1320,6 +1381,14 @@ class OpicSimulatorApp {
             try {
                 this.mediaRecorder.stop();
             } catch(e) {}
+        }
+
+        // Release hardware mic track so it doesn't cause device locks on laptops
+        if (this.currentStream) {
+            try {
+                this.currentStream.getTracks().forEach(track => track.stop());
+            } catch(e) {}
+            this.currentStream = null;
         }
     }
 
@@ -1866,7 +1935,8 @@ class OpicSimulatorApp {
                 const qNum = String(item.questionIndex + 1).padStart(2, '0');
                 const qData = this.activeExamPaper[item.questionIndex];
                 const cleanCat = qData ? qData.category.replace(/[^a-zA-Z0-9가-힣]/g, '_').slice(0, 15) : 'Answer';
-                folder.file(`Q${qNum}_${cleanCat}_VoiceAnswer.webm`, item.audioBlob);
+                const ext = (item.audioBlob && item.audioBlob.type && item.audioBlob.type.includes('mp4')) ? 'mp4' : 'webm';
+                folder.file(`Q${qNum}_${cleanCat}_VoiceAnswer.${ext}`, item.audioBlob);
             });
 
             folder.file("OPIC_15Questions_Transcript_Report.txt", summaryText);
