@@ -14,7 +14,9 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="style.css?v=5.1">
+    <!-- JSZip for Bulk Recording Download -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <link rel="stylesheet" href="style.css?v=6.0">
 </head>
 <body>
     <div class="app-background">
@@ -312,14 +314,24 @@
 
                         <div class="feedback-grid">
                             <div class="fb-card">
-                                <h4><i class="fa-solid fa-gauge-high"></i> 발화량 & 유창성 (Fluency & Length)</h4>
-                                <div class="score-bar"><div class="bar-fill" id="bar-fluency" style="width: 0%"></div></div>
-                                <p class="fb-desc" id="fb-fluency">음성 발화량이 검출되지 않았습니다.</p>
+                                <h4><i class="fa-solid fa-gauge-high text-blue"></i> 발화량 & 지속 시간 (Volume & Length)</h4>
+                                <div class="score-bar"><div class="bar-fill" id="bar-volume" style="width: 0%"></div></div>
+                                <p class="fb-desc" id="fb-volume">음성 발화량이 검출되지 않았습니다.</p>
                             </div>
                             <div class="fb-card">
-                                <h4><i class="fa-solid fa-spell-check"></i> 시제 & 문법 일치 (Grammar & Tense)</h4>
+                                <h4><i class="fa-solid fa-book-open text-green"></i> 어휘량 & 다양성 (Vocabulary & Richness)</h4>
                                 <div class="score-bar"><div class="bar-fill" id="bar-vocab" style="width: 0%"></div></div>
                                 <p class="fb-desc" id="fb-vocab">음성 발화량이 검출되지 않았습니다.</p>
+                            </div>
+                            <div class="fb-card">
+                                <h4><i class="fa-solid fa-spell-check text-yellow"></i> 시제 일관성 & 문법 (Tense & Grammar)</h4>
+                                <div class="score-bar"><div class="bar-fill" id="bar-tense" style="width: 0%"></div></div>
+                                <p class="fb-desc" id="fb-tense">음성 발화량이 검출되지 않았습니다.</p>
+                            </div>
+                            <div class="fb-card">
+                                <h4><i class="fa-solid fa-comments text-purple"></i> 유창성 & 필러 (Fluency & Fillers)</h4>
+                                <div class="score-bar"><div class="bar-fill" id="bar-fluency" style="width: 0%"></div></div>
+                                <p class="fb-desc" id="fb-fluency">음성 발화량이 검출되지 않았습니다.</p>
                             </div>
                         </div>
 
@@ -354,20 +366,20 @@
                     </div>
                     <div class="score-breakdown">
                         <div class="score-item">
-                            <span>과거 시제 정교성 (Past Tense)</span>
+                            <span><i class="fa-solid fa-gauge-high text-blue"></i> 발화량 & 속도 (Volume & WPM)</span>
+                            <strong id="stat-volume">-- / 100</strong>
+                        </div>
+                        <div class="score-item">
+                            <span><i class="fa-solid fa-book-open text-green"></i> 어휘 다양성 & 풍부도 (Vocab Richness)</span>
+                            <strong id="stat-vocab">-- / 100</strong>
+                        </div>
+                        <div class="score-item">
+                            <span><i class="fa-solid fa-spell-check text-yellow"></i> 과거/완료 시제 일관성 (Past Tense)</span>
                             <strong id="stat-past">-- / 100</strong>
                         </div>
                         <div class="score-item">
-                            <span>발화량 & 유창성 (Length & Flow)</span>
-                            <strong id="stat-length">-- / 100</strong>
-                        </div>
-                        <div class="score-item">
-                            <span>필러(Filler Words) 자연스러움</span>
+                            <span><i class="fa-solid fa-comments text-purple"></i> 필러(Filler) 및 유창성 (Fluency)</span>
                             <strong id="stat-filler">-- / 100</strong>
-                        </div>
-                        <div class="score-item">
-                            <span>롤플레이 대처 및 대안 제시</span>
-                            <strong id="stat-roleplay">-- / 100</strong>
                         </div>
                     </div>
                 </div>
@@ -380,6 +392,36 @@
                         <li><i class="fa-solid fa-triangle-exclamation text-yellow"></i> <strong>Filler Words 활용</strong>: 답변 중간 머뭇거릴 때 `umm...` 보다는 `You know`, `I mean`, `Actually`, `To be honest` 를 입에 입혀 이질감을 없애야 합니다.</li>
                         <li><i class="fa-solid fa-lightbulb text-blue"></i> <strong>돌발 및 롤플레이 13번 대응</strong>: 예상치 못한 질문이 나와도 당황하지 말고 `Well, that's a tough question, but let me see...` 로 자연스럽게 시간을 번 뒤 2~3가지 대안이나 비슷한 에피소드를 연결하세요.</li>
                     </ul>
+                </div>
+            </div>
+
+            <!-- STEP 4: 15문항 전체 녹음본 & 답변 보관함 (All 15 Recordings Archive) -->
+            <div class="archive-section glass-card" id="all-answers-archive">
+                <div class="archive-header">
+                    <div class="archive-title-group">
+                        <h2><i class="fa-solid fa-microphone-lines text-green"></i> 15문항 전체 음성 녹음본 & 스크립트 보관함</h2>
+                        <p class="archive-sub">시험 중 녹음된 15개 질문의 실제 음성 답변과 텍스트 스크립트를 문항별로 다시 듣거나 일괄 다운로드할 수 있습니다.</p>
+                    </div>
+                    <div class="archive-btn-group">
+                        <button id="download-all-zip-btn" class="primary-btn download-all-btn">
+                            <i class="fa-solid fa-file-zipper"></i> 전체 녹음본 ZIP 일괄 다운로드 (.zip)
+                        </button>
+                        <button id="download-all-txt-btn" class="secondary-btn download-txt-btn">
+                            <i class="fa-solid fa-file-lines"></i> 전체 스크립트 텍스트 다운로드 (.txt)
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 15문항 전체 진행 요약 바 -->
+                <div class="archive-summary-stats" id="archive-summary-stats">
+                    <div class="summary-pill"><i class="fa-solid fa-circle-check text-green"></i> 녹음 완료: <strong id="rec-completed-count">0 / 15</strong></div>
+                    <div class="summary-pill"><i class="fa-solid fa-stopwatch text-blue"></i> 총 발화 시간: <strong id="rec-total-duration">0분 0초</strong></div>
+                    <div class="summary-pill"><i class="fa-solid fa-font text-yellow"></i> 총 발화 단어: <strong id="rec-total-words">0단어</strong></div>
+                </div>
+
+                <!-- 15문항 목록 컨테이너 -->
+                <div class="archive-list" id="archive-list-container">
+                    <!-- Javascript will dynamically render 15 question cards here -->
                 </div>
             </div>
         </section>

@@ -614,6 +614,17 @@ class OpicSimulatorApp {
         this.currentQuestionIndex = 0;
         this.activeExamPaper = []; // Dynamic 15 Questions Test Paper
         this.evaluations = []; // Stores scores for each question
+        
+        // Comprehensive 15 Questions Answer & Recording Storage
+        this.questionAnswers = Array(15).fill(null).map((_, i) => ({
+            questionIndex: i,
+            audioBlob: null,
+            audioUrl: null,
+            duration: 0,
+            transcript: "",
+            evaluation: null
+        }));
+
         this.selectedGrade = "AL";
         this.selectedLevel = "5-5";
         this.isRecording = false;
@@ -662,21 +673,35 @@ class OpicSimulatorApp {
             responseTimer: document.getElementById('response-timer'),
             evaWave: document.getElementById('eva-wave'),
             
+            // Real-Time 4-Dimensional Feedback Drawer
             feedbackDrawer: document.getElementById('ai-feedback-drawer'),
             estGrade: document.getElementById('est-grade'),
-            fbFluency: document.getElementById('fb-fluency'),
-            fbVocab: document.getElementById('fb-vocab'),
-            barFluency: document.getElementById('bar-fluency'),
+            barVolume: document.getElementById('bar-volume'),
+            fbVolume: document.getElementById('fb-volume'),
             barVocab: document.getElementById('bar-vocab'),
+            fbVocab: document.getElementById('fb-vocab'),
+            barTense: document.getElementById('bar-tense'),
+            fbTense: document.getElementById('fb-tense'),
+            barFluency: document.getElementById('bar-fluency'),
+            fbFluency: document.getElementById('fb-fluency'),
             
+            // Final Report Stats
             finalGradeText: document.getElementById('final-grade-text'),
             finalGradeSub: document.getElementById('final-grade-sub'),
+            statVolume: document.getElementById('stat-volume'),
+            statVocab: document.getElementById('stat-vocab'),
             statPast: document.getElementById('stat-past'),
-            statLength: document.getElementById('stat-length'),
             statFiller: document.getElementById('stat-filler'),
-            statRoleplay: document.getElementById('stat-roleplay'),
 
-            // New Feature UI Elements
+            // 15-Question Recordings Archive UI
+            downloadAllZipBtn: document.getElementById('download-all-zip-btn'),
+            downloadAllTxtBtn: document.getElementById('download-all-txt-btn'),
+            recCompletedCount: document.getElementById('rec-completed-count'),
+            recTotalDuration: document.getElementById('rec-total-duration'),
+            recTotalWords: document.getElementById('rec-total-words'),
+            archiveListContainer: document.getElementById('archive-list-container'),
+
+            // TTS Volume & Progress Bar UI
             ttsVolumeSlider: document.getElementById('tts-volume-slider'),
             ttsVolText: document.getElementById('tts-vol-text'),
             ttsMuteBtn: document.getElementById('tts-mute-btn'),
@@ -745,6 +770,11 @@ class OpicSimulatorApp {
         this.ui.navBtns.forEach(btn => {
             btn.addEventListener('click', () => {
                 const targetId = btn.id.replace('nav-', '') + '-section';
+                if (targetId === 'stats-section') {
+                    if (this.isRecording) this.stopRecording();
+                    this.saveCurrentAnswer();
+                    this.renderFinalReport();
+                }
                 this.switchSection(targetId, btn);
             });
         });
@@ -784,6 +814,10 @@ class OpicSimulatorApp {
             this.ui.transcriptInput.addEventListener('input', () => {
                 const val = this.ui.transcriptInput.value.trim();
                 this.ui.evalAnswerBtn.disabled = (val.length === 0);
+                this.updateFillerCounter(val);
+                if (this.questionAnswers[this.currentQuestionIndex]) {
+                    this.questionAnswers[this.currentQuestionIndex].transcript = val;
+                }
             });
         }
 
@@ -791,6 +825,14 @@ class OpicSimulatorApp {
         this.ui.startTestBtn.addEventListener('click', () => {
             this.generateRandomExamPaper();
             this.evaluations = []; // Clear previous evaluations
+            this.questionAnswers = Array(15).fill(null).map((_, i) => ({
+                questionIndex: i,
+                audioBlob: null,
+                audioUrl: null,
+                duration: 0,
+                transcript: "",
+                evaluation: null
+            }));
             this.switchSection('simulator-section', document.getElementById('nav-sim'));
             this.startTotalTimer();
             
@@ -807,8 +849,13 @@ class OpicSimulatorApp {
             this.speakQuestion();
         });
 
-        // Next Question Button
+        // Next Question Button - Auto-Save and commit answer
         this.ui.nextQBtn.addEventListener('click', () => {
+            if (this.isRecording) {
+                this.stopRecording();
+            }
+            this.saveCurrentAnswer();
+
             if (this.currentQuestionIndex < this.activeExamPaper.length - 1) {
                 this.loadQuestion(this.currentQuestionIndex + 1);
             } else {
@@ -826,6 +873,20 @@ class OpicSimulatorApp {
         this.ui.evalAnswerBtn.addEventListener('click', () => {
             this.evaluateUserAnswer();
         });
+
+        // Download All 15 Recordings as ZIP Button
+        if (this.ui.downloadAllZipBtn) {
+            this.ui.downloadAllZipBtn.addEventListener('click', () => {
+                this.downloadAllRecordingsZip();
+            });
+        }
+
+        // Download All 15 Transcripts as TXT Button
+        if (this.ui.downloadAllTxtBtn) {
+            this.ui.downloadAllTxtBtn.addEventListener('click', () => {
+                this.downloadAllTranscriptsTxt();
+            });
+        }
     }
 
     // 100% Dynamic Survey-to-Exam Paper Randomization Engine
@@ -952,7 +1013,14 @@ class OpicSimulatorApp {
 
     loadQuestion(index) {
         this.currentQuestionIndex = index;
-        const qData = this.activeExamPaper[index];
+        const qData = this.activeExamPaper[index] || {
+            id: index + 1,
+            category: "General",
+            tag: `Question ${index + 1}`,
+            question: "Please prepare your answer.",
+            kor: "(답변을 준비해 주세요.)",
+            modelAnswer: ""
+        };
 
         this.ui.qNumber.textContent = `Q ${String(index + 1).padStart(2, '0')} / 15`;
         this.ui.qCategory.textContent = qData.category;
@@ -961,16 +1029,45 @@ class OpicSimulatorApp {
         this.ui.questionKor.textContent = qData.kor;
         this.ui.modelText.textContent = `"${qData.modelAnswer}"`;
 
-        // Reset Answer & Audio Player State
+        // Reset Recording and timers for current question
         this.stopRecording();
         this.resetTimerProgressBar();
         this.resetFillerCounter();
-        this.recordedText = "";
-        if (this.ui.transcriptInput) this.ui.transcriptInput.value = "";
-        if (this.ui.audioPlaybackBox) this.ui.audioPlaybackBox.classList.add('hidden');
-        if (this.ui.voiceAudioPlayer) this.ui.voiceAudioPlayer.src = "";
-        this.ui.evalAnswerBtn.disabled = true;
-        this.ui.feedbackDrawer.classList.add('hidden');
+
+        // Restore saved answer state if already recorded for this question
+        const saved = this.questionAnswers[index];
+        if (saved && saved.transcript) {
+            this.recordedText = saved.transcript;
+            if (this.ui.transcriptInput) this.ui.transcriptInput.value = saved.transcript;
+            this.ui.evalAnswerBtn.disabled = false;
+            this.updateFillerCounter(saved.transcript);
+        } else {
+            this.recordedText = "";
+            if (this.ui.transcriptInput) this.ui.transcriptInput.value = "";
+            this.ui.evalAnswerBtn.disabled = true;
+        }
+
+        if (saved && saved.audioUrl) {
+            this.audioBlob = saved.audioBlob;
+            this.audioUrl = saved.audioUrl;
+            if (this.ui.voiceAudioPlayer) this.ui.voiceAudioPlayer.src = saved.audioUrl;
+            if (this.ui.downloadAudioBtn) {
+                this.ui.downloadAudioBtn.href = saved.audioUrl;
+                this.ui.downloadAudioBtn.download = `OPIC_Q${String(index + 1).padStart(2, '0')}_VoiceAnswer.webm`;
+            }
+            if (this.ui.audioPlaybackBox) this.ui.audioPlaybackBox.classList.remove('hidden');
+        } else {
+            this.audioBlob = null;
+            this.audioUrl = null;
+            if (this.ui.audioPlaybackBox) this.ui.audioPlaybackBox.classList.add('hidden');
+            if (this.ui.voiceAudioPlayer) this.ui.voiceAudioPlayer.src = "";
+        }
+
+        if (saved && saved.evaluation) {
+            this.renderEvaluationDrawer(saved.evaluation);
+        } else {
+            this.ui.feedbackDrawer.classList.add('hidden');
+        }
 
         // Speak question synchronously in clear English at comfortable volume
         this.speakQuestion();
@@ -1151,22 +1248,43 @@ class OpicSimulatorApp {
                 this.audioChunks = [];
 
                 this.mediaRecorder.ondataavailable = (event) => {
-                    if (event.data.size > 0) {
+                    if (event.data && event.data.size > 0) {
                         this.audioChunks.push(event.data);
                     }
                 };
 
                 this.mediaRecorder.onstop = () => {
-                    this.audioBlob = new Blob(this.audioChunks, { type: 'audio/webm' });
-                    if (this.audioUrl) URL.revokeObjectURL(this.audioUrl);
-                    this.audioUrl = URL.createObjectURL(this.audioBlob);
-                    
+                    const blob = new Blob(this.audioChunks, { type: 'audio/webm' });
+                    const url = URL.createObjectURL(blob);
+                    const qIdx = this.currentQuestionIndex;
+                    const duration = this.responseSeconds;
+                    const transcript = (this.ui.transcriptInput ? this.ui.transcriptInput.value : "").trim();
+
+                    this.audioBlob = blob;
+                    this.audioUrl = url;
+
+                    if (!this.questionAnswers[qIdx]) {
+                        this.questionAnswers[qIdx] = {
+                            questionIndex: qIdx,
+                            audioBlob: blob,
+                            audioUrl: url,
+                            duration: duration,
+                            transcript: transcript,
+                            evaluation: null
+                        };
+                    } else {
+                        this.questionAnswers[qIdx].audioBlob = blob;
+                        this.questionAnswers[qIdx].audioUrl = url;
+                        this.questionAnswers[qIdx].duration = duration;
+                        this.questionAnswers[qIdx].transcript = transcript;
+                    }
+
                     if (this.ui.voiceAudioPlayer) {
-                        this.ui.voiceAudioPlayer.src = this.audioUrl;
+                        this.ui.voiceAudioPlayer.src = url;
                     }
                     if (this.ui.downloadAudioBtn) {
-                        this.ui.downloadAudioBtn.href = this.audioUrl;
-                        this.ui.downloadAudioBtn.download = `OPIC_Q${this.currentQuestionIndex + 1}_VoiceAnswer.webm`;
+                        this.ui.downloadAudioBtn.href = url;
+                        this.ui.downloadAudioBtn.download = `OPIC_Q${String(qIdx + 1).padStart(2, '0')}_VoiceAnswer.webm`;
                     }
                     if (this.ui.audioPlaybackBox) {
                         this.ui.audioPlaybackBox.classList.remove('hidden');
@@ -1181,6 +1299,7 @@ class OpicSimulatorApp {
     }
 
     stopRecording() {
+        if (!this.isRecording) return;
         this.isRecording = false;
         this.ui.micToggleBtn.classList.remove('recording');
         this.ui.recIndicator.classList.remove('recording-active');
@@ -1188,6 +1307,7 @@ class OpicSimulatorApp {
 
         if (this.responseTimerInterval) {
             clearInterval(this.responseTimerInterval);
+            this.responseTimerInterval = null;
         }
 
         if (this.recognition) {
@@ -1203,116 +1323,625 @@ class OpicSimulatorApp {
         }
     }
 
-    // AI Real-Time Grade & Speech Evaluation Engine
-    evaluateUserAnswer() {
+    saveCurrentAnswer() {
+        const qIdx = this.currentQuestionIndex;
         const text = (this.ui.transcriptInput ? this.ui.transcriptInput.value : "").trim();
-        const wordCount = text ? text.split(/\s+/).filter(w => w.length > 0).length : 0;
-        
-        // Count Fillers (like, you know, actually, I mean, well, to be honest, speaking of which)
-        const fillerMatches = text.match(/\b(like|you know|actually|I mean|well|to be honest|speaking of which)\b/gi) || [];
-        const fillerCount = fillerMatches.length;
 
-        // Count Past Tense Verbs (went, bought, spent, watched, enjoyed, called, had, was, were, decided, visited, took, learned, resolved)
-        const pastVerbs = text.match(/\b(went|bought|spent|watched|enjoyed|called|had|was|were|decided|visited|took|learned|resolved)\b/gi) || [];
-        const pastCount = pastVerbs.length;
-
-        let grade = "NL";
-        let fluencyScore = 0;
-        let vocabScore = 0;
-        let fluencyMsg = "";
-        let vocabMsg = "";
-
-        // Strictly Check Empty Speech / Zero Word Count
-        if (wordCount === 0) {
-            grade = "NL (Novice Low)";
-            fluencyScore = 0;
-            vocabScore = 0;
-            fluencyMsg = "⚠️ 음성 발화가 전혀 감지되지 않았습니다! 마이크를 누르고 영어로 말해 주세요.";
-            vocabMsg = "⚠️ 인식된 텍스트가 비어 있습니다. (발화량 0단어)";
-        } else if (wordCount < 15) {
-            grade = "NM (Novice Mid)";
-            fluencyScore = 30;
-            vocabScore = 35;
-            fluencyMsg = `⚠️ 발화량이 ${wordCount}단어로 부족합니다. 문장을 더 길고 풍부하게 이어서 말씀하세요.`;
-            vocabMsg = `기초 단어 포함 ${wordCount}단어 발화됨. (최소 35단어 이상 권장)`;
-        } else if (wordCount < 35) {
-            grade = "IM2 / IM3";
-            fluencyScore = 65;
-            vocabScore = 70;
-            fluencyMsg = `발화량 ${wordCount}단어. 중간 수준의 유창성입니다. 필러 표현을 적극 활용하세요.`;
-            vocabMsg = `기본 문장 구성 양호. 과거 시제 일관성을 보완하면 IH 가능.`;
-        } else if (wordCount < 55) {
-            grade = "IH (Intermediate High)";
-            fluencyScore = 85;
-            vocabScore = 86;
-            fluencyMsg = `발화량 ${wordCount}단어, 필러 ${fillerCount}회! 우수한 유창성입니다.`;
-            vocabMsg = `과거동사 ${pastCount}개 감지. 문장 연결 및 시제 표현 우수.`;
+        if (!this.questionAnswers[qIdx]) {
+            this.questionAnswers[qIdx] = {
+                questionIndex: qIdx,
+                audioBlob: this.audioBlob || null,
+                audioUrl: this.audioUrl || null,
+                duration: this.responseSeconds || 0,
+                transcript: text,
+                evaluation: null
+            };
         } else {
-            // AL Grade Requirement: Word Count >= 55 & Good Fillers / Past Verbs
-            grade = "AL (Advanced Low)";
-            fluencyScore = 96;
-            vocabScore = 94;
-            fluencyMsg = `★ 발화량 ${wordCount}단어 (풍부한 분량!), 필러 ${fillerCount}회 사용! 최상위 유창성.`;
-            vocabMsg = `★ 과거 동사 표현 ${pastCount}개 감지. 문장 완성도 및 시제 정교성 최고 수준!`;
+            this.questionAnswers[qIdx].transcript = text;
+            if (this.audioBlob) this.questionAnswers[qIdx].audioBlob = this.audioBlob;
+            if (this.audioUrl) this.questionAnswers[qIdx].audioUrl = this.audioUrl;
+            if (this.responseSeconds > 0) this.questionAnswers[qIdx].duration = this.responseSeconds;
         }
 
-        // Save evaluation result for current question
-        this.evaluations[this.currentQuestionIndex] = {
+        // If answered with text and not yet evaluated, auto-evaluate
+        if (text && (!this.evaluations[qIdx] || !this.questionAnswers[qIdx].evaluation)) {
+            const qData = this.activeExamPaper[qIdx] || null;
+            const evalRes = this.computeEvaluation(text, this.questionAnswers[qIdx].duration, qData);
+            this.evaluations[qIdx] = evalRes;
+            this.questionAnswers[qIdx].evaluation = evalRes;
+        }
+    }
+
+    // Comprehensive ACTFL OPIc Multi-Dimensional Evaluation Engine
+    computeEvaluation(text, durationSeconds, questionObj) {
+        const cleanText = (text || "").trim();
+        const words = cleanText.toLowerCase().replace(/[^a-z0-9'\s]/g, ' ').split(/\s+/).filter(w => w.length > 0);
+        const wordCount = words.length;
+        const duration = Math.max(0, parseInt(durationSeconds) || 0);
+        const wpm = (duration >= 5 && wordCount > 0) ? Math.round((wordCount / duration) * 60) : 0;
+
+        // 1. Lexical Richness & Unique Words
+        const uniqueWordSet = new Set(words);
+        const uniqueWords = uniqueWordSet.size;
+        const ttr = wordCount > 0 ? (uniqueWords / wordCount) : 0;
+
+        // OPIc AL/IH Advanced Expressions Dictionary
+        const ADVANCED_VOCAB = [
+            "breathtaking", "magnificent", "picturesque", "spectacular", "cozy", "bustling", "vibrant",
+            "versatile", "indispensable", "sophisticated", "memorable", "unforgettable", "state-of-the-art",
+            "exceptional", "phenomenal", "authentic", "remarkable", "crucial", "essential", "significant",
+            "tremendous", "passionate", "nostalgic", "overwhelmed", "affordable", "eco-friendly",
+            "perspective", "consequence", "dilemma", "controversy", "preference", "priority",
+            "infrastructure", "atmosphere", "circumstance", "obstacle", "breakthrough", "consensus",
+            "dimension", "transition", "sustainability", "innovation", "impression", "characteristic",
+            "downside", "perk", "alternative", "solution", "resolution", "recommendation",
+            "come up with", "figure out", "look forward to", "bump into", "get along with", "unwind",
+            "binge-watch", "take for granted", "turn out", "catch up with", "in terms of", "on a daily basis",
+            "play an important role", "leave a strong impression", "at the end of the day", "keep in mind",
+            "have a knack for", "rule of thumb", "a blessing in disguise", "speak highly of", "make up for"
+        ];
+
+        const matchedAdv = [];
+        const lowerText = cleanText.toLowerCase();
+        ADVANCED_VOCAB.forEach(term => {
+            if (lowerText.includes(term)) {
+                matchedAdv.push(term);
+            }
+        });
+
+        // 2. Past Tense Verbs (Irregular & Regular -ed)
+        const PAST_VERBS = [
+            "went", "saw", "visited", "enjoyed", "had", "was", "were", "took", "felt", "watched",
+            "bought", "spent", "became", "made", "decided", "started", "thought", "found", "ate",
+            "drank", "stayed", "solved", "learned", "happened", "experienced", "traveled", "walked",
+            "arrived", "returned", "noticed", "heard", "spoke", "read", "met", "called", "booked",
+            "canceled", "repaired", "replaced", "discovered", "chose", "lost", "remembered", "woke", "fixed"
+        ];
+        const matchedPast = [];
+        words.forEach(w => {
+            if (PAST_VERBS.includes(w) || (w.endsWith("ed") && w.length > 4)) {
+                matchedPast.push(w);
+            }
+        });
+        const pastCount = matchedPast.length;
+
+        // Conjunctions & Subordinate Clauses
+        const CONJUNCTIONS = [
+            "because", "although", "even though", "whereas", "while", "since", "so that", "in order to",
+            "if", "unless", "whenever", "as soon as", "whether", "as long as", "despite"
+        ];
+        const matchedConj = [];
+        CONJUNCTIONS.forEach(conj => {
+            if (lowerText.includes(conj)) {
+                matchedConj.push(conj);
+            }
+        });
+
+        // Modals & Conditionals
+        const modals = cleanText.match(/\b(would|could|should|used to|might|be able to|had to|have been|has been)\b/gi) || [];
+
+        // 3. Fillers (Discourse Hesitation Markers)
+        const FILLERS = [
+            "you know", "i mean", "well", "actually", "to be honest", "honestly", "frankly",
+            "speaking of which", "as you know", "like i said", "what i'm trying to say",
+            "let's see", "as a matter of fact", "believe it or not"
+        ];
+        const matchedFillers = [];
+        FILLERS.forEach(fil => {
+            const regex = new RegExp(`\\b${fil}\\b`, 'gi');
+            const hits = cleanText.match(regex);
+            if (hits) {
+                for (let k = 0; k < hits.length; k++) matchedFillers.push(fil);
+            }
+        });
+        const fillerCount = matchedFillers.length;
+
+        // Discourse Transitions
+        const CONNECTORS = [
+            "however", "therefore", "furthermore", "in addition", "on the other hand",
+            "for instance", "for example", "besides", "as a result", "eventually",
+            "overall", "basically", "in particular", "first of all", "moreover"
+        ];
+        const matchedConnectors = [];
+        CONNECTORS.forEach(con => {
+            if (lowerText.includes(con)) {
+                matchedConnectors.push(con);
+            }
+        });
+
+        // ==========================================
+        // Scoring Dimensions (0 - 100 each)
+        // ==========================================
+
+        // A. Volume & Duration Score (35%)
+        let volumeScore = 0;
+        if (wordCount === 0) {
+            volumeScore = 0;
+        } else {
+            const wordScore = Math.min(50, Math.round((wordCount / 65) * 50));
+            const durScore = Math.min(30, Math.round((Math.min(duration, 90) / 60) * 30));
+            let wpmScore = 10;
+            if (duration >= 5) {
+                if (wpm >= 85 && wpm <= 150) wpmScore = 20;
+                else if (wpm >= 65) wpmScore = 15;
+                else if (wpm >= 45) wpmScore = 10;
+                else wpmScore = 5;
+            } else {
+                wpmScore = Math.min(20, Math.round((wordCount / 20) * 20));
+            }
+            volumeScore = Math.min(100, wordScore + durScore + wpmScore);
+        }
+
+        // B. Vocabulary Richness Score (25%)
+        let vocabScore = 0;
+        if (wordCount === 0) {
+            vocabScore = 0;
+        } else {
+            const uniqueScore = Math.min(45, Math.round((uniqueWords / 38) * 45));
+            let ttrScore = 15;
+            if (ttr >= 0.65) ttrScore = 25;
+            else if (ttr >= 0.50) ttrScore = 20;
+            else if (ttr >= 0.40) ttrScore = 15;
+            else ttrScore = 8;
+            const advScore = Math.min(30, matchedAdv.length * 6);
+            vocabScore = Math.min(100, uniqueScore + ttrScore + advScore);
+        }
+
+        // C. Tense & Syntax Score (20%)
+        let tenseScore = 0;
+        if (wordCount === 0) {
+            tenseScore = 0;
+        } else {
+            const isExperienceQ = questionObj && (
+                questionObj.tag?.includes("경험") ||
+                questionObj.question?.toLowerCase().includes("memorable") ||
+                questionObj.question?.toLowerCase().includes("past") ||
+                questionObj.question?.toLowerCase().includes("happened")
+            );
+
+            let pastPts = Math.min(isExperienceQ ? 55 : 35, pastCount * (isExperienceQ ? 9 : 6));
+            let conjPts = Math.min(35, matchedConj.length * 9);
+            let modalPts = Math.min(25, modals.length * 6);
+            tenseScore = Math.min(100, pastPts + conjPts + modalPts + 10);
+        }
+
+        // D. Fluency & Fillers Score (20%)
+        let fluencyScore = 0;
+        if (wordCount === 0) {
+            fluencyScore = 0;
+        } else {
+            let filPts = 20;
+            if (fillerCount >= 2 && fillerCount <= 6) filPts = 50;
+            else if (fillerCount === 1) filPts = 35;
+            else if (fillerCount > 6) filPts = 38;
+            else filPts = 22;
+
+            const connPts = Math.min(50, matchedConnectors.length * 15 + 10);
+            fluencyScore = Math.min(100, filPts + connPts);
+        }
+
+        // Composite Overall Score & Grade
+        const composite = Math.round(
+            (volumeScore * 0.35) +
+            (vocabScore * 0.25) +
+            (tenseScore * 0.20) +
+            (fluencyScore * 0.20)
+        );
+
+        let grade = "NL (Novice Low)";
+        let gradeCode = "NL";
+
+        if (wordCount === 0) {
+            grade = "NL (Novice Low)";
+            gradeCode = "NL";
+        } else if (wordCount < 15) {
+            grade = "NM (Novice Mid)";
+            gradeCode = "NM";
+        } else if (wordCount < 28 || composite < 50) {
+            grade = "IL / IM1 (Intermediate Low/Mid1)";
+            gradeCode = "IM1";
+        } else if (wordCount < 45 || composite < 66) {
+            grade = "IM2 / IM3 (Intermediate Mid 2/3)";
+            gradeCode = "IM2";
+        } else if (wordCount < 60 || composite < 80) {
+            grade = "IH (Intermediate High)";
+            gradeCode = "IH";
+        } else {
+            grade = "AL (Advanced Low)";
+            gradeCode = "AL";
+        }
+
+        // Descriptive Feedback Messages
+        let fbVolumeMsg = "";
+        let fbVocabMsg = "";
+        let fbTenseMsg = "";
+        let fbFluencyMsg = "";
+
+        if (wordCount === 0) {
+            fbVolumeMsg = "⚠️ 음성 발화가 감지되지 않았습니다. 마이크를 누르고 답변해 주세요.";
+            fbVocabMsg = "⚠️ 인식된 어휘가 없습니다.";
+            fbTenseMsg = "⚠️ 분석할 문장이 없습니다.";
+            fbFluencyMsg = "⚠️ 발화 시간이 기록되지 않았습니다.";
+        } else {
+            // Volume
+            const timeDesc = duration > 0 ? `${duration}초 발화` : `시간 미기록`;
+            const speedDesc = wpm > 0 ? `, 분당 약 ${wpm} WPM` : ``;
+            if (wordCount >= 60) {
+                fbVolumeMsg = `★ 발화량 ${wordCount}단어 (${timeDesc}${speedDesc}) - AL 권장 분량(60단어 이상)을 완벽히 달성했습니다!`;
+            } else if (wordCount >= 40) {
+                fbVolumeMsg = `발화량 ${wordCount}단어 (${timeDesc}${speedDesc}) - IH 수준의 안정적인 답변 분량입니다. 조금만 더 살을 붙이면 AL 가능!`;
+            } else {
+                fbVolumeMsg = `⚠️ 발화량 ${wordCount}단어 (${timeDesc}${speedDesc}) - AL/IH 달성을 위해 45단어 이상의 연속 발화가 권장됩니다.`;
+            }
+
+            // Vocab
+            const advListStr = matchedAdv.length > 0 ? ` [${matchedAdv.slice(0, 3).join(', ')}]` : '';
+            if (uniqueWords >= 35 || matchedAdv.length >= 2) {
+                fbVocabMsg = `★ 고유 어휘 ${uniqueWords}개 (다양도 ${Math.round(ttr * 100)}%), 고급 표현${advListStr} 감지! 풍부한 어휘 구사력입니다.`;
+            } else if (uniqueWords >= 22) {
+                fbVocabMsg = `고유 어휘 ${uniqueWords}개 (다양도 ${Math.round(ttr * 100)}%). 기본 어휘가 충실합니다. 다양한 형용사나 숙어를 추가해 보세요.`;
+            } else {
+                fbVocabMsg = `고유 어휘 ${uniqueWords}개. 동일 단어 반복을 줄이고 다채로운 표현을 사용하세요.`;
+            }
+
+            // Tense
+            const pastStr = pastCount > 0 ? `과거동사 ${pastCount}개` : `과거동사 미검출`;
+            const conjStr = matchedConj.length > 0 ? `, 접속사 [${matchedConj.slice(0, 2).join(', ')}]` : '';
+            if (pastCount >= 4 || matchedConj.length >= 2) {
+                fbTenseMsg = `★ ${pastStr}${conjStr} 감지. 시제 일관성과 복합 문장 구성 능력이 우수합니다.`;
+            } else {
+                fbTenseMsg = `${pastStr}${conjStr}. 과거 경험 질문에서는 시제 일관성 유지(went, had, felt 등)가 핵심 채점 요소입니다.`;
+            }
+
+            // Fluency
+            const fillerStr = fillerCount > 0 ? `필러 ${fillerCount}회 [${matchedFillers.slice(0, 2).join(', ')}]` : `필러 0회`;
+            const connStr = matchedConnectors.length > 0 ? `, 전환사 [${matchedConnectors.slice(0, 2).join(', ')}]` : '';
+            if (fillerCount >= 2 || matchedConnectors.length >= 2) {
+                fbFluencyMsg = `★ ${fillerStr}${connStr} 활용! 원어민 특유의 자연스러운 호흡과 담화 연결성을 보여줍니다.`;
+            } else {
+                fbFluencyMsg = `${fillerStr}${connStr}. 문장 사이 머뭇거릴 때 "You know", "Actually", "I mean" 등의 필러를 자연스럽게 얹어보세요.`;
+            }
+        }
+
+        return {
             grade,
+            gradeCode,
+            composite,
             wordCount,
-            fillerCount,
+            duration,
+            wpm,
+            uniqueWords,
+            ttr: Math.round(ttr * 100),
             pastCount,
+            fillerCount,
+            volumeScore,
+            vocabScore,
+            tenseScore,
             fluencyScore,
-            vocabScore
+            fbVolumeMsg,
+            fbVocabMsg,
+            fbTenseMsg,
+            fbFluencyMsg
         };
+    }
 
-        // Render Evaluation Results
-        this.ui.estGrade.textContent = `AI 예측 등급: ${grade}`;
-        this.ui.barFluency.style.width = `${fluencyScore}%`;
-        this.ui.barVocab.style.width = `${vocabScore}%`;
+    renderEvaluationDrawer(res) {
+        if (!res) return;
+        this.ui.estGrade.textContent = `AI 예측 등급: ${res.grade}`;
 
-        this.ui.fbFluency.textContent = fluencyMsg;
-        this.ui.fbVocab.textContent = vocabMsg;
+        if (this.ui.barVolume) this.ui.barVolume.style.width = `${res.volumeScore}%`;
+        if (this.ui.fbVolume) this.ui.fbVolume.textContent = res.fbVolumeMsg;
+
+        if (this.ui.barVocab) this.ui.barVocab.style.width = `${res.vocabScore}%`;
+        if (this.ui.fbVocab) this.ui.fbVocab.textContent = res.fbVocabMsg;
+
+        if (this.ui.barTense) this.ui.barTense.style.width = `${res.tenseScore}%`;
+        if (this.ui.fbTense) this.ui.fbTense.textContent = res.fbTenseMsg;
+
+        if (this.ui.barFluency) this.ui.barFluency.style.width = `${res.fluencyScore}%`;
+        if (this.ui.fbFluency) this.ui.fbFluency.textContent = res.fbFluencyMsg;
 
         this.ui.feedbackDrawer.classList.remove('hidden');
         this.ui.feedbackDrawer.scrollIntoView({ behavior: 'smooth' });
     }
 
+    evaluateUserAnswer() {
+        this.saveCurrentAnswer();
+        const text = (this.ui.transcriptInput ? this.ui.transcriptInput.value : "").trim();
+        const qIdx = this.currentQuestionIndex;
+        const duration = (this.questionAnswers[qIdx] && this.questionAnswers[qIdx].duration) ? this.questionAnswers[qIdx].duration : this.responseSeconds;
+        const qData = this.activeExamPaper[qIdx] || null;
+
+        const res = this.computeEvaluation(text, duration, qData);
+        this.evaluations[qIdx] = res;
+        if (this.questionAnswers[qIdx]) {
+            this.questionAnswers[qIdx].evaluation = res;
+        }
+
+        this.renderEvaluationDrawer(res);
+    }
+
+    getGradeClass(gradeCode) {
+        switch(gradeCode) {
+            case 'AL': return 'grade-al';
+            case 'IH': return 'grade-ih';
+            case 'IM3':
+            case 'IM2':
+            case 'IM1': return 'grade-im';
+            default: return 'grade-novice';
+        }
+    }
+
     renderFinalReport() {
-        const validEvals = this.evaluations.filter(e => e && e.wordCount > 0);
-        
-        if (validEvals.length === 0) {
+        // Collect answered questions
+        const answers = this.questionAnswers || [];
+        const answeredItems = answers.filter(a => a && (a.audioBlob || (a.transcript && a.transcript.length > 0)));
+        const totalRecordings = answers.filter(a => a && a.audioBlob).length;
+        const totalDuration = answers.reduce((sum, a) => sum + (a && a.duration ? a.duration : 0), 0);
+        const totalWords = answers.reduce((sum, a) => sum + (a && a.evaluation ? a.evaluation.wordCount : (a && a.transcript ? a.transcript.split(/\s+/).filter(w => w.length > 0).length : 0)), 0);
+
+        // Update Summary Pills
+        if (this.ui.recCompletedCount) this.ui.recCompletedCount.textContent = `${totalRecordings} / 15`;
+        if (this.ui.recTotalDuration) {
+            const m = Math.floor(totalDuration / 60);
+            const s = totalDuration % 60;
+            this.ui.recTotalDuration.textContent = `${m}분 ${s}초`;
+        }
+        if (this.ui.recTotalWords) this.ui.recTotalWords.textContent = `${totalWords}단어`;
+
+        // Empty state check
+        if (answeredItems.length === 0) {
             this.ui.finalGradeText.textContent = "NL";
-            this.ui.finalGradeSub.textContent = "⚠️ 답변 기록이 없습니다. 시뮬레이터를 다시 실행해 주세요.";
-            this.ui.statPast.textContent = "0 / 100";
-            this.ui.statLength.textContent = "0 / 100";
-            this.ui.statFiller.textContent = "0 / 100";
-            this.ui.statRoleplay.textContent = "0 / 100";
+            this.ui.finalGradeSub.textContent = "⚠️ 답변 기록이 없습니다. 시뮬레이터를 실행하여 녹음을 진행해 주세요.";
+            if (this.ui.statVolume) this.ui.statVolume.textContent = "0 / 100";
+            if (this.ui.statVocab) this.ui.statVocab.textContent = "0 / 100";
+            if (this.ui.statPast) this.ui.statPast.textContent = "0 / 100";
+            if (this.ui.statFiller) this.ui.statFiller.textContent = "0 / 100";
+            this.renderArchiveList();
             return;
         }
 
-        const avgWords = Math.round(validEvals.reduce((acc, curr) => acc + curr.wordCount, 0) / validEvals.length);
-        const avgFluency = Math.round(validEvals.reduce((acc, curr) => acc + curr.fluencyScore, 0) / validEvals.length);
-        const avgVocab = Math.round(validEvals.reduce((acc, curr) => acc + curr.vocabScore, 0) / validEvals.length);
+        // Aggregate scores across answered questions
+        const validEvals = answeredItems.map(a => a.evaluation).filter(e => e && e.wordCount > 0);
+        const evalCount = validEvals.length > 0 ? validEvals.length : 1;
 
-        let finalGrade = "IH";
-        if (avgFluency >= 90 && avgWords >= 50) {
+        const avgVolume = Math.round(validEvals.reduce((s, e) => s + e.volumeScore, 0) / evalCount);
+        const avgVocab = Math.round(validEvals.reduce((s, e) => s + e.vocabScore, 0) / evalCount);
+        const avgPast = Math.round(validEvals.reduce((s, e) => s + e.tenseScore, 0) / evalCount);
+        const avgFluency = Math.round(validEvals.reduce((s, e) => s + e.fluencyScore, 0) / evalCount);
+        const avgComposite = Math.round(validEvals.reduce((s, e) => s + e.composite, 0) / evalCount);
+        const avgWords = Math.round(totalWords / Math.max(1, answeredItems.length));
+
+        // Determine Final OPIc Grade
+        let finalGrade = "IM2";
+        if (totalWords >= 650 && avgComposite >= 80 && totalRecordings >= 10) {
             finalGrade = "AL";
-        } else if (avgFluency >= 78) {
+        } else if (totalWords >= 450 && avgComposite >= 70 && totalRecordings >= 8) {
             finalGrade = "IH";
-        } else if (avgFluency >= 60) {
+        } else if (totalWords >= 280 && avgComposite >= 58) {
             finalGrade = "IM3";
-        } else {
+        } else if (totalWords >= 160 && avgComposite >= 48) {
             finalGrade = "IM2";
+        } else if (totalWords >= 80) {
+            finalGrade = "IM1 / IL";
+        } else {
+            finalGrade = "Novice";
         }
 
         this.ui.finalGradeText.textContent = finalGrade;
-        this.ui.finalGradeSub.textContent = `평균 발화량 ${avgWords}단어 / 유창성 ${avgFluency}점`;
+        this.ui.finalGradeSub.textContent = `평균 발화량 ${avgWords}단어 | 종합 평가 ${avgComposite}점 (완료: ${totalRecordings}/15문항)`;
 
-        this.ui.statPast.textContent = `${avgVocab} / 100`;
-        this.ui.statLength.textContent = `${avgWords * 2 > 100 ? 100 : avgWords * 2} / 100`;
-        this.ui.statFiller.textContent = `${avgFluency} / 100`;
-        this.ui.statRoleplay.textContent = `${avgFluency + 2 > 100 ? 100 : avgFluency + 2} / 100`;
+        if (this.ui.statVolume) this.ui.statVolume.textContent = `${avgVolume} / 100`;
+        if (this.ui.statVocab) this.ui.statVocab.textContent = `${avgVocab} / 100`;
+        if (this.ui.statPast) this.ui.statPast.textContent = `${avgPast} / 100`;
+        if (this.ui.statFiller) this.ui.statFiller.textContent = `${avgFluency} / 100`;
+
+        // Render Archive List for all 15 questions
+        this.renderArchiveList();
+    }
+
+    renderArchiveList() {
+        if (!this.ui.archiveListContainer) return;
+        this.ui.archiveListContainer.innerHTML = "";
+
+        for (let i = 0; i < 15; i++) {
+            const ans = this.questionAnswers[i] || {};
+            const q = (this.activeExamPaper && this.activeExamPaper[i]) ? this.activeExamPaper[i] : {
+                id: i + 1,
+                category: "일반 OPIc 문항",
+                tag: `Question ${i + 1}`,
+                question: "Question prompt not loaded.",
+                kor: "(질문 내용이 로드되지 않았습니다.)"
+            };
+
+            const hasAudio = !!ans.audioBlob;
+            const transcriptText = ans.transcript || "";
+            const hasText = transcriptText.length > 0;
+            const evalObj = ans.evaluation || null;
+            const qNum = String(i + 1).padStart(2, '0');
+
+            const card = document.createElement('div');
+            card.className = "archive-card";
+
+            const gradeClass = evalObj ? this.getGradeClass(evalObj.gradeCode) : 'grade-novice';
+            const gradeLabel = evalObj ? evalObj.gradeCode : (hasAudio || hasText ? '평가중' : '미응답');
+
+            // Audio Player & Download Row
+            let audioRowHtml = "";
+            if (hasAudio) {
+                audioRowHtml = `
+                    <div class="q-audio-row">
+                        <audio controls src="${ans.audioUrl}" class="archive-audio"></audio>
+                        <a href="${ans.audioUrl}" download="OPIC_Q${qNum}_Answer.webm" class="q-download-btn">
+                            <i class="fa-solid fa-download"></i> Q${qNum} 녹음본 다운로드 (.webm)
+                        </a>
+                    </div>
+                `;
+            } else {
+                audioRowHtml = `
+                    <div class="q-audio-row" style="background: rgba(255,255,255,0.02); justify-content: space-between;">
+                        <span class="no-rec-msg"><i class="fa-regular fa-circle-xmark"></i> 녹음된 음성이 없습니다.</span>
+                    </div>
+                `;
+            }
+
+            // Metrics chips
+            let metricsHtml = "";
+            if (evalObj) {
+                metricsHtml = `
+                    <div class="q-metrics-row">
+                        <span class="metric-chip"><i class="fa-solid fa-font text-blue"></i> 발화량: <strong>${evalObj.wordCount}단어</strong></span>
+                        <span class="metric-chip"><i class="fa-solid fa-stopwatch text-green"></i> 발화시간: <strong>${ans.duration || 0}초</strong></span>
+                        <span class="metric-chip"><i class="fa-solid fa-gauge-high text-yellow"></i> 속도: <strong>${evalObj.wpm} WPM</strong></span>
+                        <span class="metric-chip"><i class="fa-solid fa-book-open text-purple"></i> 고유 어휘: <strong>${evalObj.uniqueWords}개</strong></span>
+                        <span class="metric-chip"><i class="fa-solid fa-comments text-blue"></i> 필러: <strong>${evalObj.fillerCount}회</strong></span>
+                    </div>
+                `;
+            }
+
+            // Transcript box
+            const transcriptHtml = hasText
+                ? `<div class="q-transcript-box"><div class="q-transcript-label">내 음성 답변 스크립트:</div>"${transcriptText}"</div>`
+                : `<div class="q-transcript-box" style="opacity: 0.5;"><div class="q-transcript-label">음성 답변 스크립트:</div>(인식된 텍스트가 없습니다)</div>`;
+
+            card.innerHTML = `
+                <div class="card-top-row">
+                    <div class="q-badge-box">
+                        <span class="q-pill">Q ${qNum}</span>
+                        <span class="q-category-tag">${q.category} &bull; ${q.tag}</span>
+                    </div>
+                    <span class="q-grade-badge ${gradeClass}">${gradeLabel}</span>
+                </div>
+                <div class="q-text-prompt">
+                    "${q.question}"
+                    <span style="font-size: 13px; color: var(--text-sub); display: block; margin-top: 4px; font-weight: 400;">${q.kor}</span>
+                </div>
+                ${metricsHtml}
+                ${audioRowHtml}
+                ${transcriptHtml}
+            `;
+
+            this.ui.archiveListContainer.appendChild(card);
+        }
+    }
+
+    // Bulk Download 1: All 15 Audio Files as a ZIP
+    downloadAllRecordingsZip() {
+        const answers = this.questionAnswers || [];
+        const recordedItems = answers.filter(a => a && a.audioBlob);
+
+        if (recordedItems.length === 0) {
+            alert("다운로드할 음성 녹음본이 없습니다!\n시뮬레이터에서 마이크를 켜고 문제를 푼 뒤 다시 시도해 주세요.");
+            return;
+        }
+
+        // Summary report text to include inside ZIP
+        let summaryText = `=======================================================\n` +
+                          `  OPIc AI Master - 15문항 전체 답변 녹음 및 성적 리포트\n` +
+                          `=======================================================\n` +
+                          `최종 예측 등급: ${this.ui.finalGradeText ? this.ui.finalGradeText.textContent : '--'}\n` +
+                          `녹음 완료 문항: ${recordedItems.length} / 15\n` +
+                          `생성 일시: ${new Date().toLocaleString()}\n\n`;
+
+        for (let i = 0; i < 15; i++) {
+            const ans = answers[i];
+            const q = this.activeExamPaper[i] || { question: `Question ${i + 1}`, kor: "", category: "일반" };
+            const qNum = String(i + 1).padStart(2, '0');
+            const evalObj = ans ? ans.evaluation : null;
+
+            summaryText += `-------------------------------------------------------\n` +
+                           `[Q${qNum}] ${q.category}\n` +
+                           `질문: ${q.question}\n` +
+                           `해석: ${q.kor}\n` +
+                           `내 답변 스크립트:\n${(ans && ans.transcript) ? ans.transcript : '(음성 답변 없음)'}\n` +
+                           `소요 시간: ${(ans && ans.duration) ? ans.duration : 0}초 | 발화 단어수: ${evalObj ? evalObj.wordCount : 0}단어 | 등급: ${evalObj ? evalObj.grade : '--'}\n\n`;
+        }
+
+        // Check if JSZip library is loaded
+        if (typeof JSZip !== 'undefined') {
+            const zip = new JSZip();
+            const folder = zip.folder("OPIC_15_Voice_Answers");
+
+            recordedItems.forEach(item => {
+                const qNum = String(item.questionIndex + 1).padStart(2, '0');
+                const qData = this.activeExamPaper[item.questionIndex];
+                const cleanCat = qData ? qData.category.replace(/[^a-zA-Z0-9가-힣]/g, '_').slice(0, 15) : 'Answer';
+                folder.file(`Q${qNum}_${cleanCat}_VoiceAnswer.webm`, item.audioBlob);
+            });
+
+            folder.file("OPIC_15Questions_Transcript_Report.txt", summaryText);
+
+            zip.generateAsync({ type: "blob" }).then(blob => {
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = `OPIC_15_Answer_Recordings_${new Date().toISOString().slice(0, 10)}.zip`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }).catch(err => {
+                console.error("ZIP Generation Error:", err);
+                this.sequentialDownloadFallback(recordedItems);
+            });
+        } else {
+            console.warn("JSZip not found, initiating sequential download fallback");
+            this.sequentialDownloadFallback(recordedItems);
+        }
+    }
+
+    // Fallback: Sequential download if JSZip is offline or blocked
+    sequentialDownloadFallback(items) {
+        items.forEach((item, index) => {
+            setTimeout(() => {
+                const link = document.createElement('a');
+                link.href = item.audioUrl;
+                link.download = `OPIC_Q${String(item.questionIndex + 1).padStart(2, '0')}_VoiceAnswer.webm`;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }, index * 300);
+        });
+    }
+
+    // Bulk Download 2: All 15 Transcripts as TXT File
+    downloadAllTranscriptsTxt() {
+        const answers = this.questionAnswers || [];
+        let textContent = `=======================================================\n` +
+                          `  OPIc AI Master - 15문항 전체 텍스트 스크립트 리포트\n` +
+                          `=======================================================\n` +
+                          `AI 종합 예측 등급: ${this.ui.finalGradeText ? this.ui.finalGradeText.textContent : '--'}\n` +
+                          `총 발화 시간: ${this.ui.recTotalDuration ? this.ui.recTotalDuration.textContent : '--'}\n` +
+                          `총 발화 단어수: ${this.ui.recTotalWords ? this.ui.recTotalWords.textContent : '--'}\n` +
+                          `생성 일시: ${new Date().toLocaleString()}\n\n`;
+
+        for (let i = 0; i < 15; i++) {
+            const ans = answers[i];
+            const q = this.activeExamPaper[i] || { question: `Question ${i + 1}`, kor: "", category: "일반", modelAnswer: "" };
+            const qNum = String(i + 1).padStart(2, '0');
+            const evalObj = ans ? ans.evaluation : null;
+
+            textContent += `=======================================================\n` +
+                           `[Question ${qNum}] ${q.category} - ${q.tag || ''}\n` +
+                           `=======================================================\n` +
+                           `[질문] ${q.question}\n` +
+                           `[해석] ${q.kor}\n\n` +
+                           `[내 답변 스크립트]\n${(ans && ans.transcript) ? ans.transcript : '(답변 기록 없음)'}\n\n` +
+                           `[답변 지표]\n` +
+                           `- 소요 시간: ${(ans && ans.duration) ? ans.duration : 0}초\n` +
+                           `- 발화 단어수: ${evalObj ? evalObj.wordCount : 0} 단어\n` +
+                           `- 발화 속도: ${evalObj ? evalObj.wpm : 0} WPM\n` +
+                           `- 어휘 다양성: ${evalObj ? evalObj.uniqueWords : 0}개 고유 어휘\n` +
+                           `- 필러 표현: ${evalObj ? evalObj.fillerCount : 0}회\n` +
+                           `- 예상 등급: ${evalObj ? evalObj.grade : '--'}\n\n` +
+                           `[AL/IH 모범 답안 (Model Answer)]\n${q.modelAnswer}\n\n\n`;
+        }
+
+        const blob = new Blob([textContent], { type: 'text/plain;charset=utf-8' });
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(blob);
+        link.download = `OPIC_15Questions_Full_Transcripts_${new Date().toISOString().slice(0, 10)}.txt`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     }
 
     startTotalTimer() {

@@ -766,7 +766,7 @@ body {
 
 .feedback-grid {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 16px;
     margin-bottom: 20px;
 }
@@ -1133,3 +1133,282 @@ body {
     font-size: 11px;
     color: rgba(254, 240, 138, 0.7);
 }
+
+/* --------------------------------------------------------------------------
+   15-Question Audio Recordings Archive & Download Section (v6.0)
+   -------------------------------------------------------------------------- */
+.archive-section {
+    margin-top: 36px;
+    padding: 32px;
+}
+
+.archive-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.archive-title-group h2 {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 6px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.archive-sub {
+    font-size: 14px;
+    color: var(--text-sub);
+}
+
+.archive-btn-group {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.download-all-btn {
+    background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+    box-shadow: 0 4px 16px rgba(16, 185, 129, 0.4);
+    color: #ffffff;
+    font-weight: 700;
+    padding: 12px 20px;
+    border-radius: 12px;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.download-all-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(16, 185, 129, 0.6);
+}
+
+.download-txt-btn {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    padding: 12px 18px;
+    border-radius: 12px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 600;
+    transition: background 0.2s ease;
+}
+
+.download-txt-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+}
+
+.archive-summary-stats {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 24px;
+    flex-wrap: wrap;
+}
+
+.summary-pill {
+    background: rgba(0, 0, 0, 0.3);
+    padding: 10px 18px;
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+    font-size: 14px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-sub);
+}
+
+.summary-pill strong {
+    color: #ffffff;
+    font-weight: 700;
+}
+
+.archive-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.archive-card {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 16px;
+    padding: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    transition: border-color 0.2s ease, transform 0.2s ease;
+}
+
+.archive-card:hover {
+    border-color: rgba(99, 102, 241, 0.4);
+}
+
+.card-top-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.q-badge-box {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.q-pill {
+    background: #6366F1;
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 13px;
+    padding: 4px 10px;
+    border-radius: 8px;
+}
+
+.q-category-tag {
+    font-size: 13px;
+    color: var(--text-sub);
+}
+
+.q-grade-badge {
+    padding: 4px 12px;
+    border-radius: 14px;
+    font-weight: 800;
+    font-size: 13px;
+    display: inline-block;
+}
+
+.grade-al {
+    background: rgba(16, 185, 129, 0.2);
+    color: #34D399;
+    border: 1px solid rgba(16, 185, 129, 0.4);
+}
+
+.grade-ih {
+    background: rgba(59, 130, 246, 0.2);
+    color: #60A5FA;
+    border: 1px solid rgba(59, 130, 246, 0.4);
+}
+
+.grade-im {
+    background: rgba(245, 158, 11, 0.2);
+    color: #FBBF24;
+    border: 1px solid rgba(245, 158, 11, 0.4);
+}
+
+.grade-novice {
+    background: rgba(239, 68, 68, 0.2);
+    color: #F87171;
+    border: 1px solid rgba(239, 68, 68, 0.4);
+}
+
+.q-text-prompt {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text-main);
+    line-height: 1.45;
+}
+
+.q-audio-row {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+    background: rgba(0, 0, 0, 0.35);
+    padding: 12px 16px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.archive-audio {
+    height: 38px;
+    flex: 1;
+    min-width: 240px;
+    outline: none;
+}
+
+.q-download-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(99, 102, 241, 0.25);
+    color: #C7D2FE;
+    border: 1px solid rgba(99, 102, 241, 0.4);
+    padding: 8px 16px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.q-download-btn:hover {
+    background: #6366F1;
+    color: #ffffff;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.5);
+}
+
+.q-metrics-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    font-size: 12px;
+}
+
+.metric-chip {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+    padding: 5px 12px;
+    border-radius: 8px;
+    color: var(--text-sub);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.metric-chip strong {
+    color: #ffffff;
+}
+
+.q-transcript-box {
+    font-size: 13px;
+    color: #E2E8F0;
+    line-height: 1.6;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 14px 16px;
+    border-radius: 10px;
+    border-left: 3px solid #6366F1;
+}
+
+.q-transcript-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    color: #A5B4FC;
+    margin-bottom: 4px;
+    font-weight: 700;
+}
+
+.no-rec-msg {
+    font-size: 13px;
+    color: var(--text-muted);
+    font-style: italic;
+    padding: 10px 0;
+}
+
