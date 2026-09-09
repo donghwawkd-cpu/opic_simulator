@@ -2,7 +2,11 @@
 <html lang="ko">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="theme-color" content="#0B0F19">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
@@ -16,7 +20,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- JSZip for Bulk Recording Download -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <link rel="stylesheet" href="style.css?v=6.0">
+    <link rel="stylesheet" href="style.css?v=6.2">
 </head>
 <body>
     <div class="app-background">
@@ -347,6 +351,28 @@
                 </div>
 
             </div>
+
+            <!-- Mobile Dedicated Sticky Bottom Action Bar (Mobile Only, completely hidden on PC) -->
+            <div class="mobile-sticky-bottom-bar" id="mobile-sticky-bar">
+                <button id="mobile-listen-btn" class="mobile-bar-btn secondary" title="질문 다시 듣기">
+                    <i class="fa-solid fa-volume-high"></i>
+                    <span>다시듣기</span>
+                </button>
+                <div class="mobile-bar-center">
+                    <button id="mobile-mic-btn" class="mobile-bar-mic" title="녹음 시작 / 중지">
+                        <i class="fa-solid fa-microphone"></i>
+                    </button>
+                    <span id="mobile-timer-display" class="mobile-timer-pill">00:00</span>
+                </div>
+                <button id="mobile-eval-btn" class="mobile-bar-btn eval" title="AI 실시간 평가" disabled>
+                    <i class="fa-solid fa-wand-magic-sparkles"></i>
+                    <span>AI평가</span>
+                </button>
+                <button id="mobile-next-btn" class="mobile-bar-btn next" title="다음 질문 이동">
+                    <i class="fa-solid fa-arrow-right"></i>
+                    <span>다음문제</span>
+                </button>
+            </div>
         </section>
 
         <!-- STEP 3: Overall Performance & Scorecard -->
@@ -429,6 +455,6 @@
     </main>
 
     <!-- Scripts -->
-    <script src="app.js?v=6.1"></script>
+    <script src="app.js?v=6.2"></script>
 </body>
 </html>

@@ -708,7 +708,15 @@ class OpicSimulatorApp {
             muteIcon: document.getElementById('mute-icon'),
             timerProgressFill: document.getElementById('timer-progress-fill'),
             timerZoneLabel: document.getElementById('timer-zone-label'),
-            fillerCountNum: document.getElementById('filler-count-num')
+            fillerCountNum: document.getElementById('filler-count-num'),
+
+            // Mobile Dedicated Sticky Bar Elements
+            mobileStickyBar: document.getElementById('mobile-sticky-bar'),
+            mobileListenBtn: document.getElementById('mobile-listen-btn'),
+            mobileMicBtn: document.getElementById('mobile-mic-btn'),
+            mobileTimerDisplay: document.getElementById('mobile-timer-display'),
+            mobileEvalBtn: document.getElementById('mobile-eval-btn'),
+            mobileNextBtn: document.getElementById('mobile-next-btn')
         };
 
         this.ttsVolume = 0.3; // Default 30% quiet & comfortable volume
@@ -814,6 +822,7 @@ class OpicSimulatorApp {
             this.ui.transcriptInput.addEventListener('input', () => {
                 const val = this.ui.transcriptInput.value.trim();
                 this.ui.evalAnswerBtn.disabled = (val.length === 0);
+                if (this.ui.mobileEvalBtn) this.ui.mobileEvalBtn.disabled = (val.length === 0);
                 this.updateFillerCounter(val);
                 if (this.questionAnswers[this.currentQuestionIndex]) {
                     this.questionAnswers[this.currentQuestionIndex].transcript = val;
@@ -850,7 +859,7 @@ class OpicSimulatorApp {
         });
 
         // Next Question Button - Auto-Save and commit answer
-        this.ui.nextQBtn.addEventListener('click', () => {
+        const handleNextQuestion = () => {
             if (this.isRecording) {
                 this.stopRecording();
             }
@@ -862,7 +871,9 @@ class OpicSimulatorApp {
                 this.renderFinalReport();
                 this.switchSection('stats-section', document.getElementById('nav-stats'));
             }
-        });
+        };
+
+        this.ui.nextQBtn.addEventListener('click', handleNextQuestion);
 
         // Mic Record Toggle Button
         this.ui.micToggleBtn.addEventListener('click', () => {
@@ -873,6 +884,26 @@ class OpicSimulatorApp {
         this.ui.evalAnswerBtn.addEventListener('click', () => {
             this.evaluateUserAnswer();
         });
+
+        // Mobile Dedicated Sticky Bar Action Handlers
+        if (this.ui.mobileListenBtn) {
+            this.ui.mobileListenBtn.addEventListener('click', () => {
+                this.speakQuestion();
+            });
+        }
+        if (this.ui.mobileMicBtn) {
+            this.ui.mobileMicBtn.addEventListener('click', () => {
+                this.toggleRecording();
+            });
+        }
+        if (this.ui.mobileEvalBtn) {
+            this.ui.mobileEvalBtn.addEventListener('click', () => {
+                this.evaluateUserAnswer();
+            });
+        }
+        if (this.ui.mobileNextBtn) {
+            this.ui.mobileNextBtn.addEventListener('click', handleNextQuestion);
+        }
 
         // Download All 15 Recordings as ZIP Button
         if (this.ui.downloadAllZipBtn) {
@@ -1002,6 +1033,7 @@ class OpicSimulatorApp {
                 }
                 this.updateFillerCounter(totalText);
                 this.ui.evalAnswerBtn.disabled = (totalText.length === 0);
+                if (this.ui.mobileEvalBtn) this.ui.mobileEvalBtn.disabled = (totalText.length === 0);
             };
 
             this.recognition.onerror = (e) => {
@@ -1055,11 +1087,13 @@ class OpicSimulatorApp {
             this.recordedText = saved.transcript;
             if (this.ui.transcriptInput) this.ui.transcriptInput.value = saved.transcript;
             this.ui.evalAnswerBtn.disabled = false;
+            if (this.ui.mobileEvalBtn) this.ui.mobileEvalBtn.disabled = false;
             this.updateFillerCounter(saved.transcript);
         } else {
             this.recordedText = "";
             if (this.ui.transcriptInput) this.ui.transcriptInput.value = "";
             this.ui.evalAnswerBtn.disabled = true;
+            if (this.ui.mobileEvalBtn) this.ui.mobileEvalBtn.disabled = true;
         }
 
         if (saved && saved.audioUrl) {
@@ -1095,6 +1129,9 @@ class OpicSimulatorApp {
         }
         if (this.ui.timerZoneLabel) {
             this.ui.timerZoneLabel.textContent = '답변 시간 0초 (권장: 45초 ~ 90초)';
+        }
+        if (this.ui.mobileTimerDisplay) {
+            this.ui.mobileTimerDisplay.textContent = '00:00';
         }
     }
 
@@ -1234,11 +1271,13 @@ class OpicSimulatorApp {
     startRecording() {
         this.isRecording = true;
         this.ui.micToggleBtn.classList.add('recording');
+        if (this.ui.mobileMicBtn) this.ui.mobileMicBtn.classList.add('recording');
         this.ui.recIndicator.classList.add('recording-active');
         this.ui.recStatusText.textContent = "녹음 진행 중... (실제 음성이 파일로 저장됩니다)";
         
         this.responseSeconds = 0;
         this.ui.responseTimer.textContent = "00:00";
+        if (this.ui.mobileTimerDisplay) this.ui.mobileTimerDisplay.textContent = "00:00";
         this.resetTimerProgressBar();
 
         this.responseTimerInterval = setInterval(() => {
@@ -1246,6 +1285,7 @@ class OpicSimulatorApp {
             const mins = String(Math.floor(this.responseSeconds / 60)).padStart(2, '0');
             const secs = String(this.responseSeconds % 60).padStart(2, '0');
             this.ui.responseTimer.textContent = `${mins}:${secs}`;
+            if (this.ui.mobileTimerDisplay) this.ui.mobileTimerDisplay.textContent = `${mins}:${secs}`;
             this.updateTimerProgressBar(this.responseSeconds);
         }, 1000);
 
@@ -1363,6 +1403,7 @@ class OpicSimulatorApp {
         if (!this.isRecording) return;
         this.isRecording = false;
         this.ui.micToggleBtn.classList.remove('recording');
+        if (this.ui.mobileMicBtn) this.ui.mobileMicBtn.classList.remove('recording');
         this.ui.recIndicator.classList.remove('recording-active');
         this.ui.recStatusText.textContent = "녹음 완료! (아래에서 내 음성을 들어보고 AI 평가를 받아보세요)";
 
