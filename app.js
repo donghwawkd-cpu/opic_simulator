@@ -1165,99 +1165,35 @@ class OpicSimulatorApp {
     }
 
     speakQuestion() {
+        if (!('speechSynthesis' in window)) return;
+
+        window.speechSynthesis.cancel();
+        
         const qObj = (this.activeExamPaper && this.activeExamPaper[this.currentQuestionIndex]) ? this.activeExamPaper[this.currentQuestionIndex] : null;
         const text = qObj ? qObj.question : "";
         if (!text) return;
 
-        let targetVol = 0.5;
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.lang = 'en-US';
+        utterance.rate = 0.95;
+
+        // Dynamic Volume: Default 50% (0.5) volume level
+        let vol = 0.5;
         if (this.isMuted) {
-            targetVol = 0;
+            vol = 0;
         } else if (typeof this.ttsVolume === 'number' && !isNaN(this.ttsVolume)) {
-            targetVol = this.ttsVolume;
+            vol = this.ttsVolume;
         }
+        utterance.volume = Math.max(0, Math.min(1.0, vol));
 
-        // Stop any previous speech audio player
-        if (this.ttsAudioPlayer) {
-            try { this.ttsAudioPlayer.pause(); } catch(e) {}
-            this.ttsAudioPlayer = null;
-        }
+        if (this.ui.evaWave) this.ui.evaWave.style.opacity = '1';
+        utterance.onend = () => { if (this.ui.evaWave) this.ui.evaWave.style.opacity = '0'; };
+        utterance.onerror = (e) => { 
+            console.warn("TTS Synthesis Error:", e);
+            if (this.ui.evaWave) this.ui.evaWave.style.opacity = '0'; 
+        };
 
-        if ('speechSynthesis' in window) {
-            window.speechSynthesis.cancel();
-        }
-
-        // 1. Primary Engine: Web Speech Synthesis API
-        if ('speechSynthesis' in window) {
-            try {
-                const utterance = new SpeechSynthesisUtterance(text);
-                utterance.lang = 'en-US';
-                utterance.rate = 0.95;
-                utterance.volume = Math.max(0, Math.min(1.0, targetVol));
-
-                let hasStarted = false;
-                if (this.ui.evaWave) this.ui.evaWave.style.opacity = '1';
-
-                utterance.onstart = () => {
-                    hasStarted = true;
-                };
-
-                utterance.onend = () => {
-                    if (this.ui.evaWave) this.ui.evaWave.style.opacity = '0';
-                };
-
-                utterance.onerror = (e) => {
-                    console.warn("SpeechSynthesis error, playing audio fallback:", e);
-                    if (this.ui.evaWave) this.ui.evaWave.style.opacity = '0';
-                    this.playAudioFallback(text, targetVol);
-                };
-
-                window.speechSynthesis.speak(utterance);
-
-                // Fallback check after 400ms if SpeechSynthesis failed to start
-                setTimeout(() => {
-                    if (!hasStarted && (!window.speechSynthesis.speaking || window.speechSynthesis.paused)) {
-                        console.warn("SpeechSynthesis silent, triggering audio fallback");
-                        this.playAudioFallback(text, targetVol);
-                    }
-                }, 400);
-                return;
-            } catch(e) {
-                console.warn("SpeechSynthesis exception:", e);
-            }
-        }
-
-        // 2. Fallback Engine: High-quality TTS Audio Stream
-        this.playAudioFallback(text, targetVol);
-    }
-
-    playAudioFallback(text, volume) {
-        try {
-            const encodedText = encodeURIComponent(text);
-            const ttsUrl = `https://translate.google.com/translate_tts?ie=UTF-8&tl=en&client=tw-ob&q=${encodedText}`;
-            
-            if (this.ttsAudioPlayer) {
-                try { this.ttsAudioPlayer.pause(); } catch(e) {}
-            }
-            
-            this.ttsAudioPlayer = new Audio(ttsUrl);
-            this.ttsAudioPlayer.volume = Math.max(0, Math.min(1.0, volume));
-            
-            if (this.ui.evaWave) this.ui.evaWave.style.opacity = '1';
-            this.ttsAudioPlayer.onended = () => {
-                if (this.ui.evaWave) this.ui.evaWave.style.opacity = '0';
-            };
-            this.ttsAudioPlayer.onerror = (e) => {
-                console.warn("Audio fallback error:", e);
-                if (this.ui.evaWave) this.ui.evaWave.style.opacity = '0';
-            };
-
-            this.ttsAudioPlayer.play().catch(e => {
-                console.warn("Audio playback exception:", e);
-                if (this.ui.evaWave) this.ui.evaWave.style.opacity = '0';
-            });
-        } catch(err) {
-            console.error("playAudioFallback failure:", err);
-        }
+        window.speechSynthesis.speak(utterance);
     }
 
     toggleRecording() {
