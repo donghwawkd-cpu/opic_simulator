@@ -732,6 +732,7 @@ class OpicSimulatorApp {
     bindEvents() {
         // [1안] TTS Volume Slider Listener (Real-Time Mid-Speech Volume Update)
         if (this.ui.ttsVolumeSlider) {
+            let volumeDebounce = null;
             this.ui.ttsVolumeSlider.addEventListener('input', () => {
                 const val = parseInt(this.ui.ttsVolumeSlider.value);
                 this.ttsVolume = val / 100;
@@ -746,9 +747,12 @@ class OpicSimulatorApp {
                     if (this.ui.muteIcon) this.ui.muteIcon.className = "fa-solid fa-volume-high text-blue";
                 }
 
-                // If TTS is currently speaking, restart speech immediately at the new volume level!
+                // Debounce mid-speech restart so dragging slider doesn't machine-gun stutter
                 if ('speechSynthesis' in window && window.speechSynthesis.speaking) {
-                    this.speakQuestion();
+                    clearTimeout(volumeDebounce);
+                    volumeDebounce = setTimeout(() => {
+                        this.speakQuestion();
+                    }, 250);
                 }
             });
         }
@@ -808,13 +812,14 @@ class OpicSimulatorApp {
             });
         });
 
-        // Topic Checkbox Toggle
+        // Topic Checkbox Toggle (Safe Change Event on input)
         document.querySelectorAll('.topic-checkbox').forEach(cb => {
-            cb.addEventListener('click', () => {
-                const input = cb.querySelector('input');
-                input.checked = !input.checked;
-                cb.classList.toggle('checked', input.checked);
-            });
+            const input = cb.querySelector('input');
+            if (input) {
+                input.addEventListener('change', () => {
+                    cb.classList.toggle('checked', input.checked);
+                });
+            }
         });
 
         // Editable Transcript Area Text Change
@@ -943,7 +948,7 @@ class OpicSimulatorApp {
 
         // Select Topic 1 & Topic 2 randomly from user's selection
         const topic1Key = shuffledUserTopics[0] || "movie";
-        const topic2Key = shuffledUserTopics[1] || (shuffledUserTopics[0] !== "park" ? "park" : "travel");
+        const topic2Key = shuffledUserTopics[1] || (shuffledUserTopics[0] !== "park" ? "park" : "dom_travel");
 
         // Shuffle unexpected topics randomly
         const shuffledUnexpected = [...UNEXPECTED_TOPICS].sort(() => Math.random() - 0.5);
@@ -1205,6 +1210,14 @@ class OpicSimulatorApp {
     }
 
     startRecording() {
+        // Stop question TTS speech immediately when user starts answering
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.cancel();
+        }
+        if (this.ui.evaWave) {
+            this.ui.evaWave.style.opacity = '0';
+        }
+
         this.isRecording = true;
         this.ui.micToggleBtn.classList.add('recording');
         if (this.ui.mobileMicBtn) this.ui.mobileMicBtn.classList.add('recording');

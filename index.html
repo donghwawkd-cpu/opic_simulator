@@ -284,6 +284,12 @@
                             <div class="response-timer" id="response-timer">00:00</div>
                         </div>
 
+                        <!-- Real-Time Filler Counter Badge -->
+                        <div class="filler-counter-badge">
+                            <span><i class="fa-solid fa-comments text-yellow"></i> 실시간 필러 표현 감지: <strong id="filler-count-num">0</strong>회</span>
+                            <span class="filler-hint-sub">(You know, Like, Actually, I mean 등)</span>
+                        </div>
+
                         <!-- Live Transcript & Direct Editable Text Area -->
                         <div class="transcript-box" id="transcript-box">
                             <textarea id="live-transcript-input" class="transcript-textarea" placeholder="마이크 버튼을 누르고 영어로 말씀하시면 실제 음성이 파일로 저장되며 바로 다시 들어보실 수 있습니다. 오인식된 단어는 직접 수정 가능합니다..."></textarea>
@@ -455,6 +461,6 @@
     </main>
 
     <!-- Scripts -->
-    <script src="app.js?v=6.3"></script>
+    <script src="app.js?v=6.4"></script>
 </body>
 </html>
