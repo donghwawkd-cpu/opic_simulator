@@ -701,7 +701,9 @@ class OpicSimulatorApp {
             recTotalWords: document.getElementById('rec-total-words'),
             archiveListContainer: document.getElementById('archive-list-container'),
 
-            // TTS Volume & Progress Bar UI
+            // TTS Voice, Rate, Volume & Progress Bar UI
+            ttsVoiceSelect: document.getElementById('tts-voice-select'),
+            ttsRateSelect: document.getElementById('tts-rate-select'),
             ttsVolumeSlider: document.getElementById('tts-volume-slider'),
             ttsVolText: document.getElementById('tts-vol-text'),
             ttsMuteBtn: document.getElementById('tts-mute-btn'),
@@ -720,6 +722,9 @@ class OpicSimulatorApp {
         };
 
         this.ttsVolume = 0.3; // Default 30% quiet & comfortable volume
+        this.ttsRate = 0.95;
+        this.selectedVoiceURI = 'auto';
+        this.availableVoices = [];
         this.isMuted = false;
         this.init();
     }
@@ -727,9 +732,30 @@ class OpicSimulatorApp {
     init() {
         this.bindEvents();
         this.initSpeechRecognition();
+        this.initVoices();
     }
 
     bindEvents() {
+        // TTS Voice Selector Change
+        if (this.ui.ttsVoiceSelect) {
+            this.ui.ttsVoiceSelect.addEventListener('change', () => {
+                this.selectedVoiceURI = this.ui.ttsVoiceSelect.value;
+                if ('speechSynthesis' in window && window.speechSynthesis.speaking) {
+                    this.speakQuestion();
+                }
+            });
+        }
+
+        // TTS Speed / Rate Selector Change
+        if (this.ui.ttsRateSelect) {
+            this.ui.ttsRateSelect.addEventListener('change', () => {
+                this.ttsRate = parseFloat(this.ui.ttsRateSelect.value) || 0.95;
+                if ('speechSynthesis' in window && window.speechSynthesis.speaking) {
+                    this.speakQuestion();
+                }
+            });
+        }
+
         // [1안] TTS Volume Slider Listener (Real-Time Mid-Speech Volume Update)
         if (this.ui.ttsVolumeSlider) {
             let volumeDebounce = null;
@@ -1009,6 +1035,117 @@ class OpicSimulatorApp {
         if (activeBtn) activeBtn.classList.add('active');
     }
 
+    initVoices() {
+        if (!('speechSynthesis' in window)) return;
+
+        const populate = () => {
+            const rawVoices = window.speechSynthesis.getVoices();
+            if (!rawVoices || rawVoices.length === 0) return;
+            
+            // Filter English voices
+            this.availableVoices = rawVoices.filter(v => v.lang && (v.lang.startsWith('en') || v.lang.includes('US') || v.lang.includes('GB')));
+            if (this.availableVoices.length === 0) {
+                this.availableVoices = rawVoices;
+            }
+            this.renderVoiceOptions();
+        };
+
+        populate();
+        if (window.speechSynthesis.onvoiceschanged !== undefined) {
+            window.speechSynthesis.onvoiceschanged = populate;
+        }
+    }
+
+    renderVoiceOptions() {
+        if (!this.ui.ttsVoiceSelect || !this.availableVoices || this.availableVoices.length === 0) return;
+
+        const select = this.ui.ttsVoiceSelect;
+        const currentVal = select.value;
+        select.innerHTML = '';
+
+        // Check if Samantha exists
+        const samantha = this.availableVoices.find(v => v.name.toLowerCase().includes('samantha'));
+        
+        const autoOpt = document.createElement('option');
+        autoOpt.value = 'auto';
+        autoOpt.textContent = samantha 
+            ? "★ Samantha (자연스러운 미국 여성 · 기본)" 
+            : "★ 자연스러운 미국식 음성 (자동 최적화)";
+        select.appendChild(autoOpt);
+
+        this.availableVoices.forEach(v => {
+            const opt = document.createElement('option');
+            opt.value = v.voiceURI || v.name;
+            let label = `${v.name} (${v.lang})`;
+            if (v.name.toLowerCase().includes('samantha')) {
+                label = `★ ${v.name} (macOS 최고급 자연 여성 · 강력 추천)`;
+            } else if (v.name.toLowerCase().includes('google')) {
+                label = `${v.name} (구글 음성)`;
+            } else if (v.name.toLowerCase().includes('alex')) {
+                label = `${v.name} (자연스러운 미국 남성)`;
+            } else if (v.name.toLowerCase().includes('karen') || v.name.toLowerCase().includes('victoria') || v.name.toLowerCase().includes('ava')) {
+                label = `${v.name} (자연스러운 여성)`;
+            }
+            opt.textContent = label;
+            select.appendChild(opt);
+        });
+
+        if (currentVal && select.querySelector(`option[value="${currentVal}"]`)) {
+            select.value = currentVal;
+        } else {
+            select.value = 'auto';
+        }
+    }
+
+    getBestVoice() {
+        if (!this.availableVoices || this.availableVoices.length === 0) {
+            if ('speechSynthesis' in window) {
+                this.availableVoices = window.speechSynthesis.getVoices();
+            }
+        }
+        if (!this.availableVoices || this.availableVoices.length === 0) return null;
+
+        // 1. If user selected a specific voice from dropdown
+        if (this.selectedVoiceURI && this.selectedVoiceURI !== 'auto') {
+            const found = this.availableVoices.find(v => (v.voiceURI === this.selectedVoiceURI || v.name === this.selectedVoiceURI));
+            if (found) return found;
+        }
+
+        // 2. Highest Priority: Samantha (macOS natural Siri-like English female voice)
+        const samantha = this.availableVoices.find(v => v.name.toLowerCase().includes('samantha'));
+        if (samantha) return samantha;
+
+        // 3. High Priority: Ava, Victoria, Karen, Allison, Natural
+        const naturalFemale = this.availableVoices.find(v => 
+            v.lang.startsWith('en') && (
+                v.name.toLowerCase().includes('ava') ||
+                v.name.toLowerCase().includes('victoria') ||
+                v.name.toLowerCase().includes('karen') ||
+                v.name.toLowerCase().includes('allison') ||
+                v.name.toLowerCase().includes('natural')
+            )
+        );
+        if (naturalFemale) return naturalFemale;
+
+        // 4. Any local en-US voice that is NOT Google (strictly avoids Google robot voice)
+        const nonGoogleLocal = this.availableVoices.find(v => 
+            v.lang.replace('_', '-').startsWith('en-US') && 
+            !v.name.toLowerCase().includes('google') && 
+            v.localService
+        );
+        if (nonGoogleLocal) return nonGoogleLocal;
+
+        // 5. Any en voice that is NOT Google
+        const nonGoogleAny = this.availableVoices.find(v => 
+            v.lang.startsWith('en') && 
+            !v.name.toLowerCase().includes('google')
+        );
+        if (nonGoogleAny) return nonGoogleAny;
+
+        // 6. Fallback to first en voice
+        return this.availableVoices.find(v => v.lang.startsWith('en')) || null;
+    }
+
     initSpeechRecognition() {
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         if (SpeechRecognition) {
@@ -1179,8 +1316,17 @@ class OpicSimulatorApp {
         if (!text) return;
 
         const utterance = new SpeechSynthesisUtterance(text);
-        utterance.lang = 'en-US';
-        utterance.rate = 0.95;
+        
+        // Bind natural native voice (Samantha / Siri / non-Google natural voice)
+        const voice = this.getBestVoice();
+        if (voice) {
+            utterance.voice = voice;
+            utterance.lang = voice.lang || 'en-US';
+        } else {
+            utterance.lang = 'en-US';
+        }
+
+        utterance.rate = (typeof this.ttsRate === 'number' && !isNaN(this.ttsRate)) ? this.ttsRate : 0.95;
 
         // Dynamic Volume: Default 50% (0.5) volume level
         let vol = 0.5;

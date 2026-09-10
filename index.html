@@ -10,7 +10,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>OPIC AI Master - 실전 오픽 음성 스피킹 시뮬레이터 v6.5</title>
+    <title>OPIC AI Master - 실전 오픽 음성 스피킹 시뮬레이터 v6.6</title>
     <meta name="description" content="AI 기반 OPIc 실전 음성 인터뷰 시뮬레이터. 실시간 음성 인식, AL/IH 등급 평가, 피드백 및 모범 답변 제공">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,7 +20,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- JSZip for Bulk Recording Download -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <link rel="stylesheet" href="style.css?v=6.5">
+    <link rel="stylesheet" href="style.css?v=6.6">
 </head>
 <body>
     <div class="app-background">
@@ -34,7 +34,7 @@
             <div class="logo">
                 <i class="fa-solid fa-microphone-lines logo-icon"></i>
                 <span class="logo-text">OPIC <span class="accent-text">AI Master</span></span>
-                <span class="version-badge" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; font-weight: 800;">v6.5 (순정 음성 엔진 복원 & 안정화 완료)</span>
+                <span class="version-badge" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; font-weight: 800;">v6.6 (Samantha 자연 음성 탑재 & 목소리·속도 맞춤조절)</span>
             </div>
             <nav class="nav-links">
                 <button id="nav-survey" class="nav-btn active"><i class="fa-solid fa-sliders"></i> 백그라운드 서베이</button>
@@ -257,14 +257,34 @@
                             (인터뷰를 시작합니다. 자기소개를 간단히 해주세요.)
                         </p>
 
-                        <!-- [1안] Inline TTS Volume & Mute Bar -->
+                        <!-- [1안] Inline TTS Voice, Speed & Volume Bar -->
                         <div class="tts-volume-inline-box">
-                            <button id="tts-mute-btn" class="mute-toggle-btn" title="음소거">
-                                <i class="fa-solid fa-volume-high" id="mute-icon"></i>
-                            </button>
-                            <span class="vol-label"><i class="fa-solid fa-sliders text-blue"></i> 질문 읽기 음량:</span>
-                            <input type="range" id="tts-volume-slider" min="0" max="100" value="30" class="vol-slider">
-                            <strong id="tts-vol-text" class="vol-text">30%</strong>
+                            <div class="tts-ctrl-group">
+                                <label for="tts-voice-select" class="vol-label"><i class="fa-solid fa-headset text-green"></i> 목소리:</label>
+                                <select id="tts-voice-select" class="tts-custom-select">
+                                    <option value="auto">Samantha (자연스러운 미국 여성 · 기본)</option>
+                                </select>
+                            </div>
+
+                            <div class="tts-ctrl-group">
+                                <label for="tts-rate-select" class="vol-label"><i class="fa-solid fa-gauge-high text-yellow"></i> 속도:</label>
+                                <select id="tts-rate-select" class="tts-custom-select">
+                                    <option value="0.85">0.85x (느리게)</option>
+                                    <option value="0.9">0.9x (편안한 속도)</option>
+                                    <option value="0.95" selected>0.95x (표준 속도)</option>
+                                    <option value="1.0">1.0x (원어민 보통)</option>
+                                    <option value="1.05">1.05x (빠르게)</option>
+                                </select>
+                            </div>
+
+                            <div class="tts-ctrl-group tts-vol-group">
+                                <button id="tts-mute-btn" class="mute-toggle-btn" title="음소거">
+                                    <i class="fa-solid fa-volume-high" id="mute-icon"></i>
+                                </button>
+                                <span class="vol-label"><i class="fa-solid fa-sliders text-blue"></i> 음량:</span>
+                                <input type="range" id="tts-volume-slider" min="0" max="100" value="30" class="vol-slider">
+                                <strong id="tts-vol-text" class="vol-text">30%</strong>
+                            </div>
                         </div>
 
                         <!-- [3안] Visual Timer Progress Bar -->
@@ -461,6 +481,6 @@
     </main>
 
     <!-- Scripts -->
-    <script src="app.js?v=6.5"></script>
+    <script src="app.js?v=6.6"></script>
 </body>
 </html>
