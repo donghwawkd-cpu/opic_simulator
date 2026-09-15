@@ -1802,25 +1802,32 @@ class OpicSimulatorApp {
         // Navigation Tab Switching
         this.ui.navBtns.forEach(btn => {
             btn.addEventListener('click', () => {
-                const targetId = btn.id.replace('nav-', '') + '-section';
+                let targetId = btn.id.replace('nav-', '') + '-section';
+                if (targetId === 'sim-section') targetId = 'simulator-section';
+
                 if (targetId === 'stats-section') {
                     if (this.isRecording) this.stopRecording();
                     this.saveCurrentAnswer();
                     this.renderFinalReport();
+                } else if (targetId === 'simulator-section') {
+                    // Auto-initialize exam paper if not yet generated
+                    if (!this.activeExamPaper || this.activeExamPaper.length === 0) {
+                        this.generateRandomExamPaper();
+                        this.loadQuestion(0);
+                        this.startTotalTimer();
+                    }
                 }
                 this.switchSection(targetId, btn);
             });
         });
 
-        // Survey Radio Option Select
-        document.querySelectorAll('.survey-radio').forEach(radio => {
-            radio.addEventListener('click', () => {
-                const groupName = radio.querySelector('input').name;
+        // Survey Radio Option Select (Safe Change Event on input)
+        document.querySelectorAll('.survey-radio input').forEach(input => {
+            input.addEventListener('change', () => {
+                const groupName = input.name;
                 document.querySelectorAll(`input[name="${groupName}"]`).forEach(inp => {
-                    inp.parentElement.classList.remove('checked');
+                    inp.parentElement.classList.toggle('checked', inp.checked);
                 });
-                radio.classList.add('checked');
-                radio.querySelector('input').checked = true;
             });
         });
 
@@ -2023,8 +2030,19 @@ class OpicSimulatorApp {
     }
 
     switchSection(sectionId, activeBtn) {
+        if ('speechSynthesis' in window) {
+            try { window.speechSynthesis.cancel(); } catch(e) {}
+        }
+        if (this.ui.evaWave) {
+            this.ui.evaWave.style.opacity = '0';
+        }
+
+        const normalizedId = (sectionId === 'sim-section') ? 'simulator-section' : sectionId;
+        const targetSec = document.getElementById(normalizedId);
+        if (!targetSec) return;
+
         this.ui.sections.forEach(sec => sec.classList.remove('active'));
-        document.getElementById(sectionId).classList.add('active');
+        targetSec.classList.add('active');
 
         this.ui.navBtns.forEach(b => b.classList.remove('active'));
         if (activeBtn) activeBtn.classList.add('active');
@@ -3147,13 +3165,15 @@ class OpicSimulatorApp {
 
     startTotalTimer() {
         if (this.totalTimerInterval) clearInterval(this.totalTimerInterval);
+        this.totalSecondsLeft = 40 * 60;
+        if (this.ui.totalTimer) this.ui.totalTimer.textContent = "40:00";
 
         this.totalTimerInterval = setInterval(() => {
             if (this.totalSecondsLeft > 0) {
                 this.totalSecondsLeft--;
                 const mins = String(Math.floor(this.totalSecondsLeft / 60)).padStart(2, '0');
                 const secs = String(this.totalSecondsLeft % 60).padStart(2, '0');
-                this.ui.totalTimer.textContent = `${mins}:${secs}`;
+                if (this.ui.totalTimer) this.ui.totalTimer.textContent = `${mins}:${secs}`;
             } else {
                 clearInterval(this.totalTimerInterval);
                 alert("40분 시험 시간이 종료되었습니다! 최종 성적 리포트로 이동합니다.");
