@@ -20,7 +20,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- JSZip for Bulk Recording Download -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <link rel="stylesheet" href="style.css?v=8.0">
+    <link rel="stylesheet" href="style.css?v=8.1">
 </head>
 <body>
     <div class="app-background">
@@ -53,6 +53,40 @@
                 <h1 class="hero-title">실전 <span class="gradient-text">OPIc AL/IH</span> 등급 정복 시뮬레이터</h1>
                 <p class="hero-sub">실제 오픽 시험장과 동일한 환경에서 AI 인터뷰어와 음성으로 대화하고 실시간 등급 평가를 받으세요.</p>
             </div>
+
+            <!-- Floating Side Survey Tracker (PC / 태블릿 우측 고정 실시간 플로팅 바) -->
+            <aside class="survey-floating-dock" id="survey-floating-dock" aria-label="서베이 실시간 플로팅 현황">
+                <div class="dock-inner">
+                    <div class="dock-header">
+                        <i class="fa-solid fa-clipboard-check text-blue"></i>
+                        <span>서베이 선택 현황</span>
+                    </div>
+                    <div class="dock-count-display">
+                        <span class="dock-count-num" id="dock-checked-count">12</span>
+                        <span class="dock-count-divider">/</span>
+                        <span class="dock-count-target">12개</span>
+                    </div>
+                    <div class="dock-status-msg valid" id="dock-status-msg">
+                        <i class="fa-solid fa-circle-check text-green"></i> 12개 충족 완료!
+                    </div>
+                    <div class="dock-btn-group">
+                        <button type="button" class="dock-action-btn preset" id="dock-preset-btn" title="오픽 AL/IH 수험생들이 가장 선호하는 빈출 핵심 항목을 한 번에 자동 세팅합니다.">
+                            <i class="fa-solid fa-wand-magic-sparkles text-purple"></i> AL 전략 1클릭 세팅
+                        </button>
+                        <button type="button" class="dock-action-btn start" id="dock-start-btn">
+                            <i class="fa-solid fa-play"></i> 시험 바로 시작하기
+                        </button>
+                    </div>
+                    <div class="dock-scroll-controls">
+                        <button type="button" id="dock-scroll-top" class="dock-scroll-btn" title="페이지 맨 위로 이동">
+                            <i class="fa-solid fa-arrow-up"></i> TOP
+                        </button>
+                        <button type="button" id="dock-scroll-bottom" class="dock-scroll-btn" title="서베이 맨 아래로 이동">
+                            <i class="fa-solid fa-arrow-down"></i> DOWN
+                        </button>
+                    </div>
+                </div>
+            </aside>
 
             <div class="survey-card glass-card">
                 <div class="card-header">
@@ -554,6 +588,6 @@
     </div>
 
     <!-- Scripts -->
-    <script src="app.js?v=8.0"></script>
+    <script src="app.js?v=8.1"></script>
 </body>
 </html>

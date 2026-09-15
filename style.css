@@ -1658,6 +1658,215 @@ body {
    ======================================================== */
 
 /* Survey Header Enhancements */
+.survey-card .card-header {
+    position: sticky;
+    top: 65px;
+    z-index: 75;
+    background: rgba(15, 23, 42, 0.94);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 16px 16px 0 0;
+    padding: 16px 24px;
+    margin: -32px -32px 24px -32px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+    transition: all 0.25s ease;
+}
+
+@media (max-width: 900px) {
+    .survey-card .card-header {
+        top: 96px;
+        margin: -16px -14px 20px -14px;
+        padding: 12px 14px;
+        border-radius: 12px 12px 0 0;
+    }
+}
+
+/* Floating Side Survey Dock for Desktop (우측 고정 실시간 플로팅 바) */
+.survey-floating-dock {
+    position: fixed;
+    right: 24px;
+    top: 100px;
+    width: 200px;
+    z-index: 90;
+    animation: dockSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes dockSlideIn {
+    0% { opacity: 0; transform: translateX(20px); }
+    100% { opacity: 1; transform: translateX(0); }
+}
+
+.dock-inner {
+    background: rgba(15, 23, 42, 0.94);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(99, 102, 241, 0.4);
+    border-radius: 18px;
+    padding: 16px 14px;
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.6), 0 0 20px rgba(99, 102, 241, 0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+}
+
+.dock-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #E2E8F0;
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.dock-count-display {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 4px;
+    margin: 2px 0;
+}
+
+.dock-count-num {
+    font-size: 32px;
+    font-weight: 900;
+    font-family: var(--font-heading);
+    color: #10B981;
+    line-height: 1;
+    transition: color 0.2s ease;
+}
+
+.dock-count-num.warning {
+    color: #F59E0B;
+}
+
+.dock-count-divider {
+    font-size: 16px;
+    color: var(--text-sub);
+    font-weight: 400;
+}
+
+.dock-count-target {
+    font-size: 14px;
+    font-weight: 700;
+    color: #CBD5E1;
+}
+
+.dock-status-msg {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 8px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+}
+
+.dock-status-msg.valid {
+    background: rgba(16, 185, 129, 0.12);
+    color: #10B981;
+    border: 1px solid rgba(16, 185, 129, 0.25);
+}
+
+.dock-status-msg.warning {
+    background: rgba(245, 158, 11, 0.12);
+    color: #F59E0B;
+    border: 1px solid rgba(245, 158, 11, 0.25);
+}
+
+.dock-btn-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 2px;
+}
+
+.dock-action-btn {
+    width: 100%;
+    padding: 8px 10px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+.dock-action-btn.preset {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(168, 85, 247, 0.2));
+    border: 1px solid rgba(129, 140, 248, 0.5);
+    color: #FFFFFF;
+}
+
+.dock-action-btn.preset:hover {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.38), rgba(168, 85, 247, 0.38));
+    border-color: #818CF8;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.25);
+}
+
+.dock-action-btn.start {
+    background: var(--primary-gradient);
+    border: none;
+    color: #FFFFFF;
+    box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+}
+
+.dock-action-btn.start:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(99, 102, 241, 0.5);
+}
+
+.dock-action-btn.start:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.dock-scroll-controls {
+    display: flex;
+    gap: 6px;
+    margin-top: 2px;
+}
+
+.dock-scroll-btn {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #94A3B8;
+    padding: 4px 6px;
+    border-radius: 8px;
+    font-size: 10px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+
+.dock-scroll-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #FFFFFF;
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+@media (max-width: 1319px) {
+    .survey-floating-dock {
+        display: none !important;
+    }
+}
+
 .header-title-wrap {
     display: flex;
     flex-direction: column;

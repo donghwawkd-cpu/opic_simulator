@@ -1880,6 +1880,39 @@ class OpicSimulatorApp {
             });
         }
 
+        // v8.1 Floating Side Dock Event Handlers
+        const dockPresetBtn = document.getElementById('dock-preset-btn');
+        if (dockPresetBtn) {
+            dockPresetBtn.addEventListener('click', () => {
+                this.applyALPresetSurvey();
+            });
+        }
+
+        const dockStartBtn = document.getElementById('dock-start-btn');
+        if (dockStartBtn) {
+            dockStartBtn.addEventListener('click', () => {
+                if (this.ui.startTestBtn) {
+                    this.ui.startTestBtn.click();
+                }
+            });
+        }
+
+        const dockScrollTop = document.getElementById('dock-scroll-top');
+        if (dockScrollTop) {
+            dockScrollTop.addEventListener('click', () => {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        }
+
+        const dockScrollBottom = document.getElementById('dock-scroll-bottom');
+        if (dockScrollBottom) {
+            dockScrollBottom.addEventListener('click', () => {
+                if (this.ui.startTestBtn) {
+                    this.ui.startTestBtn.scrollIntoView({ behavior: 'smooth' });
+                }
+            });
+        }
+
         // v8.0 실전 시험 모드 (Blind Mask) 토글
         if (this.ui.realExamModeToggle) {
             this.ui.realExamModeToggle.addEventListener('change', () => {
@@ -2136,6 +2169,27 @@ class OpicSimulatorApp {
                 this.ui.surveyCountPill.innerHTML = `<i class="fa-solid fa-circle-exclamation text-yellow"></i> 서베이 항목: <strong id="survey-checked-count">${count}</strong> / 12개 (최소 12개 필요)`;
             }
         }
+
+        // Floating Side Dock 실시간 동기화
+        const dockNum = document.getElementById('dock-checked-count');
+        const dockStatus = document.getElementById('dock-status-msg');
+        const dockStartBtn = document.getElementById('dock-start-btn');
+        if (dockNum) {
+            dockNum.textContent = count;
+            dockNum.classList.toggle('warning', count < 12);
+        }
+        if (dockStatus) {
+            if (count >= 12) {
+                dockStatus.className = 'dock-status-msg valid';
+                dockStatus.innerHTML = '<i class="fa-solid fa-circle-check text-green"></i> 12개 충족 완료!';
+            } else {
+                dockStatus.className = 'dock-status-msg warning';
+                dockStatus.innerHTML = `<i class="fa-solid fa-circle-exclamation text-yellow"></i> ${12 - count}개 더 선택 필요`;
+            }
+        }
+        if (dockStartBtn) {
+            dockStartBtn.disabled = (count < 12);
+        }
     }
 
     applyALPresetSurvey() {
@@ -2183,6 +2237,15 @@ class OpicSimulatorApp {
             this.ui.surveyCountPill.style.transform = 'scale(1.08)';
             setTimeout(() => {
                 if (this.ui.surveyCountPill) this.ui.surveyCountPill.style.transform = 'scale(1)';
+            }, 250);
+        }
+
+        const dockNum = document.getElementById('dock-checked-count');
+        if (dockNum) {
+            dockNum.style.transition = 'transform 0.2s ease';
+            dockNum.style.transform = 'scale(1.25)';
+            setTimeout(() => {
+                if (dockNum) dockNum.style.transform = 'scale(1)';
             }, 250);
         }
     }
