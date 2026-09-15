@@ -3213,26 +3213,73 @@ class OpicSimulatorApp {
             return;
         }
 
-        // Aggregate scores across answered questions
-        const validEvals = answeredItems.map(a => a.evaluation).filter(e => e && e.wordCount > 0);
-        const evalCount = validEvals.length > 0 ? validEvals.length : 1;
+        // ACTFL OPIc 공식 문항별 채점 가중치 테이블
+        // Q1(자기소개): 0.0x (공식 채점 제외 / 워밍업)
+        // Q2~Q4(선택1): 0.8x / 0.8x / 1.1x (기초 묘사/루틴 및 과거경험)
+        // Q5~Q7(돌발): 0.9x / 0.9x / 1.2x (돌발 상황 대응 및 문제해결 에피소드)
+        // Q8~Q10(선택2): 0.9x / 0.9x / 1.2x (상세 묘사 및 특별한 경험)
+        // Q11~Q13(롤플레이): 1.4x / 1.6x / 1.3x (질문하기, 문제해결 대안제시 Complication, 과거경험)
+        // Q14~Q15(고난도 이슈): 1.7x / 1.8x (과거/현재 트렌드 심층비교, 사회적 이슈 및 대안 - AL 필수 관문)
+        const QUESTION_WEIGHTS = [
+            0.0,            // Q1
+            0.8, 0.8, 1.1,  // Q2 ~ Q4
+            0.9, 0.9, 1.2,  // Q5 ~ Q7
+            0.9, 0.9, 1.2,  // Q8 ~ Q10
+            1.4, 1.6, 1.3,  // Q11 ~ Q13
+            1.7, 1.8        // Q14 ~ Q15
+        ];
 
-        const avgVolume = Math.round(validEvals.reduce((s, e) => s + e.volumeScore, 0) / evalCount);
-        const avgVocab = Math.round(validEvals.reduce((s, e) => s + e.vocabScore, 0) / evalCount);
-        const avgPast = Math.round(validEvals.reduce((s, e) => s + e.tenseScore, 0) / evalCount);
-        const avgFluency = Math.round(validEvals.reduce((s, e) => s + e.fluencyScore, 0) / evalCount);
-        const avgComposite = Math.round(validEvals.reduce((s, e) => s + e.composite, 0) / evalCount);
+        let weightedSumComposite = 0;
+        let weightedSumVolume = 0;
+        let weightedSumVocab = 0;
+        let weightedSumPast = 0;
+        let weightedSumFluency = 0;
+        let totalWeight = 0;
+
+        answeredItems.forEach(item => {
+            const e = item.evaluation;
+            if (!e || e.wordCount === 0) return;
+            const w = QUESTION_WEIGHTS[item.questionIndex] !== undefined ? QUESTION_WEIGHTS[item.questionIndex] : 1.0;
+            if (w === 0 && answeredItems.length === 1) {
+                totalWeight += 1.0;
+                weightedSumComposite += e.composite * 1.0;
+                weightedSumVolume += e.volumeScore * 1.0;
+                weightedSumVocab += e.vocabScore * 1.0;
+                weightedSumPast += e.tenseScore * 1.0;
+                weightedSumFluency += e.fluencyScore * 1.0;
+            } else if (w > 0) {
+                totalWeight += w;
+                weightedSumComposite += e.composite * w;
+                weightedSumVolume += e.volumeScore * w;
+                weightedSumVocab += e.vocabScore * w;
+                weightedSumPast += e.tenseScore * w;
+                weightedSumFluency += e.fluencyScore * w;
+            }
+        });
+
+        const effectiveWeight = totalWeight > 0 ? totalWeight : 1;
+        const avgVolume = Math.round(weightedSumVolume / effectiveWeight);
+        const avgVocab = Math.round(weightedSumVocab / effectiveWeight);
+        const avgPast = Math.round(weightedSumPast / effectiveWeight);
+        const avgFluency = Math.round(weightedSumFluency / effectiveWeight);
+        const avgComposite = Math.round(weightedSumComposite / effectiveWeight);
         const avgWords = Math.round(totalWords / Math.max(1, answeredItems.length));
 
-        // Determine Final OPIc Grade
+        // 고난도 문항 게이트 검증 (Q12 롤플레이 대안제시, Q14 트렌드비교, Q15 사회적이슈)
+        const q12Eval = answers[11] ? answers[11].evaluation : null;
+        const q14Eval = answers[13] ? answers[13].evaluation : null;
+        const q15Eval = answers[14] ? answers[14].evaluation : null;
+        const advancedGatePassed = (q14Eval && q14Eval.composite >= 65) || (q15Eval && q15Eval.composite >= 65) || (q12Eval && q12Eval.composite >= 70);
+
+        // Determine Final OPIc Grade (ACTFL Item-Weighted Rules)
         let finalGrade = "IM2";
-        if (totalWords >= 650 && avgComposite >= 80 && totalRecordings >= 10) {
+        if (totalWords >= 650 && avgComposite >= 80 && totalRecordings >= 10 && advancedGatePassed) {
             finalGrade = "AL";
-        } else if (totalWords >= 450 && avgComposite >= 70 && totalRecordings >= 8) {
+        } else if (totalWords >= 450 && avgComposite >= 68 && totalRecordings >= 8) {
             finalGrade = "IH";
-        } else if (totalWords >= 280 && avgComposite >= 58) {
+        } else if (totalWords >= 280 && avgComposite >= 56) {
             finalGrade = "IM3";
-        } else if (totalWords >= 160 && avgComposite >= 48) {
+        } else if (totalWords >= 160 && avgComposite >= 46) {
             finalGrade = "IM2";
         } else if (totalWords >= 80) {
             finalGrade = "IM1 / IL";
@@ -3241,7 +3288,7 @@ class OpicSimulatorApp {
         }
 
         this.ui.finalGradeText.textContent = finalGrade;
-        this.ui.finalGradeSub.textContent = `평균 발화량 ${avgWords}단어 | 종합 평가 ${avgComposite}점 (완료: ${totalRecordings}/15문항)`;
+        this.ui.finalGradeSub.textContent = `가중 종합 평가 ${avgComposite}점 | 평균 발화량 ${avgWords}단어 (완료: ${totalRecordings}/15문항) • 문항별 ACTFL 가중치 반영`;
 
         if (this.ui.statVolume) this.ui.statVolume.textContent = `${avgVolume} / 100`;
         if (this.ui.statVocab) this.ui.statVocab.textContent = `${avgVocab} / 100`;
@@ -3316,11 +3363,18 @@ class OpicSimulatorApp {
                 ? `<div class="q-transcript-box"><div class="q-transcript-label">내 음성 답변 스크립트:</div>"${transcriptText}"</div>`
                 : `<div class="q-transcript-box" style="opacity: 0.5;"><div class="q-transcript-label">음성 답변 스크립트:</div>(인식된 텍스트가 없습니다)</div>`;
 
+            const qWeights = [0.0, 0.8, 0.8, 1.1, 0.9, 0.9, 1.2, 0.9, 0.9, 1.2, 1.4, 1.6, 1.3, 1.7, 1.8];
+            const qW = qWeights[i] !== undefined ? qWeights[i] : 1.0;
+            const weightBadgeHtml = qW === 0.0
+                ? `<span style="display:inline-flex; align-items:center; gap:3px; background:rgba(148,163,184,0.15); color:#94a3b8; padding:2px 7px; border-radius:10px; font-size:11px; font-weight:700;">워밍업(채점제외)</span>`
+                : `<span style="display:inline-flex; align-items:center; gap:3px; background:rgba(59,130,246,0.15); color:#60a5fa; padding:2px 7px; border-radius:10px; font-size:11px; font-weight:700;">가중치 ${qW}x</span>`;
+
             card.innerHTML = `
                 <div class="card-top-row">
                     <div class="q-badge-box">
                         <span class="q-pill">Q ${qNum}</span>
                         <span class="q-category-tag">${q.category} &bull; ${q.tag}</span>
+                        ${weightBadgeHtml}
                     </div>
                     <span class="q-grade-badge ${gradeClass}">${gradeLabel}</span>
                 </div>
