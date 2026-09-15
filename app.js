@@ -423,10 +423,489 @@ const SURVEY_TOPICS = {
             kor: "(해외 여행 중 겪었던 잊지 못할 사건이나 당황스러웠던 문제에 대해 말해 주세요.)",
             modelAnswer: "While traveling abroad, my smartphone battery completely died in the middle of a busy foreign city! I couldn't use translation or GPS apps. Forced to communicate using body language and paper maps, I asked friendly locals for help and reached my hotel safely. It was a thrilling adventure."
         }
+    },
+
+    // 여가 활동: 카페 / 커피전문점 가기 (cafe)
+    cafe: {
+        name: "여가 활동: 카페 / 커피전문점 가기",
+        q1: {
+            question: "You indicated in the survey that you enjoy going to cafes. Describe your favorite cafe that you often visit. What does it look like, and why do you like going there?",
+            kor: "(카페 가기를 선택하셨습니다. 자주 방문하는 좋아하는 카페를 묘사해 주세요. 인테리어는 어떻고 왜 그곳을 좋아하나요?)",
+            modelAnswer: "Well, my absolute favorite cafe is a cozy independent coffee shop located right near my neighborhood. It has warm wooden interior, large floor-to-ceiling windows, and soft jazz music playing in the background. The barista roasts single-origin beans in-house, and their signature iced vanilla latte is simply out of this world. It's my go-to spot whenever I need to read or clear my mind."
+        },
+        q2: {
+            question: "What is your typical routine when you visit a cafe? From the moment you enter until you leave, what do you usually do there?",
+            kor: "(카페에 방문했을 때의 일반적인 루틴은 어떤가요? 들어갈 때부터 나갈 때까지 주로 무엇을 하나요?)",
+            modelAnswer: "When I step into the cafe, I first scan the room for a comfortable table near an electrical outlet. Then, I head straight to the counter to place my order, usually a black Americano with a slice of carrot cake. While waiting for my drink, I set up my laptop or open a book. I usually spend about two hours studying, listening to music, or people-watching before heading home."
+        },
+        q3: {
+            question: "Tell me about a memorable or unexpected incident that occurred while you were at a cafe. What happened, and how did you handle the situation?",
+            kor: "(카페에서 일어났던 기억에 남는 특별한 사건이나 뜻밖의 일에 대해 말해 주세요. 어떤 일이 있었고 어떻게 대처했나요?)",
+            modelAnswer: "A memorable incident happened last winter. I was sitting by the window working on an important project report when someone accidentally bumped into my small table and knocked over my iced coffee! Thankfully, the coffee spilled away from my laptop onto my notebook. The person apologized profusely and immediately bought me a fresh drink and napkins. It was a close call, but their genuine kindness turned a potential disaster into a pleasant memory."
+        }
+    },
+
+    // 여가 활동: 술집 / 바에 가기 (bar)
+    bar: {
+        name: "여가 활동: 술집 / 바에 가기",
+        q1: {
+            question: "You mentioned in the survey that you go to bars. Describe a bar or pub you often go to. What is the atmosphere like, and what kind of drinks do they serve?",
+            kor: "(술집이나 바에 가는 것을 선택하셨습니다. 자주 가는 바나 펍을 설명해 주세요. 분위기는 어떻고 어떤 술을 판매하나요?)",
+            modelAnswer: "I frequently visit a craft beer pub located in a vibrant downtown alley. The pub features an industrial brick interior with warm amber lighting and vintage vinyl records on the walls. They serve over twenty varieties of local craft beer on tap, ranging from fruity IPAs to rich chocolate stouts. The energetic yet laid-back atmosphere makes it an ideal place to unwind on Friday evenings."
+        },
+        q2: {
+            question: "When you go out for drinks with friends or colleagues, what is the usual routine? What food or appetizers do you like to order with your drinks?",
+            kor: "(친구들이나 동료들과 술자리를 가질 때의 일반적인 루틴은 무엇인가요? 어떤 안주를 곁들여 주문하나요?)",
+            modelAnswer: "We usually meet up around 7 PM on weekends. First, we start with a hearty dinner at a barbecue restaurant, and then we move on to a casual pub for a second round. We love ordering finger foods like spicy chicken wings, crispy nachos, or cheese platters. We spend hours catching up on each other's lives, sharing funny stories, and laughing until late at night."
+        },
+        q3: {
+            question: "Tell me about an unforgettable experience or a funny episode you had while having drinks at a bar or gathering.",
+            kor: "(술집이나 모임에서 술을 마시던 중 겪었던 잊지 못할 경험이나 재미있는 에피소드를 들려주세요.)",
+            modelAnswer: "A couple of months ago, my close college friends and I gathered at a local pub to celebrate my best friend's surprise birthday. We secretly arranged with the pub owner to dim the lights and play his favorite rock song when he arrived. The look of pure shock and joy on his face was priceless! Everyone in the pub ended up singing along and congratulating him. It was truly an unforgettable night filled with warmth and camaraderie."
+        }
+    },
+
+    // 취미: 요리하기 (cooking)
+    cooking: {
+        name: "취미: 요리하기",
+        q1: {
+            question: "You indicated that one of your hobbies is cooking. What is your signature dish that you cook best, and what ingredients do you need for it?",
+            kor: "(요리하기를 선택하셨습니다. 가장 자신 있는 대표 요리는 무엇이며 어떤 재료가 필요한가요?)",
+            modelAnswer: "My absolute signature dish is spicy seafood pasta. To make it, I need fresh shrimp, squid, cherry tomatoes, minced garlic, olive oil, and spaghetti noodles. The secret ingredient is a spoonful of Korean chili flakes, which gives the rich tomato sauce a fantastic spicy kick. My friends always request this dish whenever they visit my place."
+        },
+        q2: {
+            question: "Describe your step-by-step cooking routine from grocery shopping and prep work to washing the dishes.",
+            kor: "(장보기와 재료 손질부터 요리, 설거지까지의 단계별 요리 루틴을 설명해 주세요.)",
+            modelAnswer: "I usually start by visiting a local organic grocery market on Saturday morning to pick up fresh produce. When I return home, I wash and chop all the vegetables meticulously. While the food is simmering on the stove, I clean up the cutting board and utensils to keep the kitchen tidy. After enjoying the homemade meal, I soak the cookware in warm soapy water and run the dishwasher."
+        },
+        q3: {
+            question: "Tell me about a time when you cooked a special meal for someone or experienced a memorable cooking failure.",
+            kor: "(누군가를 위해 특별한 음식을 만들었거나 기억에 남는 요리 실패를 겪었던 경험에 대해 말해 주세요.)",
+            modelAnswer: "I remember the first time I attempted to bake a chocolate souffle for my mother's birthday. I accidentally mixed up sugar and salt in the batter! When my mother took the first bite, her polite expression turned into hilarious disbelief. We both burst out laughing and ended up ordering takeout pizza instead. It was a complete culinary disaster, but a sweet memory we still talk about."
+        }
+    },
+
+    // 운동: 요가 / 스트레칭 (yoga)
+    yoga: {
+        name: "운동: 요가 / 스트레칭",
+        q1: {
+            question: "You selected yoga in your survey. Where do you usually practice yoga, and what equipment or clothing do you need for it?",
+            kor: "(요가를 선택하셨습니다. 주로 어디서 요가를 하며 어떤 장비나 복장이 필요한가요?)",
+            modelAnswer: "I usually practice yoga in the corner of my living room where I have plenty of open space and natural light. All I need is a high-density non-slip yoga mat, a pair of foam blocks for alignment support, and comfortable breathable athletic clothes. Practicing at home allows me to play soothing meditation music and focus entirely on my breathing."
+        },
+        q2: {
+            question: "How often do you practice yoga or stretching in a typical week? Describe your exercise routine from warm-up to cool-down.",
+            kor: "(보통 일주일에 얼마나 자주 요가를 하나요? 준비 운동부터 마무리 스트레칭까지의 루틴을 설명해 주세요.)",
+            modelAnswer: "I practice yoga three to four times a week, usually right after waking up or before going to bed. I start with five minutes of deep diaphragmatic breathing and gentle neck rolls. Then, I transition through sun salutations to warm up my muscles, followed by warrior poses and core balancing exercises. Finally, I end with a restful child's pose and corpse pose to relieve tension."
+        },
+        q3: {
+            question: "Why did you first start practicing yoga, and what physical or mental benefits have you noticed since you started?",
+            kor: "(처음 요가를 시작하게 된 계기는 무엇이며, 시작한 이후 몸과 마음에 어떤 긍정적인 변화가 있었나요?)",
+            modelAnswer: "I started practicing yoga about two years ago because I was suffering from severe lower back pain and chronic fatigue from sitting at a desk all day. Within a few months of consistent practice, my posture improved remarkably, and my back stiffness completely vanished. More importantly, it has taught me mindfulness and helps me manage daily stress with mental clarity."
+        }
+    },
+
+    // 운동: 농구 / 배드민턴 (basketball)
+    basketball: {
+        name: "운동: 농구 / 배드민턴",
+        q1: {
+            question: "You indicated playing sports like basketball or badminton. Describe the court or sports facility where you usually play.",
+            kor: "(농구나 배드민턴 등 구기 운동을 선택하셨습니다. 주로 운동하는 코트나 체육 시설을 묘사해 주세요.)",
+            modelAnswer: "I regularly play basketball at a well-maintained outdoor court inside a riverside public park. It features shock-absorbing rubber flooring, regulation-size fiberglass backboards, and bright floodlights that allow us to play late into the evening. The cool river breeze makes playing there on breezy autumn afternoons incredibly refreshing."
+        },
+        q2: {
+            question: "Who do you usually play sports with, and what is your typical game routine before and after playing?",
+            kor: "(주로 누구와 운동하며, 경기 전후의 전형적인 루틴은 어떤가요?)",
+            modelAnswer: "I usually play pickup games with my high school friends and fellow neighborhood sports enthusiasts on weekend mornings. Before jumping into a game, we spend twenty minutes stretching our calves and practicing three-point shooting drills. After an intense two-hour match, we always grab cold sports drinks and head to a nearby diner for a big protein-packed brunch."
+        },
+        q3: {
+            question: "Tell me about a memorable sports match you played in. What was the score, and why was the match so thrilling?",
+            kor: "(직접 뛰었던 기억에 남는 스포츠 경기에 대해 말해 주세요. 스코어는 어땠고 왜 그토록 흥미진진했나요?)",
+            modelAnswer: "Last summer, our neighborhood team played a friendly tournament final match. We were trailing by two points with only seven seconds left on the game clock! My teammate passed me the ball at the top of the key. I faked a drive and took a buzzer-beater three-point shot. When the ball swished through the net, everyone cheered hysterically. It felt like a Hollywood sports movie ending!"
+        }
+    },
+
+    // 여가 활동: 게임하기 (game)
+    game: {
+        name: "여가 활동: 게임하기",
+        q1: {
+            question: "You selected playing games in the survey. What video, PC, or mobile games do you enjoy playing most, and what are their features?",
+            kor: "(게임하기를 선택하셨습니다. 주로 즐기는 PC/모바일/콘솔 게임은 무엇이며 그 특징은 무엇인가요?)",
+            modelAnswer: "I am an avid fan of cooperative multiplayer PC games, especially tactical team shooters and open-world role-playing games. What fascinates me most is the immersive storytelling, photorealistic graphics, and the necessity of strategic real-time communication with teammates across voice chat to achieve collective objectives."
+        },
+        q2: {
+            question: "Describe your gaming environment at home. What devices, peripherals, or habits do you have when you play games?",
+            kor: "(집안의 게임 환경을 설명해 주세요. 어떤 기기, 게이밍 장비를 갖추고 있으며 어떤 습관이 있나요?)",
+            modelAnswer: "I have a dedicated gaming desk setup equipped with a high-refresh-rate dual monitor, a mechanical RGB keyboard, and a noise-canceling headset with a crystal-clear microphone. I usually game for an hour or two on weekend evenings after wrapping up my daily errands. I always keep a large tumbler of ice water by my side to stay hydrated during matches."
+        },
+        q3: {
+            question: "Tell me about a memorable incident or a thrilling victory you experienced while playing a game.",
+            kor: "(게임을 하던 중 겪었던 기억에 남는 일이나 짜릿한 승리 경험에 대해 말해 주세요.)",
+            modelAnswer: "Just a few weeks ago, my friends and I were playing a competitive tournament match online. Our team was pushed back against the wall, but we coordinated a synchronized ambush in the final round. Through flawless team communication and quick reflexes, we wiped out the opponent team and secured an incredible comeback victory. The sheer adrenaline rush was unforgettable."
+        }
+    },
+
+    // 여가 활동: 당구치기 (billiards)
+    billiards: {
+        name: "여가 활동: 당구치기",
+        q1: {
+            question: "You indicated playing billiards or pool in the survey. Describe a billiards hall you often visit. What are the tables and atmosphere like?",
+            kor: "(당구치기를 선택하셨습니다. 자주 방문하는 당구장의 테이블과 분위기를 묘사해 주세요.)",
+            modelAnswer: "I frequently go to a modern billiards club near our city center. Unlike traditional smoky billiard rooms, this place has a clean, smoke-free cafe-style lounge with bright LED spotlights over each international-standard carom table. The cushions and cloth are always kept in pristine condition, offering smooth and precise ball roll."
+        },
+        q2: {
+            question: "What is the typical routine when you go play billiards with friends? How do you decide who buys food or pays for the game?",
+            kor: "(친구들과 당구를 치러 갈 때의 일반적인 루틴은 어떤가요? 게임비나 식사 내기는 어떻게 결정하나요?)",
+            modelAnswer: "We usually head to the billiard hall after dinner. We divide into two teams and play a game of four-ball carom or eight-ball pool. To make things exciting, we usually make a playful bet where the losing team pays for the game fee and buys iced Americanos or late-night snacks. It's a fantastic way to bond and relieve stress."
+        },
+        q3: {
+            question: "Tell me about a memorable match or an unbelievable trick shot you witnessed while playing billiards.",
+            kor: "(당구를 치던 중 경험한 기억에 남는 경기나 놀라운 샷에 대해 이야기해 주세요.)",
+            modelAnswer: "I once played a game where my opponent needed only one point to win. On my final turn, the cue ball was blocked behind two obstacle balls. I attempted a daring three-cushion bank shot with maximum backspin. To everyone's astonishment, the ball curved gracefully and scored the winning point! My friends couldn't stop applauding, and we still reminisce about that miracle shot."
+        }
+    },
+
+    // 취미: 춤추기 (dance)
+    dance: {
+        name: "취미: 춤추기",
+        q1: {
+            question: "You mentioned dancing in the survey. What style or genre of dance do you enjoy, and what makes it so appealing to you?",
+            kor: "(춤추기를 선택하셨습니다. 어떤 장르의 춤을 좋아하며 그 매력은 무엇인가요?)",
+            modelAnswer: "I really enjoy K-Pop choreography and urban street dance. What draws me to dancing is the rhythmic synchronization between body movements and upbeat music. It allows me to express raw emotion and energy that words simply cannot capture, while offering a phenomenal full-body cardio workout."
+        },
+        q2: {
+            question: "How and where do you usually practice dancing? Describe your practice routine from stretching to learning choreography.",
+            kor: "(주로 어디서 어떻게 춤 연습을 하나요? 스트레칭부터 안무 연습까지의 과정을 설명해 주세요.)",
+            modelAnswer: "I usually rent a mirrored dance studio with my dance crew twice a month, or practice in front of a mirror at home. We spend fifteen minutes doing dynamic stretches and body isolations. Then, we break down a new choreography step by step at half speed using video tutorials before dancing to the original tempo."
+        },
+        q3: {
+            question: "Tell me about a memorable experience when you performed a dance in front of people or learned a challenging routine.",
+            kor: "(사람들 앞에서 춤을 선보였거나 어려운 안무를 마스터했던 기억에 남는 경험에 대해 말해 주세요.)",
+            modelAnswer: "During our annual university festival, my dance club performed a medley routine on the main outdoor stage in front of hundreds of students. My heart was pounding like crazy backstage, but as soon as the beat dropped, the adrenaline took over. Hearing the roaring crowd cheer for our performance gave me goosebumps that I will never forget."
+        }
+    },
+
+    // 취미: 악기 연주하기 (instrument)
+    instrument: {
+        name: "취미: 악기 연주하기",
+        q1: {
+            question: "You indicated playing a musical instrument in the survey. What instrument do you play, and what does it sound like?",
+            kor: "(악기 연주하기를 선택하셨습니다. 어떤 악기를 다루며 그 음색의 특징은 무엇인가요?)",
+            modelAnswer: "I have been playing the acoustic guitar for several years. I love the warm, resonant, and organic tone of steel strings vibrating against wooden soundboards. Whether strumming bright chords for pop songs or fingerpicking delicate melodies, the acoustic guitar has a soulful voice that immediately comforts the listener."
+        },
+        q2: {
+            question: "What is your regular practice routine with your instrument? When and where do you play, and what songs do you practice?",
+            kor: "(평소 악기 연습 루틴은 어떤가요? 주로 언제 어디서 연주하며 어떤 곡들을 연습하나요?)",
+            modelAnswer: "I keep my guitar on a stand in my bedroom so I can easily pick it up whenever inspiration strikes. In the evenings, I usually spend thirty minutes tuning the strings, practicing fingerstyle scales, and playing classic acoustic covers by artists like Ed Sheeran and Eric Clapton. It serves as my daily meditation."
+        },
+        q3: {
+            question: "Tell me about how you first started learning your musical instrument and a memorable milestone in your musical journey.",
+            kor: "(처음 악기를 배우게 된 계기와 음악 여정에서 가장 기억에 남는 순간에 대해 말해 주세요.)",
+            modelAnswer: "I first picked up the guitar in middle school after watching a legendary concert video. In the beginning, my fingertips blistered and formed calluses, and forming the difficult F-chord seemed almost impossible. But when I finally played my first complete song from beginning to end without stopping, the sense of accomplishment was so exhilarating that it sparked my lifelong passion for music."
+        }
+    },
+
+    // 취미: 그림 그리기 (drawing)
+    drawing: {
+        name: "취미: 그림 그리기",
+        q1: {
+            question: "You selected drawing in your survey. What kind of artwork or drawings do you create, and what tools or media do you use?",
+            kor: "(그림 그리기를 선택하셨습니다. 주로 어떤 스타일의 그림을 그리며 어떤 도구를 사용하나요?)",
+            modelAnswer: "I mainly create digital landscape illustrations and quick pen-and-ink architectural sketches. I use a graphics tablet with an electronic stylus pen, which allows me to experiment with infinite color palettes, textures, and brush strokes without making a physical mess. I love capturing the interplay of natural sunlight and urban buildings."
+        },
+        q2: {
+            question: "Where do you get inspiration for your drawings, and what is your creative process when starting a new piece?",
+            kor: "(그림을 그릴 때 주로 어디서 영감을 얻으며, 새 작품을 시작할 때의 창작 과정은 어떤가요?)",
+            modelAnswer: "I get most of my inspiration from taking leisurely walks around historical neighborhoods or browsing photographic travel essays. When starting a piece, I begin with rough geometric outlines to establish perspective. Then, I block in primary color values, gradually layering shadows and intricate highlights until the artwork comes alive."
+        },
+        q3: {
+            question: "Tell me about a special drawing you completed that holds sentimental value or an exhibition you visited that inspired your art.",
+            kor: "(각별한 의미가 있는 완성작이나 예술적 영감을 주었던 전시회 관람 경험에 대해 이야기해 주세요.)",
+            modelAnswer: "Last year, I drew a detailed watercolor illustration of my grandparents' old countryside home as a surprise anniversary gift. When I presented the framed painting to them, my grandmother was so moved that she teared up. Seeing how deeply art can convey gratitude and emotional connection made it the most meaningful piece I have ever created."
+        }
+    },
+
+    // 취미: 글쓰기 (writing)
+    writing: {
+        name: "취미: 글쓰기",
+        q1: {
+            question: "You indicated writing as a hobby. What types of writing do you enjoy, and what topics do you like to write about?",
+            kor: "(글쓰기를 선택하셨습니다. 어떤 종류의 글을 즐겨 쓰며 주로 어떤 주제를 다루나요?)",
+            modelAnswer: "I enjoy writing reflective personal essays and tech reviews on my personal blog. I frequently write about my professional research thoughts, book summaries, and life lessons learned from everyday interactions. Writing provides me with a quiet space to clarify my thoughts and organize complex ideas systematically."
+        },
+        q2: {
+            question: "What is your typical writing routine? When and where do you sit down to write, and how do you overcome writer's block?",
+            kor: "(평소 글쓰기 루틴은 어떤가요? 주로 언제 어디서 글을 쓰며 글이 잘 안 풀릴 땐 어떻게 하나요?)",
+            modelAnswer: "I do my best writing early on Sunday mornings in a quiet corner of my room with a hot mug of coffee. When I face writer's block, I don't force myself to type. Instead, I step outside for a brisk twenty-minute walk or jot down free-flowing bullet points in a pocket notebook. Changing the physical scenery always reignites my creativity."
+        },
+        q3: {
+            question: "Tell me about a memorable piece of writing you wrote or feedback from a reader that left a strong impression on you.",
+            kor: "(기억에 남는 글이나 독자에게서 받았던 인상 깊은 피드백에 대해 이야기해 주세요.)",
+            modelAnswer: "A few months ago, I published an in-depth essay about overcoming career burnout and maintaining mental resilience. A young graduate student left a comment saying my honest words gave him the courage to persevere through his thesis defense. Realizing that sharing my vulnerabilities could positively touch someone else's life was deeply rewarding."
+        }
+    },
+
+    // 여가 활동: 박물관 / 미술관 가기 (museum)
+    museum: {
+        name: "여가 활동: 박물관 / 미술관 가기",
+        q1: {
+            question: "You selected visiting museums in your survey. Describe a museum or art gallery you frequently visit or like best.",
+            kor: "(박물관 가기를 선택하셨습니다. 자주 방문하거나 가장 좋아하는 박물관/미술관을 설명해 주세요.)",
+            modelAnswer: "I love visiting the National Museum of Korea located in Yongsan. It is a monumental contemporary building surrounded by a peaceful mirrored pond and landscaped gardens. The museum houses thousands of historical artifacts and national treasures spanning centuries. The serene 'Room of Quiet Contemplation' featuring the meditating Bodhisattva statues is awe-inspiring."
+        },
+        q2: {
+            question: "What is your typical routine when you go to a museum? How do you explore the exhibits from start to finish?",
+            kor: "(박물관에 갈 때의 일반적인 관람 루틴은 어떤가요? 처음부터 끝까지 어떻게 둘러보나요?)",
+            modelAnswer: "I usually reserve tickets online in advance to avoid long weekend queues. Upon arrival, I pick up an audio guide headset so I can listen to expert curatorial commentary while viewing the relics. I spend about three hours exploring the main gallery, and I always wrap up my visit by purchasing art postcards and drinking tea at the museum cafe."
+        },
+        q3: {
+            question: "Tell me about a memorable exhibition you visited recently or in the past. What made the experience so special?",
+            kor: "(최근이나 과거에 방문했던 인상 깊은 특별 전시에 대해 말해 주세요. 무엇이 그토록 특별했나요?)",
+            modelAnswer: "Last autumn, I visited a blockbuster special exhibition featuring original Impressionist masterpieces on loan from European museums. Seeing the delicate brushstrokes and vivid light of Claude Monet's water lilies in real life took my breath away. Standing just inches from iconic paintings I had only seen in textbooks was an unforgettable cultural experience."
+        }
+    },
+
+    // 여가 활동: 클럽 / 나이트클럽 가기 (club)
+    club: {
+        name: "여가 활동: 클럽 / 나이트클럽 가기",
+        q1: {
+            question: "You indicated going to clubs in the survey. Describe a popular club you know of. What is the music, lighting, and vibe like?",
+            kor: "(클럽 가기를 선택하셨습니다. 알고 있는 인기 클럽의 음악, 조명, 분위기를 묘사해 주세요.)",
+            modelAnswer: "There is a renowned underground electronic music club in the trendy Hongdae district. It features state-of-the-art acoustic sound systems, mesmerizing laser light shows, and world-class resident DJs spinning deep house and progressive techno. The atmosphere is brimming with electric energy, where people from all walks of life dance freely without judgment."
+        },
+        q2: {
+            question: "When people go clubbing in your country, what is the usual routine before entering and after leaving the club?",
+            kor: "(클럽에 갈 때의 전형적인 루틴은 어떤가요? 들어가기 전과 나온 후 무엇을 하나요?)",
+            modelAnswer: "People typically meet up with friends around 10 PM for dinner and pre-drinks at a nearby lounge bar. They usually enter the club around midnight when the headlining DJ takes the stage. After dancing energetically for several hours, they leave around 4 or 5 AM to grab warm Korean street food or hangover soup at a 24-hour diner to recharge."
+        },
+        q3: {
+            question: "Tell me about a memorable night or a funny incident you experienced while at a club or music party.",
+            kor: "(클럽이나 음악 파티에서 겪었던 기억에 남는 밤이나 재미있는 에피소드에 대해 말해 주세요.)",
+            modelAnswer: "On New Year's Eve, my friends and I counted down to the new year inside a packed music club. As the clock struck midnight, golden confetti cannons exploded from the ceiling, and the entire venue roared in celebration. Strangers were hugging, high-fiving, and dancing together under the glittering lights. Celebrating the new year with such vibrant collective euphoria was unforgettable."
+        }
+    },
+
+    // 여가 활동: 스포츠 관람 (sports_watch)
+    sports_watch: {
+        name: "여가 활동: 스포츠 관람",
+        q1: {
+            question: "You mentioned watching sports in the survey. What sport do you enjoy watching most, and who is your favorite team or player?",
+            kor: "(스포츠 관람을 선택하셨습니다. 가장 즐겨 보는 스포츠는 무엇이며 좋아하는 팀이나 선수는 누구인가요?)",
+            modelAnswer: "I am a passionate fan of professional baseball. My favorite team is the local franchise team from my hometown. Watching a live game at the stadium with tens of thousands of enthusiastic spectators singing team fight songs and cheering for every home run is pure exhilaration."
+        },
+        q2: {
+            question: "What is the typical routine when you go watch a live sporting match at a stadium? What food and gear do you bring?",
+            kor: "(경기장에 직접 스포츠를 직관하러 갈 때의 루틴은 어떤가요? 어떤 응원 도구와 음식을 챙기나요?)",
+            modelAnswer: "We always arrive an hour before first pitch to find our seats and soak in the pre-game atmosphere. The quintessential Korean stadium experience involves buying crispy fried chicken and cold draft beer. We put on team jerseys, inflate cheering sticks, and sing synchronized chants throughout all nine innings."
+        },
+        q3: {
+            question: "Tell me about the most thrilling sports match you have ever watched live or on television.",
+            kor: "(직관했거나 TV로 보았던 경기 중 가장 짜릿했던 최고의 스포츠 경기에 대해 말해 주세요.)",
+            modelAnswer: "During the baseball postseason last year, our team was losing by three runs in the bottom of the ninth inning with two outs! The bases were loaded, and our cleanup hitter stepped up to the plate. On a full count, he hit a walk-off grand slam into the upper deck! The entire stadium erupted in pure pandemonium. It was easily the greatest sporting moment of my life."
+        }
+    },
+
+    // 여가 활동: 주거 개선 / 인테리어 (home_improve)
+    home_improve: {
+        name: "여가 활동: 주거 개선 / 인테리어",
+        q1: {
+            question: "You indicated an interest in home improvement. What changes or improvements have you made to your living space recently?",
+            kor: "(주거 개선을 선택하셨습니다. 최근 주거 공간에 어떤 변화나 인테리어 개선을 시도했나요?)",
+            modelAnswer: "Recently, I completely upgraded my home study area. I replaced my old bulky desk with a motorized standing desk, installed warm indirect LED light strips behind my monitor, and placed several potted air-purifying plants like snake plants around the room. It transformed a cluttered room into an aesthetically pleasing, productive sanctuary."
+        },
+        q2: {
+            question: "What is your typical process when you decide to redecorate a room or organize your household furniture?",
+            kor: "(방을 새롭게 꾸미거나 가구를 재배치할 때의 일반적인 진행 과정은 어떤가요?)",
+            modelAnswer: "I always start by decluttering and discarding items I no longer use. Then, I browse interior design apps like Pinterest to create a visual mood board for color harmony. I measure room dimensions carefully before purchasing modular furniture, ensuring optimal airflow and efficient walking space."
+        },
+        q3: {
+            question: "Tell me about a DIY home repair or redecorating project you did that turned out better or worse than expected.",
+            kor: "(직접 시도했던 DIY 인테리어나 집수리 프로젝트 중 예상보다 좋았거나 힘들었던 경험을 말해 주세요.)",
+            modelAnswer: "A few months ago, I decided to assemble a large Scandinavian modular bookshelf all by myself. What I thought would take one hour turned into a four-hour marathon with dozens of screws, confusing manual diagrams, and upside-down panels! But once I tightened the final bolt and arranged all my books, the sense of triumph was unbeatable."
+        }
+    },
+
+    // 여가 활동: 친구들과 문자 대화하기 (texting)
+    texting: {
+        name: "여가 활동: 친구들과 문자 대화하기",
+        q1: {
+            question: "You selected texting with friends in the survey. What messaging apps do you use, and what features do you find most useful?",
+            kor: "(친구들과 문자 대화하기를 선택하셨습니다. 주로 어떤 메신저 앱을 쓰며 어떤 기능이 가장 유용한가요?)",
+            modelAnswer: "In Korea, KakaoTalk is the indispensable national messaging platform used by virtually everyone. Beyond basic instant messaging, it offers fantastic features like funny animated emoticons, seamless mobile gift vouchers, high-quality voice and video calls, and group chat voting tools for scheduling meetings."
+        },
+        q2: {
+            question: "How often do you text throughout the day, and what kind of group chat rooms are you active in?",
+            kor: "(하루 중 얼마나 자주 문자를 주고받으며 주로 어떤 단체 대화방에 참여하고 있나요?)",
+            modelAnswer: "I check and send text messages periodically throughout the day. I am active in several group chats, including an everyday banter room with my closest friends, a family chat room where we share photos of meals, and professional project chat channels for rapid work coordination."
+        },
+        q3: {
+            question: "Tell me about a funny episode, misunderstanding, or mistake you experienced while texting someone.",
+            kor: "(문자를 보내던 중 겪었던 재미있는 에피소드나 오타, 실수로 인한 해프닝에 대해 말해 주세요.)",
+            modelAnswer: "Once, I intended to send a goofy selfie with a silly joke to my close friend group chat, but in my rush, I accidentally posted it into my serious university research group chat! My advisor was the first to see it. Thankfully, he responded with a laughing emoticon and teased me gently. My face turned bright red, but it ended up lightening the lab atmosphere."
+        }
+    },
+
+    // 취미: 독서 / 책 읽어주기 (read_book)
+    read_book: {
+        name: "취미: 독서 / 책 읽어주기",
+        q1: {
+            question: "You indicated reading in your survey. What genres of books do you enjoy, and who is your favorite author?",
+            kor: "(독서하기를 선택하셨습니다. 어떤 장르의 책을 좋아하며 좋아하는 작가는 누구인가요?)",
+            modelAnswer: "I enjoy reading behavioral economics, popular science, and historical biographies. One of my favorite authors is Yuval Noah Harari. His book 'Sapiens' blew my mind with its sweeping, multidisciplinary perspective on the cognitive and agricultural revolutions of humankind. It completely reshaped my understanding of human society."
+        },
+        q2: {
+            question: "Describe your personal reading habits. When and where do you prefer to read, and how many books do you read in a month?",
+            kor: "(개인적인 독서 습관을 설명해 주세요. 주로 언제 어디서 책을 읽으며 한 달에 몇 권 정도 읽나요?)",
+            modelAnswer: "I aim to read at least two books a month. I do most of my reading during my daily subway commute using an e-book reader, or in bed for thirty minutes before sleeping. Reading analog paper books at night helps me detach from digital screens and promotes sound, restful sleep."
+        },
+        q3: {
+            question: "Tell me about a book you read that left a profound impression on you or changed your outlook on life.",
+            kor: "(자신의 가치관이나 인생관에 깊은 감명을 주었던 인상 깊은 책에 대해 말해 주세요.)",
+            modelAnswer: "A book that deeply moved me is 'Atomic Habits' by James Clear. It taught me that monumental life achievements don't come from sudden drastic transformations, but from the compounding effect of tiny 1% daily improvements. Applying this principle to my daily English speaking and exercise routines has produced astonishing results in my life."
+        }
+    },
+
+    // 취미: 노래 부르기 (singing)
+    singing: {
+        name: "취미: 노래 부르기",
+        q1: {
+            question: "You selected singing in the survey. Where do you usually sing, and what songs do you like to perform?",
+            kor: "(노래 부르기를 선택하셨습니다. 주로 어디서 노래를 부르며 어떤 노래를 즐겨 부르나요?)",
+            modelAnswer: "I often go to coin karaoke booths, known as 'Coin Noraebang' in Korea. They are modern, private, air-conditioned acoustic booths equipped with high-fidelity microphones and sound systems. I love singing emotional acoustic ballads, classic pop rock anthems, and energetic K-Pop songs that allow me to hit high notes and release stress."
+        },
+        q2: {
+            question: "What is your typical routine when you go to a karaoke room with your friends?",
+            kor: "(친구들과 노래방에 갔을 때의 일반적인 진행 과정과 루틴은 어떤가요?)",
+            modelAnswer: "We usually head to karaoke after having a big group dinner. We start by putting on upbeat dance tracks to warm up our vocal cords and build hype. Then, we take turns passing the microphones, singing duets, and scoring points on the karaoke machine. It's the ultimate Korean cultural bonding ritual."
+        },
+        q3: {
+            question: "Tell me about a memorable memory or funny moment from a time you sang with friends or performed.",
+            kor: "(친구들과 노래방에서 노래를 부르며 겪었던 기억에 남는 추억이나 재미있는 순간을 말해 주세요.)",
+            modelAnswer: "At a college farewell party, my friends and I stayed at a karaoke room until early sunrise. At the end of the night, with our voices completely hoarse and raspy, we all stood shoulder to shoulder, belting out Queen's 'Bohemian Rhapsody' at the top of our lungs. The sheer passion and camaraderie of that moment is etched forever in my memory."
+        }
+    },
+
+    // 휴가: 집에서 보내는 휴가 (Staycation) (staycation)
+    staycation: {
+        name: "휴가: 집에서 보내는 휴가 (Staycation)",
+        q1: {
+            question: "You indicated spending vacations at home. Describe what a peaceful staycation looks like for you.",
+            kor: "(집에서 보내는 휴가를 선택하셨습니다. 평화로운 스테이케이션은 어떤 모습인가요?)",
+            modelAnswer: "For me, a staycation is the pinnacle of pure relaxation. Without the stress of packing heavy luggage, booking flights, or battling airport crowds, my home transforms into a personal resort. I enjoy luxurious sleep without alarms, cook elaborate meals, and enjoy uninterrupted quiet time in my favorite comfortable loungewear."
+        },
+        q2: {
+            question: "What is your typical daily routine when you spend your vacation days entirely at home?",
+            kor: "(휴가 기간을 집에서 온전히 보낼 때의 전형적인 하루 일과는 어떤가요?)",
+            modelAnswer: "I wake up naturally around 10 AM, brew gourmet pour-over coffee, and prepare a leisurely brunch. In the afternoon, I binge-watch acclaimed documentary series on streaming platforms or immerse myself in a good novel. In the evening, I order delicious delivery food and take a soothing hot bath to recharge my batteries."
+        },
+        q3: {
+            question: "Tell me about the best staycation you have ever had. What did you do, and why was it so rejuvenating?",
+            kor: "(지금까지 보냈던 최고의 집콕 휴가에 대해 말해 주세요. 무엇을 했고 왜 그토록 힐링이 되었나요?)",
+            modelAnswer: "Last summer during a record-breaking heatwave, I decided to take a four-day digital detox staycation. I turned off all work notifications, closed the blackout curtains, kept the air conditioner at a crisp 22 degrees, and spent days reading, sketching, and listening to classical music. That undisturbed solitude recharged my mental stamina far better than any hectic overseas trip could have."
+        }
+    },
+
+    // 출장: 국내 출장 (dom_biz)
+    dom_biz: {
+        name: "출장: 국내 출장",
+        q1: {
+            question: "You selected domestic business trips in your survey. What cities do you frequently visit for work, and what is your mode of transportation?",
+            kor: "(국내 출장을 선택하셨습니다. 업무차 자주 방문하는 도시는 어디이며 어떤 교통수단을 이용하나요?)",
+            modelAnswer: "I frequently travel to Busan and Daejeon for academic conferences and client research meetings. My primary mode of transportation is the KTX high-speed bullet train. It connects Seoul to Busan in less than three hours, offering free Wi-Fi and power outlets at every seat so I can work productively while traveling."
+        },
+        q2: {
+            question: "Describe your typical business trip schedule from departure to returning home.",
+            kor: "(출발부터 귀가까지의 전형적인 출장 일정을 설명해 주세요.)",
+            modelAnswer: "I catch an early morning train around 7 AM, reviewing presentation slides on my laptop during the ride. Upon arrival, I attend stakeholder meetings and client presentations throughout the afternoon. After wrapping up business, I often enjoy a quick regional specialty dinner with local partners before catching the evening train back home."
+        },
+        q3: {
+            question: "Tell me about an unexpected challenge or emergency you handled while on a domestic business trip.",
+            kor: "(국내 출장 중 겪었던 예상치 못한 돌발 상황이나 문제 해결 경험에 대해 말해 주세요.)",
+            modelAnswer: "Last year during a critical project presentation in Daejeon, the presentation venue's HDMI projector adapter was incompatible with my new laptop! With only ten minutes before the presentation, I quickly uploaded my slides to cloud storage, accessed them from a colleague's tablet, and delivered the presentation smoothly without a hitch. It taught me the vital importance of always having redundant digital backups."
+        }
+    },
+
+    // 출장: 해외 출장 (overseas_biz)
+    overseas_biz: {
+        name: "출장: 해외 출장",
+        q1: {
+            question: "You indicated overseas business trips. Describe a country or city you visited for business and the nature of your trip.",
+            kor: "(해외 출장을 선택하셨습니다. 업무로 방문했던 해외 도시와 출장의 목적에 대해 설명해 주세요.)",
+            modelAnswer: "I traveled to San Francisco, California, to attend an international engineering symposium and meet with international research collaborators. The conference took place at a massive convention center in downtown San Francisco, where researchers from across the globe gathered to discuss the latest advancements in technology."
+        },
+        q2: {
+            question: "What is your preparation routine before going on an overseas business trip? What do you pack and prepare?",
+            kor: "(해외 출장을 가기 전의 준비 과정은 어떤가요? 무엇을 챙기고 준비하나요?)",
+            modelAnswer: "Preparation begins weeks in advance. I ensure my passport and travel visas are up to date, prepare customized presentation slides in English, and pack business formal attire alongside power plug converters. I also download offline translation maps and foreign currency exchange apps on my smartphone to navigate international airports smoothly."
+        },
+        q3: {
+            question: "Tell me about a memorable cross-cultural experience or an unexpected hurdle you encountered during an overseas business trip.",
+            kor: "(해외 출장 중 겪었던 기억에 남는 문화적 경험이나 예상치 못한 난관에 대해 이야기해 주세요.)",
+            modelAnswer: "During my first international conference in Germany, I experienced significant jet lag combined with a sudden flight cancellation due to an airline strike! I had to quickly navigate the international train station to book an intercity train across cities to reach the conference hall on time. Overcoming that challenge boosted my self-confidence immensely when handling international logistics."
+        }
+    },
+
+    // 취미: 여행 블로그 읽기 (travel_blog)
+    travel_blog: {
+        name: "취미: 여행 블로그 읽기",
+        q1: {
+            question: "You selected reading travel blogs. What kinds of travel blogs or travel vlogs do you follow, and what makes them captivating?",
+            kor: "(여행 블로그 읽기를 선택하셨습니다. 어떤 여행 블로그나 브이로그를 찾아보며 그 매력은 무엇인가요?)",
+            modelAnswer: "I follow independent travel blogs and YouTube travel channels that focus on off-the-beaten-path destinations and authentic local gastronomy. What captivates me is the raw, unfiltered perspectives, stunning high-resolution photography, and honest cost breakdowns that commercial travel guidebooks rarely disclose."
+        },
+        q2: {
+            question: "How do you utilize travel blogs when planning an upcoming trip? Describe your research process.",
+            kor: "(여행을 계획할 때 여행 블로그를 어떻게 활용하나요? 정보 탐색 과정을 설명해 주세요.)",
+            modelAnswer: "Whenever I plan a vacation, I search for recent travel blog reviews using specific keywords. I save hidden gem restaurant recommendations, transit pass tips, and scenic photo spot coordinates directly onto my digital map app. This allows me to craft an efficient daily itinerary tailored to my personal pace."
+        },
+        q3: {
+            question: "Tell me about a time when you visited a place recommended by a travel blog. Did it live up to your expectations?",
+            kor: "(여행 블로그 추천을 보고 찾아갔던 장소에 대한 경험을 말해 주세요. 기대만큼 좋았나요?)",
+            modelAnswer: "Before traveling to Jeju Island, I read a blog post recommending a tiny seafood noodle eatery tucked away in a remote coastal village. The blogger claimed it had the best sea urchin noodles on the island. When I visited, the breathtaking ocean view combined with the freshest, sweetest seafood exceeded every expectation! It became the highlight of my entire trip."
+        }
+    },
+
+    // 운동: 운동을 전혀 하지 않음 (no_exercise)
+    no_exercise: {
+        name: "운동: 운동을 전혀 하지 않음",
+        q1: {
+            question: "You indicated in the survey that you do not exercise. What sedentary hobbies or restful activities do you enjoy instead during your free time?",
+            kor: "(운동을 하지 않음을 선택하셨습니다. 격렬한 운동 대신 여가 시간에 주로 어떤 정적인 활동이나 휴식을 즐기나요?)",
+            modelAnswer: "Instead of strenuous physical workouts, I prefer intellectually stimulating and relaxing sedentary hobbies. In my free time, I immerse myself in reading science books, watching thought-provoking cinema, listening to classical jazz music, or solving complex computer programming puzzles from the comfort of my sofa."
+        },
+        q2: {
+            question: "How do you maintain your health and stamina in your daily life without engaging in regular sports?",
+            kor: "(정기적인 스포츠 운동을 하지 않으면서 일상 속에서 건강과 체력을 어떻게 유지하나요?)",
+            modelAnswer: "Although I don't go to a gym, I incorporate natural physical movement into my daily routine. For instance, I take the stairs instead of the elevator, walk briskly during my daily commutes, and maintain strict dietary habits with balanced nutrition, high water intake, and plenty of restorative sleep."
+        },
+        q3: {
+            question: "Tell me about a time when friends or family tried to persuade you to exercise, or a brief attempt you made to work out.",
+            kor: "(주변에서 운동을 권유받았거나 짧게 운동을 시도해보았던 경험에 대해 말해 주세요.)",
+            modelAnswer: "Last New Year's, my close friend persuaded me to register for a three-month gym membership together. I went faithfully for the first week, but by the second week, lifting heavy weights felt more like an exhausting chore than fun. I realized that forcing myself into workouts I dislike isn't sustainable, so I decided to stick to peaceful walking and healthy eating instead."
+        }
+    },
+
+    // 운동: 태권도 / 무술 / 낚시 (taekwondo)
+    taekwondo: {
+        name: "운동: 태권도 / 무술 / 낚시",
+        q1: {
+            question: "You indicated interest in martial arts like Taekwondo or outdoor sports like fishing. Describe the training dojang or outdoor spot you usually go to.",
+            kor: "(태권도/무술 또는 낚시를 선택하셨습니다. 주로 수련하는 도장이나 낚시를 즐기는 장소를 묘사해 주세요.)",
+            modelAnswer: "I regularly practice Taekwondo at a traditional martial arts dojang located in my neighborhood. The gym is fitted with high-density shock-absorbing mats, wooden training dummies, and kicking pads mounted along the mirrored walls. Training in an authentic uniform with a crisp belt gives me a deep sense of discipline and mental focus."
+        },
+        q2: {
+            question: "What is your typical training or sporting routine from warm-up exercises to sparring or catching fish?",
+            kor: "(준비 운동부터 겨루기 또는 낚시 활동까지의 전형적인 루틴을 설명해 주세요.)",
+            modelAnswer: "A typical training session begins with a rigorous twenty-minute warm-up consisting of dynamic high kicks, jump rope, and core conditioning. Then, we practice fundamental form patterns called Poomsae, followed by controlled sparring drills wearing chest protectors. We always finish with respectful bow salutations and meditative breathing."
+        },
+        q3: {
+            question: "Tell me about a memorable milestone, a belt promotion test, or an exciting catch you experienced while practicing your sport.",
+            kor: "(승급 심사나 낚시 중 대어를 낚았던 기억에 남는 특별한 경험에 대해 이야기해 주세요.)",
+            modelAnswer: "A defining milestone in my journey was testing for my first-degree black belt after years of relentless practice. During the final breaking demonstration, I had to execute a jumping spinning heel kick to shatter a thick pine board in mid-air. When the board split cleanly with a loud snap, the entire hall erupted in applause. The feeling of perseverance paying off was deeply gratifying."
+        }
     }
 };
 
-// 🚨 Unexpected Topics Pool (서베이 미선택 돌발 주제 - 5개 이상의 콤보 세트로 확장!)
 const UNEXPECTED_TOPICS = [
     {
         name: "음식 & 건강 (Food & Health)",
@@ -517,10 +996,142 @@ const UNEXPECTED_TOPICS = [
             kor: "[🚨 돌발 질문] (온라인 뱅킹이나 카드 결제 중 겪었던 기억에 남는 문제에 대해 말해 주세요.)",
             modelAnswer: "Once while paying online, my security card certificate expired unexpectedly in the middle of a purchase! I had to go through a identity verification process via SMS to issue a new cloud certificate before completing the order."
         }
+    },
+
+    {
+        name: "명절 및 기념일 (Holidays & Celebrations)",
+        q1: {
+            question: "Describe the major traditional holidays in your country. What do people eat, and what traditional customs do families practice?",
+            kor: "[🚨 돌발 질문] (우리나라의 대표 명절인 설날이나 추석에 대해 설명해 주세요. 어떤 음식을 먹고 어떤 전통 풍습을 행하나요?)",
+            modelAnswer: "In Korea, the two grandest traditional holidays are Seollal, which is Lunar New Year, and Chuseok, the Korean Thanksgiving. During Chuseok, families gather from all across the country to celebrate the autumn harvest. We prepare a festive feast featuring Songpyeon, which are half-moon shaped rice cakes stuffed with sweet sesame, and conduct memorial ancestral rites called Charye."
+        },
+        q2: {
+            question: "How have the ways people celebrate holidays in your country changed over the years compared to when you were young?",
+            kor: "[🚨 돌발 질문] (어렸을 때와 비교하여 오늘날 명절을 보내는 방식이 어떻게 변화했나요?)",
+            modelAnswer: "In the past, holidays were strictly about large extended family reunions, labor-intensive food preparation, and ancestral rituals. Nowadays, many modern families prefer simplified ceremonies, ordering pre-made feast food online, or using the long holiday weekend to travel abroad together for relaxation."
+        },
+        q3: {
+            question: "Tell me about a memorable or special holiday experience you had with your family or friends in the past.",
+            kor: "[🚨 돌발 질문] (과거 가족이나 친구들과 보냈던 특별하고 기억에 남는 명절 추억에 대해 이야기해 주세요.)",
+            modelAnswer: "Two years ago during Chuseok, our entire family decided to break tradition and rent a private villa by the coast instead of staying home. We had a lively barbecue party under the full moon, played traditional folk board games with the children, and walked along the ocean beach. It was the most relaxing and harmonious holiday celebration we have ever experienced."
+        }
+    },
+
+    {
+        name: "약속 및 모임 (Appointments & Social Gatherings)",
+        q1: {
+            question: "Where do you usually meet up when making appointments with friends or colleagues? Describe the typical meeting spot.",
+            kor: "[🚨 돌발 질문] (친구들이나 지인들과 약속을 잡을 때 주로 어디서 만나나요? 전형적인 약속 장소를 묘사해 주세요.)",
+            modelAnswer: "When making plans with friends, we usually choose bustling transit hubs with easy subway access, such as Gangnam or Hongdae. These locations offer a rich variety of trendy cafes, international restaurants, and entertainment arcades within walking distance, making it convenient for everyone coming from different parts of the city."
+        },
+        q2: {
+            question: "What is your typical process when planning a social gathering or appointment from picking a date to sending invitations?",
+            kor: "[🚨 돌발 질문] (약속이나 모임을 계획할 때 날짜 선정부터 연락까지의 일반적인 과정은 어떤가요?)",
+            modelAnswer: "We usually initiate a group chat on mobile messengers and use online scheduling polls to identify a date when everyone is free. Once the date is finalized, one of us researches popular restaurants with high online ratings and makes a table reservation in advance to guarantee a smooth, hassle-free evening."
+        },
+        q3: {
+            question: "Tell me about a memorable time when an appointment was delayed, mixed up, or unexpectedly canceled at the last minute.",
+            kor: "[🚨 돌발 질문] (약속이 늦어지거나 일정이 엉키거나 직전에 취소되었던 기억에 남는 경험에 대해 말해 주세요.)",
+            modelAnswer: "Last month, I was supposed to meet a college friend at a popular Italian bistro. However, due to a sudden signal failure on Subway Line 2, my train was stuck underground for nearly forty minutes! I immediately notified my friend via mobile chat. Graciously, he waited for me at a nearby bookstore with a cup of coffee. When I finally arrived, I happily treated him to dinner to make up for the delay."
+        }
+    },
+
+    {
+        name: "대중교통 및 출퇴근 (Transportation & Commuting)",
+        q1: {
+            question: "Describe the public transportation system in your country. How convenient and accessible is it for daily commuters?",
+            kor: "[🚨 돌발 질문] (우리나라의 대중교통 시스템에 대해 설명해 주세요. 통근자들에게 얼마나 편리한가요?)",
+            modelAnswer: "Korea boasts one of the most efficient, clean, and punctual public transportation networks in the world. The metropolitan subway system covers extensive lines with heated seats in winter, air conditioning in summer, and digital arrival screens. Furthermore, the integrated transit transfer system offers free transfer discounts between buses and subways using a single smart transit card or smartphone."
+        },
+        q2: {
+            question: "What is your typical daily commute from home to work or school? What do you usually do during your travel time?",
+            kor: "[🚨 돌발 질문] (집에서 직장이나 학교까지의 일상적인 출퇴근 경로는 어떤가요? 이동 중에 주로 무엇을 하나요?)",
+            modelAnswer: "My daily commute takes approximately forty minutes each way. I walk five minutes to the subway station, take the train for seven stops, and walk another five minutes to my office. During the train ride, I put on noise-canceling earbuds to listen to English news podcasts, read e-books, or review my daily work agenda."
+        },
+        q3: {
+            question: "Tell me about a memorable challenge or incident you encountered while using public transportation, such as severe delays or lost items.",
+            kor: "[🚨 돌발 질문] (대중교통을 이용하다가 겪었던 극심한 지연이나 분실물 등 기억에 남는 사건에 대해 말해 주세요.)",
+            modelAnswer: "Once during a crowded morning rush hour, I accidentally left my leather briefcase containing my work tablet on the overhead luggage rack of the subway train! The moment the train doors closed, I panicked. I immediately ran to the station customer service center. The staff coordinated swiftly with the terminal station, and miraculously, my briefcase was recovered untouched within an hour. The honesty of the public transit system was astonishing."
+        }
+    },
+
+    {
+        name: "가구 및 생활용품 (Furniture & Living Essentials)",
+        q1: {
+            question: "What pieces of furniture do you have in your home? Describe the piece of furniture you use most and like best.",
+            kor: "[🚨 돌발 질문] (집에 어떤 가구들이 있나요? 가장 자주 쓰고 좋아하는 가구를 자세히 묘사해 주세요.)",
+            modelAnswer: "Our home is furnished with practical modern furniture, including an ergonomic sofa, a dining table, and wardrobe units. My favorite piece is my ergonomic mesh office chair. It has adjustable lumbar support, 4D armrests, and a flexible headrest that perfectly supports my spine during long hours of research and writing. It is the best investment I've ever made for my health."
+        },
+        q2: {
+            question: "When you buy new furniture, what factors do you consider most important, and what is your shopping process?",
+            kor: "[🚨 돌발 질문] (새 가구를 살 때 가장 중요하게 고려하는 요소는 무엇이며 구매 과정은 어떤가요?)",
+            modelAnswer: "When purchasing furniture, durability and ergonomic functionality are my top priorities, followed closely by aesthetic design harmony. I usually research customer reviews and specifications online, and then visit offline showrooms to sit on the chairs or touch the materials firsthand before making a final purchase decision."
+        },
+        q3: {
+            question: "Tell me about a memorable experience you had when purchasing, moving, or assembling a piece of furniture.",
+            kor: "[🚨 돌발 질문] (가구를 새로 사거나 조립, 이사할 때 겪었던 기억에 남는 일화에 대해 말해 주세요.)",
+            modelAnswer: "When I moved into my current apartment, I purchased a massive multi-tier wooden wardrobe. However, upon delivery, the delivery workers discovered that the wardrobe box was slightly too wide to fit into the building elevator! We had to carefully carry the heavy components up five flights of stairs by hand. It was an exhausting workout, but the wardrobe looks spectacular in my bedroom today."
+        }
+    },
+
+    {
+        name: "패션 및 옷차림 (Fashion & Clothing Styles)",
+        q1: {
+            question: "People wear different styles of clothing depending on the seasons. Describe what people in your country typically wear in summer and winter.",
+            kor: "[🚨 돌발 질문] (계절에 따라 사람들의 옷차림이 다릅니다. 우리나라 사람들이 여름과 겨울에 주로 입는 스타일을 설명해 주세요.)",
+            modelAnswer: "Because Korea experiences distinct climate extremes, seasonal fashion varies drastically. In humid summers, people opt for lightweight, breathable linen shirts, cool-touch cotton tees, and shorts. In freezing winters, virtually everyone wears long down-padded parkas, warm thermal underwear, cashmere turtlenecks, and woolen scarves to brave the sub-zero temperatures."
+        },
+        q2: {
+            question: "What is your personal fashion style for work and for weekends? What accessories do you like to wear?",
+            kor: "[🚨 돌발 질문] (본인의 평소 출근 복장과 주말 일상 패션 스타일은 어떠하며 어떤 악세서리를 착용하나요?)",
+            modelAnswer: "For work, my style leans towards neat business casual. I typically wear well-fitted chinos, crisp collared shirts, and clean leather loafers. On weekends, I prioritize maximum comfort, wearing relaxed-fit hoodies, denim jeans, and running sneakers. My signature daily accessory is a minimalist analog wristwatch."
+        },
+        q3: {
+            question: "Tell me about a time when you bought a piece of clothing that did not fit well or had a defect. How did you resolve the issue?",
+            kor: "[🚨 돌발 질문] (사이즈가 맞지 않거나 하자가 있는 옷을 사서 곤란했던 경험과 어떻게 해결했는지 말해 주세요.)",
+            modelAnswer: "I once ordered an expensive winter woolen coat from an online shopping mall. When the package arrived, the coat was two sizes too large, and one of the front buttons was hanging loose! I immediately initiated an online exchange request with photo evidence. The company arranged a pickup the next day and delivered a perfectly tailored replacement coat within three days."
+        }
+    },
+
+    {
+        name: "지형 및 자연환경 (Geography & Landscapes of Korea)",
+        q1: {
+            question: "Describe the geography and natural landscape of your country. What are the distinctive geographical features?",
+            kor: "[🚨 돌발 질문] (우리나라의 지형과 자연환경을 설명해 주세요. 어떤 지리적 특징이 있나요?)",
+            modelAnswer: "Korea is a peninsula surrounded by water on three sides, with roughly 70 percent of its landmass covered by picturesque mountains. The eastern region features steep mountain ranges like Seoraksan, while the western and southern coasts are characterized by gentle plains, scenic islands, and fertile valleys. This geographical diversity offers breathtaking scenery in every province."
+        },
+        q2: {
+            question: "What outdoor recreational activities do people enjoy taking advantage of the geographical features in your country?",
+            kor: "[🚨 돌발 질문] (사람들이 지형적 특성을 활용하여 즐기는 대표적인 야외 활동은 무엇인가요?)",
+            modelAnswer: "Due to abundant mountains, mountain hiking is practically a national pastime in Korea. On weekends, trails are filled with hikers wearing colorful gear. In addition, people flock to the eastern coastal beaches for surfing and ocean camping in the summer, and ski resorts in the northern mountains in winter."
+        },
+        q3: {
+            question: "Tell me about a memorable trip you took to a mountainous area or coastal region in your country. What did you see and do?",
+            kor: "[🚨 돌발 질문] (우리나라의 산이나 바닷가로 떠났던 기억에 남는 여행 경험에 대해 말해 주세요.)",
+            modelAnswer: "Last autumn, I hiked to the summit of Mount Halla on Jeju Island. The eight-hour trek was physically demanding, but hiking through the vibrant autumn foliage was exhilarating. When I finally reached the volcanic crater lake at the peak under the clear blue sky, the panoramic view above the clouds was so majestic that it took all my exhaustion away."
+        }
+    },
+
+    {
+        name: "호텔 및 숙박시설 (Hotels & Accommodations)",
+        q1: {
+            question: "When you travel, what kind of accommodations do you prefer staying in? Describe a hotel or resort you stayed in recently.",
+            kor: "[🚨 돌발 질문] (여행 시 어떤 숙소를 선호하나요? 최근에 묵었던 호텔이나 리조트를 묘사해 주세요.)",
+            modelAnswer: "When traveling, I prefer modern boutique hotels or oceanfront resorts that offer clean amenities and excellent accessibility. Recently, I stayed at a coastal hotel in Gangneung. The room featured an expansive balcony overlooking the East Sea, plush goose-down bedding, and a rooftop infinity pool that merged seamlessly with the ocean horizon."
+        },
+        q2: {
+            question: "What facilities and services do you look for most when choosing a hotel or lodging for vacation?",
+            kor: "[🚨 돌발 질문] (휴가를 위해 숙소를 고를 때 가장 중요하게 확인하는 부대시설이나 서비스는 무엇인가요?)",
+            modelAnswer: "First and foremost, impeccable room cleanliness and soundproofing are non-negotiable for me. I also look for hotels that offer complimentary high-speed Wi-Fi, fitness centers, and a diverse breakfast buffet featuring both local and continental options. Reading verified guest reviews is my essential selection ritual."
+        },
+        q3: {
+            question: "Tell me about an unexpected problem or inconvenience you experienced during a hotel stay and how the staff handled it.",
+            kor: "[🚨 돌발 질문] (호텔에 묵는 동안 겪었던 뜻밖의 불편이나 문제, 그리고 직원의 대처에 대해 말해 주세요.)",
+            modelAnswer: "During a summer getaway, the air conditioning unit in my hotel room started leaking water with a loud buzzing sound in the middle of the night! I contacted the front desk immediately. The duty manager arrived within ten minutes, apologized sincerely, and upgraded us to an executive suite on the top floor with complimentary breakfast vouchers. Their prompt and courteous service turned a frustrating glitch into five-star hospitality."
+        }
     }
 ];
 
-// 🎭 Role-Play Combo Pools (Q11 ~ Q13)
 const ROLEPLAY_POOLS = [
     {
         name: "콘서트 티켓 예매 & 돌발 취소",
@@ -575,10 +1186,104 @@ const ROLEPLAY_POOLS = [
             kor: "[🎭 롤플레이 Q13] (과거 여행 중 비행기 지연이나 숙소 예약 변경으로 힘들었던 경험에 대해 말해 주세요.)",
             modelAnswer: "Two years ago, my flight home was delayed by eight hours due to dense fog. The airline provided us with food vouchers and lounge access while we waited. I used the extra time to read a book and chat with fellow travelers, turning a tedious delay into a restful afternoon."
         }
+    },
+
+    {
+        name: "식당 예약 & 인원 변경 문의",
+        q11: {
+            question: "I'd like to give you a role-play scenario. You want to reserve a table for a family dinner at a famous Italian restaurant. Call the restaurant and ask three or four questions regarding reservation details, menu options, and parking.",
+            kor: "[🎭 롤플레이 Q11] (유명 이탈리안 레스토랑에 가족 식사 예약을 하려고 합니다. 식당에 전화해 예약, 메뉴, 주차에 대해 3~4가지 질문을 하세요.)",
+            modelAnswer: "Hello, good afternoon! I'd like to make a dinner reservation for next Saturday evening. First of all, do you have a private room or quiet table available for six adults at 7 PM? Secondly, do you offer any special family set menus or vegetarian options? Also, is valet parking available for guests? Lastly, do I need to pay a deposit for the reservation? Thank you so much!"
+        },
+        q12: {
+            question: "There is a problem you need to solve. On the afternoon of the reservation, two family members suddenly caught the flu and cannot attend. Call the restaurant, explain the situation, and suggest two alternatives.",
+            kor: "[🎭 롤플레이 Q12] (예약 당일 오후 가족 2명이 독감에 걸려 갈 수 없게 되었습니다. 식당에 전화해 상황을 설명하고 2가지 대안을 제시하세요.)",
+            modelAnswer: "Hi, I have a reservation under the name DongHwa for six people tonight at 7 PM. I'm terribly sorry, but two of our family members suddenly came down with a high fever and cannot make it. Here is what I propose: First, would it be possible to reduce our party size from six to four people while keeping the reservation? Or second, if the private room requires a minimum party size, could you reschedule our entire booking to next Saturday instead? Please let me know what works best for your staff."
+        },
+        q13: {
+            question: "Have you ever experienced a time when dining plans or party reservations had to be altered abruptly? Tell me what happened and how you handled the situation.",
+            kor: "[🎭 롤플레이 Q13] (외식 약속이나 식당 예약이 갑자기 변경되어 곤란했던 실제 경험에 대해 이야기해 주세요.)",
+            modelAnswer: "Last year during year-end holiday season, we booked a rooftop barbecue venue for our team celebration. However, a sudden torrential winter rainstorm struck on the event day! The outdoor terrace was closed due to safety concerns. We quickly negotiated with the venue manager to transfer our party to their indoor private lounge, enjoying great food and drinks in a cozy indoor setting."
+        }
+    },
+
+    {
+        name: "옷/신발 매장 구매 & 교환/환불 대안",
+        q11: {
+            question: "You are at a clothing boutique and want to purchase a stylish winter coat. Ask the store clerk three or four detailed questions about sizes, colors, material, and discounts.",
+            kor: "[🎭 롤플레이 Q11] (옷 매장에서 겨울 코트를 사려고 합니다. 점원에게 사이즈, 색상, 소재, 할인에 대해 3~4가지 질문을 하세요.)",
+            modelAnswer: "Excuse me, could you help me with this cashmere coat? First, do you have this design in a medium size? Second, does this coat come in charcoal grey or navy as well? Also, what is the exact wool-to-cashmere blend ratio of the fabric? Lastly, are there any promotional discounts or membership perks applied to this seasonal collection? Thanks!"
+        },
+        q12: {
+            question: "You purchased the coat and brought it home, but you found a tear along the inner lining and the sleeves are too short. Call the store, explain the defects, and suggest two solutions.",
+            kor: "[🎭 롤플레이 Q12] (코트를 샀는데 안감이 찢어져 있고 소매가 너무 짧습니다. 매장에 전화해 결함을 알리고 2가지 해결책을 제안하세요.)",
+            modelAnswer: "Hello, I purchased a cashmere coat at your downtown branch just two hours ago, but upon inspecting it at home, I found a tear along the inner sleeve lining, and the sleeve length is noticeably uneven. Here are two solutions: Can I bring it back to the store this evening for an immediate exchange for a flawless coat in size Large? Or if that item is out of stock, could you process a full refund to my credit card? I have the receipt and original tags intact."
+        },
+        q13: {
+            question: "Tell me about a real-life experience when an item of clothing or shoes you bought had a defect or didn't fit, and you had to return or exchange it.",
+            kor: "[🎭 롤플레이 Q13] (구매한 옷이나 신발에 결함이 있거나 맞지 않아 교환/환불을 해야 했던 실제 경험을 말해 주세요.)",
+            modelAnswer: "A few months ago, I bought running shoes online. When they arrived, the left shoe's air cushion was defective and squeaked loudly with every step! I immediately submitted an exchange request on the vendor's app with a short video clip. A courier picked up the defective pair the following day, and a brand-new replacement pair arrived within forty-eight hours. The prompt resolution made me trust the brand even more."
+        }
+    },
+
+    {
+        name: "렌터카 대여 & 차량 고장 대안",
+        q11: {
+            question: "You are planning a road trip during your vacation and want to rent a car. Call the car rental agency and ask three or four questions about car models, rental rates, and insurance coverage.",
+            kor: "[🎭 롤플레이 Q11] (휴가 로드트립을 위해 렌터카 업체에 전화해 차종, 요금, 보험에 대해 3~4가지 질문을 하세요.)",
+            modelAnswer: "Hi, I'm calling to inquire about renting a vehicle for a three-day weekend trip. First, do you have a mid-size SUV or hybrid sedan available starting this Friday morning? Second, what is the total rental cost including unlimited mileage? Also, what does your comprehensive zero-deductible insurance cover? Lastly, can I drop off the vehicle at a different branch near the train station? Thank you!"
+        },
+        q12: {
+            question: "While driving the rented car on a highway, an engine warning light turns on and you hear an abnormal rattling noise. Call the rental agency customer service, describe the issue, and demand two solutions.",
+            kor: "[🎭 롤플레이 Q12] (렌터카를 몰고 가던 중 엔진 경고등이 켜지고 덜컹거리는 소음이 납니다. 고객센터에 전화해 상황을 설명하고 2가지 대안을 요구하세요.)",
+            modelAnswer: "Hello, this is DongHwa renting vehicle license plate number 1234. I'm currently pulled over at a rest stop on the highway because the engine check light suddenly started flashing, and there's a loud metallic rattling noise coming from the front hood! Here is what we need to do immediately: First, can you dispatch emergency roadside assistance with a replacement vehicle to my location right away? Or second, if that takes too long, can you arrange a taxi to the nearest city and book a replacement car at your local branch? Please treat this as urgent."
+        },
+        q13: {
+            question: "Tell me about a memorable trouble or unexpected incident you experienced while driving or traveling in a car.",
+            kor: "[🎭 롤플레이 Q13] (운전 중이나 자동차 여행 중 겪었던 기억에 남는 문제나 돌발 사건에 대해 말해 주세요.)",
+            modelAnswer: "A couple of years ago while driving to the coast, my car suffered a sudden tire blowout on a rainy highway! The steering wheel shook violently, but I managed to pull over safely to the shoulder. I put on hazard lights, set up an emergency warning triangle, and called my insurance emergency dispatch. They arrived within twenty minutes and swapped the flat tire with a spare. It was a terrifying moment, but staying calm kept me safe."
+        }
+    },
+
+    {
+        name: "부동산 아파트 렌트 문의 & 시설 하자 보수 요청",
+        q11: {
+            question: "You are looking for a new apartment to rent. Call a real estate agent and ask three or four questions about available rental units, monthly maintenance fees, and neighborhood amenities.",
+            kor: "[🎭 롤플레이 Q11] (새 아파트 임대를 위해 부동산 중개인에게 전화해 매물, 관리비, 주변 환경에 대해 3~4가지 질문을 하세요.)",
+            modelAnswer: "Hello, I saw your online listing for studio apartments near the station. First, are there any furnished units available for immediate move-in? Second, how much is the security deposit and average monthly maintenance fee? Also, is parking included in the rent? Lastly, what are the nearby amenities like grocery stores and subway exits? I'd love to schedule an in-person viewing tomorrow."
+        },
+        q12: {
+            question: "You moved into the new apartment, but on your second day, the heating system stopped working and the bathroom drain is completely clogged. Call the property manager, report the urgent problems, and propose two solutions.",
+            kor: "[🎭 롤플레이 Q12] (입주 이틀 차에 난방이 꺼지고 배수구가 막혔습니다. 집주인/관리인에게 전화해 하자를 알리고 2가지 대안을 제시하세요.)",
+            modelAnswer: "Hi, this is DongHwa in apartment unit 402. I moved in just two days ago, but the boiler broke down completely in this freezing weather, and the bathroom drain is severely clogged with standing water! Here is what we must do: First, could you please send an emergency plumber and heating technician over this afternoon to fix both issues? Or second, if your regular contractor isn't available today, can I hire an emergency local repairman myself and deduct the repair costs from next month's rent? Please let me know immediately."
+        },
+        q13: {
+            question: "Have you ever experienced a sudden breakdown of facilities or appliances in your living space? Tell me what happened and how the issue was resolved.",
+            kor: "[🎭 롤플레이 Q13] (주거 공간에서 배관이나 보일러, 가전이 고장 나 곤란했던 실제 경험에 대해 말해 주세요.)",
+            modelAnswer: "During the peak of summer heat last July, the air conditioner in my living room suddenly began blowing hot air! The indoor temperature skyrocketed to over thirty degrees. I called customer service, but all repair technicians were fully booked for a week. Fortunately, a friendly local contractor came by the next morning and refilled the refrigerant gas, restoring crisp, cool air. It taught me to always service cooling systems before summer begins."
+        }
+    },
+
+    {
+        name: "친구에게 장비 빌리기 & 파손 후 보상 대안",
+        q11: {
+            question: "You have an important trip coming up and want to borrow a high-end digital camera from your friend. Call your friend and ask three or four questions about operating the camera, lenses, and battery life.",
+            kor: "[🎭 롤플레이 Q11] (여행을 위해 친구의 고급 디지털 카메라를 빌리려고 합니다. 친구에게 전화해 사용법, 렌즈, 배터리에 대해 3~4가지 질문을 하세요.)",
+            modelAnswer: "Hey Chris! How have you been? Listen, I'm heading on a road trip next week and I was wondering if I could borrow your mirrorless camera. First of all, would that be okay with you? Second, how many extra batteries do you have? Also, does it come with a versatile zoom lens suitable for landscape photos? Lastly, do you have a spare high-speed SD memory card I could borrow as well? I promise to take extraordinary care of it!"
+        },
+        q12: {
+            question: "While traveling, you accidentally dropped the borrowed camera on a rocky path, cracking the camera lens. Call your friend, explain the unfortunate accident, apologize sincerely, and offer two compensation solutions.",
+            kor: "[🎭 롤플레이 Q12] (여행 중 실수로 빌린 카메라를 떨어뜨려 렌즈가 깨졌습니다. 친구에게 전화해 진심으로 사과하고 2가지 보상 대안을 제시하세요.)",
+            modelAnswer: "Hey Chris, it's DongHwa. Look, I feel absolutely terrible, but an unfortunate accident happened earlier today. While taking landscape photos, the camera strap slipped and the camera fell onto a rock, cracking the front lens element! I am so deeply sorry. Here is how I will make this right: First, I can bring it straight to the official manufacturer service center as soon as I return and cover 100% of the repair costs. Or second, if the lens cannot be repaired to factory standard, I will buy you a brand-new authentic replacement lens immediately. Please let me know which option you prefer."
+        },
+        q13: {
+            question: "Tell me about a time when you damaged or lost an item belonging to someone else, or vice versa. How was the situation resolved?",
+            kor: "[🎭 롤플레이 Q13] (타인의 물건을 잃어버리거나 파손시켰던, 혹은 반대의 경우를 겪었던 실제 경험에 대해 말해 주세요.)",
+            modelAnswer: "Back in college, I borrowed a rare, out-of-print economics textbook from my senior classmate. While studying at a cafe, a cup of green tea spilled and stained several pages! I felt so guilty that I spent the whole evening searching second-hand bookstores online. I finally found a pristine collector's copy and presented it to him alongside his favorite coffee beans with a handwritten apology note. He appreciated my sincerity, and we became even closer friends."
+        }
     }
 ];
 
-// 🔥 Advanced Social Issues & Trends (Q14 ~ Q15)
 const ADVANCED_ISSUE_POOLS = [
     {
         name: "미디어 기술 트렌드 변화 & 저작권 이슈",
@@ -604,6 +1309,62 @@ const ADVANCED_ISSUE_POOLS = [
             question: "What are the current challenges or controversies governments and companies face when transitioning toward renewable energy and carbon neutrality?",
             kor: "[🔥 고난도 Q15] (정부나 기업이 신재생 에너지 전환 및 탄소 중립을 추진할 때 직면하는 주요 도전 과제나 쟁점은 무엇인가요?)",
             modelAnswer: "The biggest challenge is balancing the economic cost of building renewable infrastructure like solar and wind farms with maintaining grid stability. Additionally, industries face temporary financial strains while upgrading to zero-emission production standards."
+        }
+    },
+
+    {
+        name: "인공지능(AI) 혁신과 미래 일자리 패러다임 변화",
+        q14: {
+            question: "Compare how people worked in office environments ten or fifteen years ago with how people work today utilizing cutting-edge AI and digital automation tools. What are the key differences?",
+            kor: "[🔥 고난도 Q14] (10~15년 전의 사무 환경과 비교하여 오늘날 AI와 자동화 도구를 활용하는 업무 환경이 어떻게 달라졌는지 비교해 보세요.)",
+            modelAnswer: "A decade ago, white-collar workers spent countless hours manually sorting through spreadsheets, drafting formal emails, and conducting tedious document searches. Today, generative AI tools and intelligent cloud automation have revolutionized workplace productivity. Workers can now summarize lengthy research papers, generate presentation outlines, and analyze vast datasets in mere seconds, shifting the human focus from routine administrative tasks to creative strategic decision-making."
+        },
+        q15: {
+            question: "What are some of the primary concerns, ethical controversies, or societal challenges surrounding the rapid adoption of artificial intelligence in the modern workforce?",
+            kor: "[🔥 고난도 Q15] (현대 노동 시장에서 인공지능의 급속한 도입으로 인해 제기되는 주요 우려, 윤리적 논란 또는 사회적 과제는 무엇인가요?)",
+            modelAnswer: "The paramount social concern is technological unemployment, as AI automation threatens to displace entry-level cognitive roles across industries like customer service, software coding, and creative copywriting. Furthermore, ethical controversies regarding algorithmic bias, digital copyright infringement, and data privacy remain hotly debated. To mitigate these disruptions, governments and academic institutions must urgently overhaul educational curriculums to retrain workers for human-AI collaborative skills."
+        }
+    },
+
+    {
+        name: "부동산 시장 변화 & 청년층 주거 환경 문제",
+        q14: {
+            question: "How have the living arrangements and housing preferences of young adults today changed compared to the previous generation? Discuss the notable differences.",
+            kor: "[🔥 고난도 Q14] (기성세대와 비교하여 오늘날 청년들의 주거 형태나 선호도가 어떻게 변화했는지 비교해 보세요.)",
+            modelAnswer: "In the past generation, traditional nuclear families prioritized purchasing permanent single-family homes or large suburban apartments as primary lifelong investments. In contrast, today's young generation, driven by rising single-person households and soaring real estate prices, prefers living in compact, convenient studio apartments or shared co-living spaces located close to downtown subway stations, prioritizing immediate lifestyle mobility over property ownership."
+        },
+        q15: {
+            question: "What are the significant social challenges associated with soaring housing prices and rental burdens in major metropolitan cities, and what solutions are being discussed?",
+            kor: "[🔥 고난도 Q15] (대도시의 가파른 집값 상승과 높은 임대료 부담으로 인한 사회적 문제점과 어떤 해결책들이 논의되고 있나요?)",
+            modelAnswer: "Skyrocketing urban housing prices have created severe social inequality, preventing young professionals from accumulating wealth and contributing to record-low marriage and birth rates. As housing cost burdens escalate, societal debate centers on increasing public rental housing supplies, expanding low-interest mortgage subsidies for first-time buyers, and incentivizing corporate decentralization to develop balanced regional economies outside capital areas."
+        }
+    },
+
+    {
+        name: "현대인의 건강 관리 트렌드 & 웰니스 라이프스타일",
+        q14: {
+            question: "Compare the public's awareness and habits regarding physical fitness and dietary health today with that of the past. How has health management evolved?",
+            kor: "[🔥 고난도 Q14] (과거와 비교하여 오늘날 신체 건강과 식단 관리에 대한 대중의 인식과 습관이 어떻게 진화했는지 비교하세요.)",
+            modelAnswer: "In previous decades, health management was often reactive, focusing simply on curing illnesses at hospitals when symptoms appeared. Today, there is a seismic cultural shift toward proactive preventive wellness. People rigorously track their daily steps and sleep quality using smartwatches, participate in high-intensity functional training, and consciously consume low-sugar, plant-based, and protein-enriched organic diets."
+        },
+        q15: {
+            question: "Despite widespread interest in wellness, what are the modern health issues or psychological stresses people face today, and how should society address them?",
+            kor: "[🔥 고난도 Q15] (웰빙에 대한 관심에도 불구하고 현대인들이 겪는 건강 문제나 심리적 스트레스는 무엇이며 어떻게 대처해야 할까요?)",
+            modelAnswer: "Ironically, despite fitness booms, modern professionals suffer from chronic mental health crises, including digital burnout, sleep deprivation, and psychological anxiety exacerbated by constant social media comparisons. Moreover, sedentary desk lifestyles lead to severe postural and metabolic syndromes. Society must foster supportive workplace cultures that respect work-life boundaries, encourage digital detoxes, and provide accessible community mental health counseling."
+        }
+    },
+
+    {
+        name: "친환경 모빌리티 혁신 & 도시 교통 문제",
+        q14: {
+            question: "How have urban transportation systems and personal mobility options changed over the past decade? Compare how commuters travel today versus the past.",
+            kor: "[🔥 고난도 Q14] (지난 10년 동안 도시 교통망과 개인 이동 수단이 어떻게 변했는지 과거와 현재의 통근 방식을 비교해 보세요.)",
+            modelAnswer: "A decade ago, urban commuting was overwhelmingly divided between traditional gasoline automobiles and fixed public buses or subways. Today, the urban mobility ecosystem is vastly diversified. Commuters seamlessly integrate shared electric scooters, app-based public bicycles, and ride-hailing services for last-mile transit, while electric and hybrid vehicles have become commonplace on metropolitan streets."
+        },
+        q15: {
+            question: "What conflicts, safety controversies, or infrastructure challenges have emerged with the proliferation of electric vehicles and shared micro-mobility devices?",
+            kor: "[🔥 고난도 Q15] (전기차와 공유 전동킥보드 등 신규 모빌리티의 확산으로 어떤 안전 논란이나 인프라 갈등이 발생하고 있나요?)",
+            modelAnswer: "The rapid expansion of electric scooters has ignited severe pedestrian safety controversies due to careless sidewalk riding and haphazard parking that clutters sidewalks. Simultaneously, the surge in electric vehicles has exposed shortages in fast-charging infrastructure, battery fire safety concerns, and ethical dilemmas regarding lithium mining supply chains. Municipalities must urgently enact designated parking zones, enforce helmet regulations, and upgrade grid infrastructure to ensure safe coexistence."
         }
     }
 ];
