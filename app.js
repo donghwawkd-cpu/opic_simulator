@@ -1713,7 +1713,20 @@ class OpicSimulatorApp {
             mobileMicBtn: document.getElementById('mobile-mic-btn'),
             mobileTimerDisplay: document.getElementById('mobile-timer-display'),
             mobileEvalBtn: document.getElementById('mobile-eval-btn'),
-            mobileNextBtn: document.getElementById('mobile-next-btn')
+            mobileNextBtn: document.getElementById('mobile-next-btn'),
+
+            // v8.0 실전 시험 모드, 서베이 카운터 & 난이도 재조정 인터미션 UI
+            surveyCountPill: document.getElementById('survey-count-pill'),
+            surveyCheckedCount: document.getElementById('survey-checked-count'),
+            presetSurveyBtn: document.getElementById('preset-survey-btn'),
+            realExamModeToggle: document.getElementById('real-exam-mode-toggle'),
+            realExamBlindOverlay: document.getElementById('real-exam-blind-overlay'),
+            revealQuestionBtn: document.getElementById('reveal-question-btn'),
+            listenBtnLabel: document.getElementById('listen-btn-label'),
+            difficultyModal: document.getElementById('difficulty-modal'),
+            diffMaintainBtn: document.getElementById('diff-maintain-btn'),
+            diffUpgradeBtn: document.getElementById('diff-upgrade-btn'),
+            modalEvaWave: document.getElementById('modal-eva-wave')
         };
 
         this.ttsVolume = 0.3; // Default 30% quiet & comfortable volume
@@ -1721,6 +1734,13 @@ class OpicSimulatorApp {
         this.selectedVoiceURI = 'auto';
         this.availableVoices = [];
         this.isMuted = false;
+
+        // v8.0 실전 시험 모드 & 인터미션 상태
+        this.realExamMode = true;
+        this.replayCount = 0;
+        this.questionRevealed = false;
+        this.difficultyReassessed = false;
+
         this.init();
     }
 
@@ -1728,6 +1748,8 @@ class OpicSimulatorApp {
         this.bindEvents();
         this.initSpeechRecognition();
         this.initVoices();
+        this.initRealExamMode();
+        this.updateSurveyCounter();
     }
 
     bindEvents() {
@@ -1846,9 +1868,52 @@ class OpicSimulatorApp {
             if (input) {
                 input.addEventListener('change', () => {
                     cb.classList.toggle('checked', input.checked);
+                    this.updateSurveyCounter();
                 });
             }
         });
+
+        // v8.0 AL/IH 전략 조합 1클릭 자동 세팅 버튼
+        if (this.ui.presetSurveyBtn) {
+            this.ui.presetSurveyBtn.addEventListener('click', () => {
+                this.applyALPresetSurvey();
+            });
+        }
+
+        // v8.0 실전 시험 모드 (Blind Mask) 토글
+        if (this.ui.realExamModeToggle) {
+            this.ui.realExamModeToggle.addEventListener('change', () => {
+                this.realExamMode = this.ui.realExamModeToggle.checked;
+                this.updateRealExamOverlay();
+                this.updateListenButtonUI();
+            });
+        }
+
+        // v8.0 질문 텍스트 살짝 확인하기 버튼
+        if (this.ui.revealQuestionBtn) {
+            this.ui.revealQuestionBtn.addEventListener('click', () => {
+                this.questionRevealed = true;
+                this.updateRealExamOverlay();
+            });
+        }
+
+        // v8.0 7번 문항 직후 난이도 재조정 모달 버튼 (5-5 유지 vs 5-6 상향)
+        if (this.ui.diffMaintainBtn) {
+            this.ui.diffMaintainBtn.addEventListener('click', () => {
+                this.difficultyReassessed = true;
+                if (this.ui.difficultyModal) this.ui.difficultyModal.classList.add('hidden');
+                this.loadQuestion(7);
+            });
+        }
+
+        if (this.ui.diffUpgradeBtn) {
+            this.ui.diffUpgradeBtn.addEventListener('click', () => {
+                this.difficultyReassessed = true;
+                this.selectedLevel = "5-6";
+                if (this.ui.difficultyModal) this.ui.difficultyModal.classList.add('hidden');
+                this.loadQuestion(7);
+            });
+        }
 
         // Editable Transcript Area Text Change
         if (this.ui.transcriptInput) {
@@ -1867,6 +1932,7 @@ class OpicSimulatorApp {
         this.ui.startTestBtn.addEventListener('click', () => {
             this.generateRandomExamPaper();
             this.evaluations = []; // Clear previous evaluations
+            this.difficultyReassessed = false; // Reset intermission flag
             this.questionAnswers = Array(15).fill(null).map((_, i) => ({
                 questionIndex: i,
                 audioBlob: null,
@@ -1886,9 +1952,9 @@ class OpicSimulatorApp {
             this.loadQuestion(0);
         });
 
-        // Question TTS Play
+        // Question TTS Play (1/1 회 실전 규정 적용)
         this.ui.listenQBtn.addEventListener('click', () => {
-            this.speakQuestion();
+            this.handleReplayQuestion();
         });
 
         // Next Question Button - Auto-Save and commit answer
@@ -1897,6 +1963,12 @@ class OpicSimulatorApp {
                 this.stopRecording();
             }
             this.saveCurrentAnswer();
+
+            // 7번 문항(인덱스 6) 완료 직후 실전 난이도 재조정 인터미션 모달 호출
+            if (this.currentQuestionIndex === 6 && !this.difficultyReassessed) {
+                this.showDifficultyModal();
+                return;
+            }
 
             if (this.currentQuestionIndex < this.activeExamPaper.length - 1) {
                 this.loadQuestion(this.currentQuestionIndex + 1);
@@ -1921,7 +1993,7 @@ class OpicSimulatorApp {
         // Mobile Dedicated Sticky Bar Action Handlers
         if (this.ui.mobileListenBtn) {
             this.ui.mobileListenBtn.addEventListener('click', () => {
-                this.speakQuestion();
+                this.handleReplayQuestion();
             });
         }
         if (this.ui.mobileMicBtn) {
@@ -1938,6 +2010,35 @@ class OpicSimulatorApp {
             this.ui.mobileNextBtn.addEventListener('click', handleNextQuestion);
         }
 
+        // PC Keyboard Shortcuts (Space: Rec/Stop, R: Replay, N: Next Question)
+        window.addEventListener('keydown', (e) => {
+            // Only operate when simulator-section is active
+            const simSec = document.getElementById('simulator-section');
+            if (!simSec || !simSec.classList.contains('active')) return;
+
+            // Do not trigger shortcuts when typing inside text inputs
+            const activeEl = document.activeElement;
+            if (activeEl && (activeEl.tagName === 'INPUT' || activeEl.tagName === 'TEXTAREA' || activeEl.isContentEditable)) {
+                return;
+            }
+
+            // Do not trigger shortcuts while difficulty reassessment modal is open
+            if (this.ui.difficultyModal && !this.ui.difficultyModal.classList.contains('hidden')) {
+                return;
+            }
+
+            if (e.code === 'Space') {
+                e.preventDefault();
+                this.toggleRecording();
+            } else if (e.key === 'r' || e.key === 'R') {
+                e.preventDefault();
+                this.handleReplayQuestion();
+            } else if (e.key === 'n' || e.key === 'N') {
+                e.preventDefault();
+                handleNextQuestion();
+            }
+        });
+
         // Download All 15 Recordings as ZIP Button
         if (this.ui.downloadAllZipBtn) {
             this.ui.downloadAllZipBtn.addEventListener('click', () => {
@@ -1950,6 +2051,139 @@ class OpicSimulatorApp {
             this.ui.downloadAllTxtBtn.addEventListener('click', () => {
                 this.downloadAllTranscriptsTxt();
             });
+        }
+    }
+
+    // ========================================================
+    // v8.0 실전 시험 모드 (Real Exam Mode) & 인터미션 헬퍼 메서드
+    // ========================================================
+    initRealExamMode() {
+        if (this.ui.realExamModeToggle) {
+            this.realExamMode = this.ui.realExamModeToggle.checked;
+        }
+        this.updateRealExamOverlay();
+        this.updateListenButtonUI();
+    }
+
+    updateRealExamOverlay() {
+        if (!this.ui.realExamBlindOverlay) return;
+        if (this.realExamMode && !this.questionRevealed) {
+            this.ui.realExamBlindOverlay.classList.remove('hidden');
+        } else {
+            this.ui.realExamBlindOverlay.classList.add('hidden');
+        }
+    }
+
+    updateListenButtonUI() {
+        if (!this.ui.listenBtnLabel) return;
+        if (this.realExamMode) {
+            if (this.replayCount >= 1) {
+                this.ui.listenBtnLabel.textContent = "질문 청취 완료 (실전 규정)";
+                if (this.ui.listenQBtn) this.ui.listenQBtn.disabled = true;
+                if (this.ui.mobileListenBtn) this.ui.mobileListenBtn.disabled = true;
+            } else {
+                this.ui.listenBtnLabel.textContent = "질문 다시 듣기 (1/1회)";
+                if (this.ui.listenQBtn) this.ui.listenQBtn.disabled = false;
+                if (this.ui.mobileListenBtn) this.ui.mobileListenBtn.disabled = false;
+            }
+        } else {
+            this.ui.listenBtnLabel.textContent = "질문 다시 듣기 (무제한)";
+            if (this.ui.listenQBtn) this.ui.listenQBtn.disabled = false;
+            if (this.ui.mobileListenBtn) this.ui.mobileListenBtn.disabled = false;
+        }
+    }
+
+    handleReplayQuestion() {
+        if (this.realExamMode) {
+            if (this.replayCount >= 1) {
+                if (this.ui.recStatusText) {
+                    this.ui.recStatusText.innerHTML = '<span style="color:#f59e0b;font-weight:700;"><i class="fa-solid fa-circle-info"></i> 실전 시험 규정상 질문 다시 듣기는 1회만 허용됩니다.</span>';
+                }
+                return;
+            }
+            this.replayCount++;
+            this.speakQuestion();
+            this.updateListenButtonUI();
+        } else {
+            this.speakQuestion();
+        }
+    }
+
+    showDifficultyModal() {
+        if (!this.ui.difficultyModal) {
+            this.difficultyReassessed = true;
+            this.loadQuestion(7);
+            return;
+        }
+        if ('speechSynthesis' in window) {
+            try { window.speechSynthesis.cancel(); } catch(e) {}
+        }
+        this.ui.difficultyModal.classList.remove('hidden');
+    }
+
+    updateSurveyCounter() {
+        const checkedBoxes = document.querySelectorAll('.topic-checkbox input:checked');
+        const count = checkedBoxes.length;
+        if (this.ui.surveyCheckedCount) {
+            this.ui.surveyCheckedCount.textContent = count;
+        }
+        if (this.ui.surveyCountPill) {
+            if (count >= 12) {
+                this.ui.surveyCountPill.classList.remove('warning');
+                this.ui.surveyCountPill.innerHTML = `<i class="fa-solid fa-circle-check text-green"></i> 서베이 항목: <strong id="survey-checked-count">${count}</strong> / 12개 선택됨`;
+            } else {
+                this.ui.surveyCountPill.classList.add('warning');
+                this.ui.surveyCountPill.innerHTML = `<i class="fa-solid fa-circle-exclamation text-yellow"></i> 서베이 항목: <strong id="survey-checked-count">${count}</strong> / 12개 (최소 12개 필요)`;
+            }
+        }
+    }
+
+    applyALPresetSurvey() {
+        // 1. 일 경험 없음, 학생 아님, 아파트 홀로 거주
+        const occNone = document.querySelector('input[name="occ"][value="none"]');
+        if (occNone) {
+            occNone.checked = true;
+            document.querySelectorAll('input[name="occ"]').forEach(i => i.parentElement.classList.toggle('checked', i.checked));
+        }
+
+        const studentNo = document.querySelector('input[name="student"][value="no"]');
+        if (studentNo) {
+            studentNo.checked = true;
+            document.querySelectorAll('input[name="student"]').forEach(i => i.parentElement.classList.toggle('checked', i.checked));
+        }
+
+        const housingApt = document.querySelector('input[name="housing"][value="alone_apt"]');
+        if (housingApt) {
+            housingApt.checked = true;
+            document.querySelectorAll('input[name="housing"]').forEach(i => i.parentElement.classList.toggle('checked', i.checked));
+        }
+
+        // 2. High-synergy AL 12 topics:
+        // 영화(movie), TV(tv), 콘서트(concert), 공원(park), 카페(cafe), 음악(music),
+        // 조깅(jogging), 걷기(walking), 수영(swimming), 자전거(bicycle), 국내여행(dom_travel), 해외여행(overseas_travel)
+        const presetKeys = [
+            'movie', 'tv', 'concert', 'park', 'cafe', 'music',
+            'jogging', 'walking', 'swimming', 'bicycle', 'dom_travel', 'overseas_travel'
+        ];
+
+        document.querySelectorAll('.topic-checkbox').forEach(cb => {
+            const input = cb.querySelector('input');
+            if (input) {
+                const shouldCheck = presetKeys.includes(input.value);
+                input.checked = shouldCheck;
+                cb.classList.toggle('checked', shouldCheck);
+            }
+        });
+
+        this.updateSurveyCounter();
+
+        // Visual bounce animation for instant feedback
+        if (this.ui.surveyCountPill) {
+            this.ui.surveyCountPill.style.transition = 'transform 0.2s ease';
+            this.ui.surveyCountPill.style.transform = 'scale(1.08)';
+            setTimeout(() => {
+                if (this.ui.surveyCountPill) this.ui.surveyCountPill.style.transform = 'scale(1)';
+            }, 250);
         }
     }
 
@@ -2230,6 +2464,12 @@ class OpicSimulatorApp {
         this.ui.questionText.textContent = `"${qData.question}"`;
         this.ui.questionKor.textContent = qData.kor;
         this.ui.modelText.textContent = `"${qData.modelAnswer}"`;
+
+        // v8.0 실전 시험 모드 & 다시듣기 카운터 리셋
+        this.questionRevealed = false;
+        this.replayCount = 0;
+        this.updateRealExamOverlay();
+        this.updateListenButtonUI();
 
         // Reset Recording and timers for current question
         this.stopRecording();
@@ -2705,22 +2945,55 @@ class OpicSimulatorApp {
             vocabScore = Math.min(100, uniqueScore + ttrScore + advScore);
         }
 
-        // C. Tense & Syntax Score (20%)
+        // C. Tense, Grammar & Question-Type Scoring (20%)
         let tenseScore = 0;
+        const qText = (questionObj && questionObj.question) ? questionObj.question.toLowerCase() : "";
+        const qTag = (questionObj && questionObj.tag) ? questionObj.tag.toLowerCase() : "";
+        const qCat = (questionObj && questionObj.category) ? questionObj.category.toLowerCase() : "";
+
+        const isRoleplayQ = qTag.includes("롤플레이") || qCat.includes("롤플레이") || qText.includes("call") || qText.includes("ask") || qText.includes("situation") || qText.includes("pretend");
+        const isComparisonQ = !isRoleplayQ && (qTag.includes("비교") || qTag.includes("트렌드") || qText.includes("compare") || qText.includes("difference") || qText.includes("versus") || qText.includes("how has") || qText.includes("past and present"));
+        const isExperienceQ = !isRoleplayQ && !isComparisonQ && (qTag.includes("경험") || qText.includes("memorable") || qText.includes("past") || qText.includes("happened") || qText.includes("first time") || qText.includes("last time") || qText.includes("incident"));
+
+        const COMP_MARKERS = [
+            "compared to", "in contrast", "on the other hand", "whereas", "while",
+            "unlike", "used to", "back then", "nowadays", "different from",
+            "much more", "far more"
+        ];
+        const matchedComp = [];
+        COMP_MARKERS.forEach(m => {
+            if (lowerText.includes(m)) matchedComp.push(m);
+        });
+
+        const ROLEPLAY_MARKERS = [
+            "could you", "would you", "can you", "i was wondering", "is it possible",
+            "do you have", "how much", "the problem is", "unfortunately", "i'm afraid",
+            "how about", "instead", "give me a call", "let me know"
+        ];
+        const matchedRoleplay = [];
+        ROLEPLAY_MARKERS.forEach(m => {
+            if (lowerText.includes(m)) matchedRoleplay.push(m);
+        });
+
         if (wordCount === 0) {
             tenseScore = 0;
         } else {
-            const isExperienceQ = questionObj && (
-                questionObj.tag?.includes("경험") ||
-                questionObj.question?.toLowerCase().includes("memorable") ||
-                questionObj.question?.toLowerCase().includes("past") ||
-                questionObj.question?.toLowerCase().includes("happened")
-            );
-
-            let pastPts = Math.min(isExperienceQ ? 55 : 35, pastCount * (isExperienceQ ? 9 : 6));
             let conjPts = Math.min(35, matchedConj.length * 9);
             let modalPts = Math.min(25, modals.length * 6);
-            tenseScore = Math.min(100, pastPts + conjPts + modalPts + 10);
+            let corePts = 0;
+
+            if (isExperienceQ) {
+                corePts = Math.min(55, pastCount * 9);
+            } else if (isComparisonQ) {
+                const compPts = Math.min(35, matchedComp.length * 15);
+                corePts = Math.min(20, pastCount * 5) + compPts;
+            } else if (isRoleplayQ) {
+                const rpPts = Math.min(40, matchedRoleplay.length * 14);
+                corePts = Math.min(15, pastCount * 4) + rpPts;
+            } else {
+                corePts = Math.min(35, pastCount * 6);
+            }
+            tenseScore = Math.min(100, corePts + conjPts + modalPts + 10);
         }
 
         // D. Fluency & Fillers Score (20%)
@@ -2802,13 +3075,34 @@ class OpicSimulatorApp {
                 fbVocabMsg = `고유 어휘 ${uniqueWords}개. 동일 단어 반복을 줄이고 다채로운 표현을 사용하세요.`;
             }
 
-            // Tense
+            // Tense & Type-Specific Diagnostics
             const pastStr = pastCount > 0 ? `과거동사 ${pastCount}개` : `과거동사 미검출`;
             const conjStr = matchedConj.length > 0 ? `, 접속사 [${matchedConj.slice(0, 2).join(', ')}]` : '';
-            if (pastCount >= 4 || matchedConj.length >= 2) {
-                fbTenseMsg = `★ ${pastStr}${conjStr} 감지. 시제 일관성과 복합 문장 구성 능력이 우수합니다.`;
+
+            if (isExperienceQ) {
+                if (pastCount >= 4) {
+                    fbTenseMsg = `★ [과거 경험형] ${pastStr}${conjStr} 검출! 과거 시제 일관성(went, had, felt 등)이 매우 우수하며 AL 채점 기준에 부합합니다.`;
+                } else {
+                    fbTenseMsg = `⚠️ [과거 경험형] ${pastStr}${conjStr}. 과거 경험 문항은 발화의 70% 이상을 과거 시제로 유지해야 IH/AL 감점을 피할 수 있습니다.`;
+                }
+            } else if (isComparisonQ) {
+                if (matchedComp.length >= 1) {
+                    fbTenseMsg = `★ [비교/대조형] 대조 표현 [${matchedComp.slice(0, 2).join(', ')}] 활용! 과거와 현재의 차이점을 논리정연하게 대조했습니다.`;
+                } else {
+                    fbTenseMsg = `💡 [비교/대조형] ${pastStr}${conjStr}. "Compared to the past...", "I used to..., but now..." 같은 대조 구문을 활용하면 AL 취득에 유리합니다.`;
+                }
+            } else if (isRoleplayQ) {
+                if (matchedRoleplay.length >= 1) {
+                    fbTenseMsg = `★ [롤플레이형] 문제해결/질문 표현 [${matchedRoleplay.slice(0, 2).join(', ')}] 활용! 원어민 수준의 자연스러운 상황 대화체입니다.`;
+                } else {
+                    fbTenseMsg = `💡 [롤플레이형] ${pastStr}. 상대방에게 문의하는 공손한 의문문("Could you tell me...?")이나 대안 제시("How about...?")를 구사해 보세요.`;
+                }
             } else {
-                fbTenseMsg = `${pastStr}${conjStr}. 과거 경험 질문에서는 시제 일관성 유지(went, had, felt 등)가 핵심 채점 요소입니다.`;
+                if (pastCount >= 4 || matchedConj.length >= 2) {
+                    fbTenseMsg = `★ ${pastStr}${conjStr} 감지. 시제 일관성과 복합 문장 구성 능력이 우수합니다.`;
+                } else {
+                    fbTenseMsg = `${pastStr}${conjStr}. 명확한 주어-동사 호응과 다양한 접속사 활용이 권장됩니다.`;
+                }
             }
 
             // Fluency

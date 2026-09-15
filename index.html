@@ -10,7 +10,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>OPIC AI Master - 실전 오픽 음성 스피킹 시뮬레이터 v7.3</title>
+    <title>OPIC AI Master - 실전 오픽 음성 스피킹 시뮬레이터 v8.0</title>
     <meta name="description" content="AI 기반 OPIc 실전 음성 인터뷰 시뮬레이터. 실시간 음성 인식, AL/IH 등급 평가, 피드백 및 모범 답변 제공">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,7 +20,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- JSZip for Bulk Recording Download -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <link rel="stylesheet" href="style.css?v=7.3">
+    <link rel="stylesheet" href="style.css?v=8.0">
 </head>
 <body>
     <div class="app-background">
@@ -34,7 +34,7 @@
             <div class="logo">
                 <i class="fa-solid fa-microphone-lines logo-icon"></i>
                 <span class="logo-text">OPIC <span class="accent-text">AI Master</span></span>
-                <span class="version-badge" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; font-weight: 800;">v7.3 (시스템 무결성 전수점검 완료 · 안정화)</span>
+                <span class="version-badge" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; font-weight: 800;">v8.0 (실전 시험 모드 · 난이도 재조정 · AL 전략 서베이)</span>
             </div>
             <nav class="nav-links">
                 <button id="nav-survey" class="nav-btn active"><i class="fa-solid fa-sliders"></i> 백그라운드 서베이</button>
@@ -56,7 +56,17 @@
 
             <div class="survey-card glass-card">
                 <div class="card-header">
-                    <h2><i class="fa-solid fa-list-check"></i> OPIc 백그라운드 서베이 (Background Survey)</h2>
+                    <div class="header-title-wrap">
+                        <h2><i class="fa-solid fa-list-check"></i> OPIc 백그라운드 서베이 (Background Survey)</h2>
+                        <div class="survey-status-bar">
+                            <span class="survey-count-pill" id="survey-count-pill">
+                                <i class="fa-solid fa-circle-check text-green"></i> 서베이 항목: <strong id="survey-checked-count">12</strong> / 12개 선택됨
+                            </span>
+                            <button type="button" id="preset-survey-btn" class="preset-btn" title="오픽 AL/IH 수험생들이 가장 선호하는 빈출 핵심 항목을 한 번에 자동 세팅합니다.">
+                                <i class="fa-solid fa-wand-magic-sparkles"></i> ★ AL/IH 전략 조합 1클릭 세팅
+                            </button>
+                        </div>
+                    </div>
                     <span class="step-badge">1 / 2</span>
                 </div>
 
@@ -245,11 +255,14 @@
                     <!-- Action Controls -->
                     <div class="control-actions">
                         <button id="listen-q-btn" class="secondary-btn">
-                            <i class="fa-solid fa-volume-high"></i> 질문 다시 듣기 (Play)
+                            <i class="fa-solid fa-volume-high"></i> <span id="listen-btn-label">질문 다시 듣기 (1/1회)</span>
                         </button>
                         <button id="next-q-btn" class="secondary-btn">
                             다음 질문으로 <i class="fa-solid fa-arrow-right"></i>
                         </button>
+                        <div class="shortcut-hint-box">
+                            <i class="fa-regular fa-keyboard"></i> <kbd>Space</kbd> 녹음 &bull; <kbd>R</kbd> 다시듣기 &bull; <kbd>N</kbd> 다음
+                        </div>
                     </div>
                 </div>
 
@@ -258,15 +271,39 @@
                     <!-- Question Box -->
                     <div class="question-container">
                         <div class="question-header">
-                            <span class="badge-tag" id="q-tag">Question 1</span>
-                            <span class="target-time-tag"><i class="fa-regular fa-clock"></i> 권장 답변: 1분 ~ 1분 30초</span>
+                            <div class="header-left-group">
+                                <span class="badge-tag" id="q-tag">Question 1</span>
+                                <span class="target-time-tag"><i class="fa-regular fa-clock"></i> 권장 답변: 1분 ~ 1분 30초</span>
+                            </div>
+                            <div class="mode-toggle-group">
+                                <label class="mode-switch-container" title="실제 시험장과 동일하게 텍스트를 숨기고 오직 귀로만 듣고 답변하는 실전 모드입니다.">
+                                    <input type="checkbox" id="real-exam-mode-toggle" checked>
+                                    <span class="mode-switch-slider"></span>
+                                    <span class="mode-switch-text"><i class="fa-solid fa-shield-halved text-green"></i> 실전 시험 모드</span>
+                                </label>
+                            </div>
                         </div>
-                        <h2 class="question-text" id="question-text">
-                            "Let's start the interview. Please tell me a little bit about yourself."
-                        </h2>
-                        <p class="question-kor" id="question-kor">
-                            (인터뷰를 시작합니다. 자기소개를 간단히 해주세요.)
-                        </p>
+
+                        <!-- Question Text & Real Exam Blind Mask -->
+                        <div class="question-display-wrap" id="question-display-wrap">
+                            <h2 class="question-text" id="question-text">
+                                "Let's start the interview. Please tell me a little bit about yourself."
+                            </h2>
+                            <p class="question-kor" id="question-kor">
+                                (인터뷰를 시작합니다. 자기소개를 간단히 해주세요.)
+                            </p>
+                            <!-- Real Exam Mode Blind Overlay -->
+                            <div class="real-exam-blind-overlay" id="real-exam-blind-overlay">
+                                <div class="blind-inner">
+                                    <i class="fa-solid fa-headphones-simple blind-headphone-icon"></i>
+                                    <span class="blind-title">실제 시험장 모드 적용 중 (질문 텍스트 비공개)</span>
+                                    <span class="blind-desc">에바의 질문 음성을 집중해서 듣고 마이크 버튼을 눌러 답변하세요.</span>
+                                    <button type="button" class="reveal-question-btn" id="reveal-question-btn">
+                                        <i class="fa-solid fa-eye"></i> 질문 텍스트 살짝 확인하기
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
 
                         <!-- [1안] Inline TTS Voice, Speed & Volume Bar -->
                         <div class="tts-volume-inline-box">
@@ -491,7 +528,32 @@
 
     </main>
 
+    <!-- Difficulty Reassessment Modal (7번 문항 직후 실전 난이도 재조정 인터미션) -->
+    <div id="difficulty-modal" class="modal-backdrop hidden">
+        <div class="difficulty-modal-card glass-card">
+            <div class="modal-avatar-box">
+                <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&auto=format&fit=crop&q=80" alt="EVA Interviewer" class="modal-avatar-img">
+                <div class="speaking-wave" id="modal-eva-wave"></div>
+            </div>
+            <h3 class="diff-modal-title">난이도 재조정 (Difficulty Reassessment)</h3>
+            <p class="diff-modal-desc">
+                전반부 7개 문항이 완료되었습니다.<br>
+                <strong>후반부(8~15번) 질문의 난이도를 선택해 주세요.</strong>
+            </p>
+            <div class="diff-options-container">
+                <button type="button" class="diff-choice-btn" id="diff-maintain-btn">
+                    <div class="diff-btn-head"><i class="fa-solid fa-circle-check text-blue"></i> 비슷한 수준의 질문 유지 (5-5 단계)</div>
+                    <div class="diff-btn-sub">동일한 난이도로 안정적인 발화를 이어가며 IH/IM3 등급을 확실하게 공략합니다.</div>
+                </button>
+                <button type="button" class="diff-choice-btn diff-upgrade" id="diff-upgrade-btn">
+                    <div class="diff-btn-head"><i class="fa-solid fa-fire text-yellow"></i> 더 어려운 질문 도전 (5-6 상향) ★ 권장</div>
+                    <div class="diff-sub">심도 있는 14~15번 사회적 트렌드·이슈를 통해 최고 등급 AL 취득에 도전합니다.</div>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Scripts -->
-    <script src="app.js?v=7.3"></script>
+    <script src="app.js?v=8.0"></script>
 </body>
 </html>
