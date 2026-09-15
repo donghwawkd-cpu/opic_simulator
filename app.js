@@ -3595,7 +3595,28 @@ class OpicSimulatorApp {
     }
 }
 
-// Instantiate App
+// Instantiate App & Handle Update Toast
 document.addEventListener('DOMContentLoaded', () => {
     window.opicApp = new OpicSimulatorApp();
+
+    // v8.1.1 Update Toast Notification handler
+    const toast = document.getElementById('update-toast');
+    const closeBtn = document.getElementById('toast-close-btn');
+    if (toast) {
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => {
+                toast.classList.add('hide');
+                setTimeout(() => toast.remove(), 400);
+            });
+        }
+        // Automatically dismiss toast after 7 seconds
+        setTimeout(() => {
+            if (toast && !toast.classList.contains('hide')) {
+                toast.classList.add('hide');
+                setTimeout(() => toast.remove(), 400);
+            }
+        }, 7000);
+    }
+
+    console.log("🚀 OPIc AI Master Simulator v8.1.1 (Survey Floating Dock & Responsive Capsule) loaded successfully!");
 });

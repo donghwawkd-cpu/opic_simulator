@@ -36,7 +36,84 @@ body {
     color: var(--text-main);
     font-family: var(--font-main);
     min-height: 100vh;
-    overflow-x: hidden;
+    overflow-x: clip;
+}
+
+/* Update Verification Notice Toast (v8.1 최신 배포 즉시 확인 배너) */
+.update-toast {
+    position: fixed;
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    background: rgba(15, 23, 42, 0.95);
+    border: 1px solid rgba(16, 185, 129, 0.6);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(16, 185, 129, 0.25);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    padding: 10px 18px;
+    border-radius: 9999px;
+    color: #F8FAFC;
+    font-size: 13px;
+    font-weight: 500;
+    width: max-content;
+    max-width: min(94vw, 680px);
+    animation: toastSlideDown 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.update-toast.hide {
+    opacity: 0;
+    transform: translate(-50%, -20px);
+    pointer-events: none;
+}
+
+@keyframes toastSlideDown {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -30px);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
+}
+
+.toast-content {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.toast-tag {
+    background: linear-gradient(135deg, #10B981 0%, #059669 100%);
+    color: #FFFFFF;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 3px 8px;
+    border-radius: 20px;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+.toast-close-btn {
+    background: none;
+    border: none;
+    color: #94A3B8;
+    font-size: 20px;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0 4px;
+    transition: color 0.2s ease;
+}
+
+.toast-close-btn:hover {
+    color: #FFFFFF;
 }
 
 /* Background Glow Orbs */
@@ -183,7 +260,7 @@ body {
 
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
+    to { opacity: 1; transform: none; }
 }
 
 /* Hero Section */
@@ -1861,9 +1938,96 @@ body {
     border-color: rgba(255, 255, 255, 0.2);
 }
 
-@media (max-width: 1319px) {
+/* Responsive Survey Floating Dock: On screens < 1180px, morph into bottom floating action capsule */
+@media (max-width: 1179px) {
     .survey-floating-dock {
-        display: none !important;
+        position: fixed;
+        bottom: 18px;
+        top: auto;
+        right: auto;
+        left: 50%;
+        transform: translateX(-50%);
+        width: min(94vw, 560px);
+        z-index: 950;
+        animation: dockSlideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes dockSlideUp {
+        0% { opacity: 0; transform: translate(-50%, 25px); }
+        100% { opacity: 1; transform: translate(-50%, 0); }
+    }
+
+    .dock-inner {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 18px;
+        border-radius: 9999px;
+        box-shadow: 0 12px 36px rgba(0, 0, 0, 0.75), 0 0 20px rgba(99, 102, 241, 0.35);
+        gap: 12px;
+        background: rgba(15, 23, 42, 0.96);
+    }
+
+    .dock-header {
+        display: none;
+    }
+
+    .dock-count-display {
+        margin: 0;
+        gap: 3px;
+        align-items: baseline;
+    }
+
+    .dock-count-num {
+        font-size: 24px;
+    }
+
+    .dock-count-target {
+        font-size: 13px;
+    }
+
+    .dock-status-msg {
+        font-size: 11px;
+        padding: 4px 10px;
+        white-space: nowrap;
+    }
+
+    .dock-btn-group {
+        flex-direction: row;
+        gap: 8px;
+        margin: 0;
+    }
+
+    .dock-action-btn {
+        padding: 7px 12px;
+        font-size: 11px;
+        white-space: nowrap;
+        border-radius: 20px;
+    }
+
+    .dock-scroll-controls {
+        display: none;
+    }
+}
+
+@media (max-width: 640px) {
+    .survey-floating-dock {
+        bottom: 12px;
+        width: 96vw;
+    }
+
+    .dock-inner {
+        padding: 8px 12px;
+        gap: 8px;
+    }
+
+    .dock-action-btn.preset {
+        display: none;
+    }
+
+    .dock-action-btn.start {
+        padding: 8px 14px;
+        font-size: 12px;
     }
 }
 

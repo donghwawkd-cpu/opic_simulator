@@ -17,12 +17,24 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@400;600;700;800&display=swap" rel="stylesheet">
     <!-- FontAwesome Icons -->
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- JSZip for Bulk Recording Download -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <link rel="stylesheet" href="style.css?v=8.1">
+    <link rel="stylesheet" href="style.css?v=8.1.1">
 </head>
 <body>
+    <!-- Update Verification Notice Toast (업데이트 즉시 확인 배너) -->
+    <div id="update-toast" class="update-toast">
+        <div class="toast-content">
+            <span class="toast-tag">v8.1 최신 배포</span>
+            <span><i class="fa-solid fa-circle-check text-green"></i> <strong>서베이 12개 실시간 플로팅독 &amp; 스크롤 고정</strong>이 성공적으로 반영되었습니다!</span>
+        </div>
+        <button type="button" class="toast-close-btn" id="toast-close-btn" aria-label="닫기">&times;</button>
+    </div>
+
     <div class="app-background">
         <div class="glow-orb orb-1"></div>
         <div class="glow-orb orb-2"></div>
@@ -34,7 +46,7 @@
             <div class="logo">
                 <i class="fa-solid fa-microphone-lines logo-icon"></i>
                 <span class="logo-text">OPIC <span class="accent-text">AI Master</span></span>
-                <span class="version-badge" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; font-weight: 800;">v8.0 (실전 시험 모드 · 난이도 재조정 · AL 전략 서베이)</span>
+                <span class="version-badge" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; font-weight: 800;"><i class="fa-solid fa-sparkles"></i> v8.1 (서베이 실시간 플로팅독 &amp; 스크롤 고정 적용됨)</span>
             </div>
             <nav class="nav-links">
                 <button id="nav-survey" class="nav-btn active"><i class="fa-solid fa-sliders"></i> 백그라운드 서베이</button>
@@ -588,6 +600,6 @@
     </div>
 
     <!-- Scripts -->
-    <script src="app.js?v=8.1"></script>
+    <script src="app.js?v=8.1.1"></script>
 </body>
 </html>
