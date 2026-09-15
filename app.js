@@ -431,17 +431,17 @@ const SURVEY_TOPICS = {
         q1: {
             question: "You indicated in the survey that you enjoy going to cafes. Describe your favorite cafe that you often visit. What does it look like, and why do you like going there?",
             kor: "(카페 가기를 선택하셨습니다. 자주 방문하는 좋아하는 카페를 묘사해 주세요. 인테리어는 어떻고 왜 그곳을 좋아하나요?)",
-            modelAnswer: "Well, my absolute favorite cafe is a cozy independent coffee shop located right near my neighborhood. It has warm wooden interior, large floor-to-ceiling windows, and soft jazz music playing in the background. The barista roasts single-origin beans in-house, and their signature iced vanilla latte is simply out of this world. It's my go-to spot whenever I need to read or clear my mind."
+            modelAnswer: "Well, my absolute go-to spot is a cozy independent coffee shop located just a five-minute walk from my apartment. The moment you walk in, you're greeted by the rich aroma of freshly roasted coffee beans and mellow acoustic music. It features warm wooden furniture, exposed brick walls, and floor-to-ceiling windows that let in plenty of natural sunlight. The baristas roast single-origin beans in-house, and their signature iced vanilla latte with oat milk is simply heavenly. It has comfortable ergonomic seating with plenty of power outlets, making it the perfect sanctuary for me to read, study, or just unwind after a busy day."
         },
         q2: {
-            question: "What is your typical routine when you visit a cafe? From the moment you enter until you leave, what do you usually do there?",
-            kor: "(카페에 방문했을 때의 일반적인 루틴은 어떤가요? 들어갈 때부터 나갈 때까지 주로 무엇을 하나요?)",
-            modelAnswer: "When I step into the cafe, I first scan the room for a comfortable table near an electrical outlet. Then, I head straight to the counter to place my order, usually a black Americano with a slice of carrot cake. While waiting for my drink, I set up my laptop or open a book. I usually spend about two hours studying, listening to music, or people-watching before heading home."
+            question: "Tell me about the very first time you went to a coffee shop. How old were you, who did you go with, what did you drink, and what was that experience like?",
+            kor: "(처음으로 커피숍에 갔던 기억에 대해 말해 주세요. 몇 살이었고, 누구와 함께 갔으며, 무엇을 마셨나요? 그 경험은 어땠나요?)",
+            modelAnswer: "If I recall correctly, the very first time I visited a modern coffee shop was back when I was in middle school, around fourteen years old. My older sister took me to a newly opened franchise cafe near our downtown station. Back then, I wasn't used to drinking bitter black coffee, so my sister ordered me an iced caramel frappuccino topped with fluffy whipped cream and sweet caramel drizzle. I was completely mesmerized by the aroma of freshly ground espresso, the stylish modern interior, and the relaxing jazz background music. It felt so grown-up and chic compared to the traditional bakeries I was used to. That memorable afternoon sparked my lifelong fascination with cafe culture."
         },
         q3: {
-            question: "Tell me about a memorable or unexpected incident that occurred while you were at a cafe. What happened, and how did you handle the situation?",
-            kor: "(카페에서 일어났던 기억에 남는 특별한 사건이나 뜻밖의 일에 대해 말해 주세요. 어떤 일이 있었고 어떻게 대처했나요?)",
-            modelAnswer: "A memorable incident happened last winter. I was sitting by the window working on an important project report when someone accidentally bumped into my small table and knocked over my iced coffee! Thankfully, the coffee spilled away from my laptop onto my notebook. The person apologized profusely and immediately bought me a fresh drink and napkins. It was a close call, but their genuine kindness turned a potential disaster into a pleasant memory."
+            question: "How have coffee shops and coffee culture in your country changed compared to when you were young or in the past? What are the major differences between cafes back then and cafes today?",
+            kor: "(어렸을 때 혹은 과거와 비교하여 오늘날의 커피숍과 커피 문화가 어떻게 변화했나요? 과거의 카페와 오늘날 카페의 주요 차이점은 무엇인가요?)",
+            modelAnswer: "Looking back, coffee shops in my country have undergone an astonishing transformation over the past two decades. When I was young, coffee was mostly consumed as instant powdered mix with sugar and creamer, and traditional old-fashioned tea houses called 'Dabang' were primarily social spots for older businessmen. In stark contrast, today coffee culture is an indispensable staple of daily life. Specialty coffee shops and boutique roasteries are ubiquitous on virtually every single street corner. Furthermore, the functional role of cafes has evolved dramatically; they are no longer just beverage spots, but multi-functional community hubs. People spend hours studying, telecommuting with laptops, and catching up with friends. With the rise of single-origin pour-over brews, non-dairy oat milk options, and artisanal bakery desserts, our cafe culture has become remarkably sophisticated and diverse."
         }
     },
 
@@ -1365,6 +1365,20 @@ const ADVANCED_ISSUE_POOLS = [
             question: "What conflicts, safety controversies, or infrastructure challenges have emerged with the proliferation of electric vehicles and shared micro-mobility devices?",
             kor: "[🔥 고난도 Q15] (전기차와 공유 전동킥보드 등 신규 모빌리티의 확산으로 어떤 안전 논란이나 인프라 갈등이 발생하고 있나요?)",
             modelAnswer: "The rapid expansion of electric scooters has ignited severe pedestrian safety controversies due to careless sidewalk riding and haphazard parking that clutters sidewalks. Simultaneously, the surge in electric vehicles has exposed shortages in fast-charging infrastructure, battery fire safety concerns, and ethical dilemmas regarding lithium mining supply chains. Municipalities must urgently enact designated parking zones, enforce helmet regulations, and upgrade grid infrastructure to ensure safe coexistence."
+        }
+    },
+
+    {
+        name: "커피 산업 트렌드 변화 & 카페 일회용품/자영업 이슈",
+        q14: {
+            question: "How has the coffee culture and coffee shop industry changed over the past decade compared to the past? Discuss the notable differences in consumer habits and cafe concepts.",
+            kor: "[🔥 고난도 Q14] (과거와 비교하여 지난 10년 동안 커피 문화와 카페 산업이 어떻게 변화했는지 소비자 습관과 카페 트렌드의 차이점을 비교해 보세요.)",
+            modelAnswer: "A decade or two ago, coffee consumption was largely dominated by convenient instant coffee mixes or commercial franchises offering standard drip coffee. Today, consumer tastes have matured remarkably. People actively seek out premium single-origin beans, cold brews, and specialized brewing methods like pour-over. Furthermore, cafes have evolved from simple beverage vendors into all-in-one lifestyle spaces where people study, work remotely, and hold casual business meetings. The sheer explosion of high-end boutique roasteries reflects this elevated cultural appreciation for specialty coffee."
+        },
+        q15: {
+            question: "What are some of the current environmental challenges, government regulations, or economic issues that coffee shops and consumers are facing today?",
+            kor: "[🔥 고난도 Q15] (오늘날 커피숍과 소비자들이 직면하고 있는 환경 규제, 일회용품 문제 또는 자영업 경제적 이슈는 무엇인가요?)",
+            modelAnswer: "One of the most pressing challenges today revolves around environmental sustainability. With millions of takeout coffees sold daily, the disposal of single-use plastic cups and straws has created severe environmental strain. In response, governments have introduced strict regulations banning single-use plastics for dine-in customers and encouraging reusable tumblers. On top of that, cafe owners face intense market saturation, soaring coffee bean import costs, and skyrocketing commercial rents, leading to fierce competition and tightening profit margins across the industry."
         }
     }
 ];
