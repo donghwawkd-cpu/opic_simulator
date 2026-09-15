@@ -505,23 +505,243 @@ const SURVEY_TOPICS = {
         }
     },
 
-    // 운동: 농구 / 배드민턴 (basketball)
+    // 운동: 농구 (basketball)
     basketball: {
-        name: "운동: 농구 / 배드민턴",
+        name: "운동: 농구",
         q1: {
-            question: "You indicated playing sports like basketball or badminton. Describe the court or sports facility where you usually play.",
-            kor: "(농구나 배드민턴 등 구기 운동을 선택하셨습니다. 주로 운동하는 코트나 체육 시설을 묘사해 주세요.)",
-            modelAnswer: "I regularly play basketball at a well-maintained outdoor court inside a riverside public park. It features shock-absorbing rubber flooring, regulation-size fiberglass backboards, and bright floodlights that allow us to play late into the evening. The cool river breeze makes playing there on breezy autumn afternoons incredibly refreshing."
+            question: "You indicated playing basketball in your survey. Describe the basketball court or gym where you usually play. What does it look like?",
+            kor: "(농구를 선택하셨습니다. 주로 농구를 하는 코트나 체육관을 묘사해 주세요. 어떤 시설이 갖추어져 있나요?)",
+            modelAnswer: "I regularly play basketball at an indoor hardwood gym near our community center. It has standard regulation glass backboards, pristine spring-loaded breakaway rims, and smooth maple flooring that provides excellent shoe grip. It's fully climate-controlled, so we can play comfortably year-round regardless of outside weather."
         },
         q2: {
-            question: "Who do you usually play sports with, and what is your typical game routine before and after playing?",
-            kor: "(주로 누구와 운동하며, 경기 전후의 전형적인 루틴은 어떤가요?)",
-            modelAnswer: "I usually play pickup games with my high school friends and fellow neighborhood sports enthusiasts on weekend mornings. Before jumping into a game, we spend twenty minutes stretching our calves and practicing three-point shooting drills. After an intense two-hour match, we always grab cold sports drinks and head to a nearby diner for a big protein-packed brunch."
+            question: "Who do you usually play basketball with, and what is your typical routine before and after playing?",
+            kor: "(주로 누구와 농구를 하며, 경기 전후의 전형적인 루틴은 어떤가요?)",
+            modelAnswer: "I usually play pickup games with my friends and fellow hoopers every Saturday morning. We spend twenty minutes doing shooting drills from around the three-point arc and stretching our ankles. After several full-court games, we drink plenty of iced electrolyte water and analyze our game highlights over a hearty lunch."
         },
         q3: {
-            question: "Tell me about a memorable sports match you played in. What was the score, and why was the match so thrilling?",
-            kor: "(직접 뛰었던 기억에 남는 스포츠 경기에 대해 말해 주세요. 스코어는 어땠고 왜 그토록 흥미진진했나요?)",
-            modelAnswer: "Last summer, our neighborhood team played a friendly tournament final match. We were trailing by two points with only seven seconds left on the game clock! My teammate passed me the ball at the top of the key. I faked a drive and took a buzzer-beater three-point shot. When the ball swished through the net, everyone cheered hysterically. It felt like a Hollywood sports movie ending!"
+            question: "Tell me about a memorable basketball match you played in. What was the score, and why was the match so thrilling?",
+            kor: "(직접 뛰었던 기억에 남는 농구 경기에 대해 말해 주세요. 스코어는 어땠고 왜 그토록 흥미진진했나요?)",
+            modelAnswer: "Last winter, our local pickup squad played in a friendly weekend tournament. We were trailing by two points with only five seconds remaining on the clock! My teammate drove into the lane and kicked the ball out to me in the corner. I released a three-pointer as the buzzer sounded, and it swished cleanly through the hoop! That buzzer-beater victory gave all of us chills."
+        }
+    },
+
+    // 운동: 축구 (soccer)
+    soccer: {
+        name: "운동: 축구",
+        q1: {
+            question: "You indicated in your survey that you play soccer. Describe the soccer field or stadium where you usually play. What does it look like, and what facilities are available?",
+            kor: "(축구를 선택하셨습니다. 주로 축구를 하는 축구장이나 구장을 묘사해 주세요. 어떻게 생겼고 어떤 시설이 있나요?)",
+            modelAnswer: "I usually play soccer at a local sports park that has a full-sized artificial turf field. The pitch is surrounded by professional running tracks, covered spectator stands, and bright LED floodlights for evening matches. The turf is well-cushioned with rubber pellets, which minimizes the risk of knee injuries during fast sprints and sudden turns."
+        },
+        q2: {
+            question: "Who do you usually play soccer with, and what is your typical routine before and after a soccer match?",
+            kor: "(주로 누구와 축구를 하며, 경기 전후의 일반적인 루틴은 어떤가요?)",
+            modelAnswer: "I play on a weekend amateur soccer club with my college alumni and neighborhood friends. We arrive 30 minutes early to warm up with short-passing drills, agility ladder exercises, and dynamic groin stretches. After playing two intense 45-minute halves, we do cool-down stretches, rehydrate with cold sports drinks, and head out to eat barbecue together."
+        },
+        q3: {
+            question: "Tell me about a memorable or exciting soccer match you participated in or watched. What happened, and why was it so memorable?",
+            kor: "(직접 뛰었거나 관람했던 기억에 남는 축구 경기에 대해 말해 주세요. 어떤 일이 있었고 왜 기억에 남나요?)",
+            modelAnswer: "Last spring, our club reached the final of a local community tournament. We were trailing 1-0 until the final minute of stoppage time! From a corner kick, I managed to head the ball into the top corner of the net to equalize. We eventually won the championship in a dramatic penalty shootout, and celebrating with my teammates was an unforgettable rush."
+        }
+    },
+
+    // 운동: 야구 / 소프트볼 (baseball)
+    baseball: {
+        name: "운동: 야구 / 소프트볼",
+        q1: {
+            question: "You indicated that you enjoy baseball in your survey. Describe the baseball field or stadium you usually visit. What is the atmosphere like?",
+            kor: "(야구를 선택하셨습니다. 자주 방문하는 야구장이나 연습장을 설명해 주세요. 분위기는 어떤가요?)",
+            modelAnswer: "I frequently visit both an amateur baseball diamond at a public sports complex and our city's professional baseball stadium. The amateur field has well-raked dirt infields, expansive green outfields, and protective batting cages. The atmosphere during weekend games is always buzzing with team camaraderie and enthusiastic cheers from family and friends."
+        },
+        q2: {
+            question: "What equipment or gear do you need when you play baseball, and what do you do to prepare for a game?",
+            kor: "(야구를 할 때 어떤 장비가 필요하며, 경기를 준비할 때 무엇을 하나요?)",
+            modelAnswer: "To play safely, I gear up with a genuine leather fielding glove, molded cleats, a fitted batting helmet, and protective batting gloves. Before every game, I spend plenty of time warming up my shoulder and elbow joints with long-toss throwing drills, followed by taking batting practice in the cages to dial in my swing timing."
+        },
+        q3: {
+            question: "Tell me about a memorable baseball game you played in or watched live. What was the dramatic highlight of that game?",
+            kor: "(직접 뛰었거나 직관했던 기억에 남는 야구 경기에 대해 이야기해 주세요. 어떤 극적인 하이라이트가 있었나요?)",
+            modelAnswer: "Last summer, I watched a thrilling playoff baseball game at the stadium. It was the bottom of the ninth inning with two outs, bases loaded, and our home team down by two runs. The batter hit a walk-off grand slam right over the center-field fence! The entire stadium exploded with fireworks and thunderous roaring cheers. It was pure cinematic magic."
+        }
+    },
+
+    // 운동: 배구 (volleyball)
+    volleyball: {
+        name: "운동: 배구",
+        q1: {
+            question: "You indicated playing volleyball in the survey. Describe the volleyball court or gymnasium where you usually play. What does it look like?",
+            kor: "(배구를 선택하셨습니다. 주로 배구를 하는 코트나 체육관을 설명해 주세요. 어떤 모습인가요?)",
+            modelAnswer: "I play volleyball at an indoor sports gymnasium equipped with regulation-height net systems, clean wooden sprung flooring, and padded boundary poles for safety. The gym has high ceilings that allow high aerial sets and powerful spikes without obstruction, making it a fantastic venue for fast-paced rallies."
+        },
+        q2: {
+            question: "What position do you play in volleyball, and what is your routine when practicing with your teammates?",
+            kor: "(배구에서 어떤 포지션을 맡고 있으며, 동료들과 연습할 때 루틴은 어떤가요?)",
+            modelAnswer: "I usually play as an outside hitter or defensive libero. Our training session starts with dynamic pepper drills, where pairs practice bumping, setting, and spiking in continuous rhythm. Then, we rotate through serve-receive formations and practice coordinated team blocking at the net to build defensive chemistry."
+        },
+        q3: {
+            question: "Tell me about a memorable volleyball match you played. What was the most intense rally or turning point of the game?",
+            kor: "(기억에 남는 배구 경기에 대해 말해 주세요. 가장 치열했던 랠리나 경기의 전환점은 무엇이었나요?)",
+            modelAnswer: "A memorable match happened during a community club final that went into a fifth-set deuce! During a marathon rally, our setter made a diving pancake save just inches above the floor, and I spiked the ball down the opposing team's sideline for the match point. The sheer intensity and teamwork required in that single rally was breathtaking."
+        }
+    },
+
+    // 운동: 테니스 (tennis)
+    tennis: {
+        name: "운동: 테니스",
+        q1: {
+            question: "You indicated playing tennis in your survey. Describe the tennis court where you usually play. What surface is it, and what are its features?",
+            kor: "(테니스를 선택하셨습니다. 주로 테니스를 치는 코트를 묘사해 주세요. 어떤 코트 표면이고 어떤 특징이 있나요?)",
+            modelAnswer: "I regularly play on hard courts at a municipal tennis club located in a scenic park. The club has six well-maintained acrylic surface courts, high perimeter fencing with windbreaks, and bright floodlights for evening sessions. The court surface provides a consistent medium-fast bounce that suits my baseline aggressive playing style."
+        },
+        q2: {
+            question: "What gear or equipment do you use for tennis, and what is your typical warm-up routine before a match?",
+            kor: "(테니스를 칠 때 어떤 장비를 사용하며, 경기 전 준비 운동 루틴은 어떤가요?)",
+            modelAnswer: "I play with a 300-gram graphite composite racket strung at 52 pounds of tension, and I wear specialized non-marking tennis shoes with strong lateral ankle support. Before playing, I warm up with short-court mini-tennis to tune my touch, followed by baseline groundstroke rallies and practicing my first and second serves."
+        },
+        q3: {
+            question: "Tell me about a memorable tennis match you played against a tough opponent. How did the match unfold?",
+            kor: "(까다로운 상대와 치렀던 기억에 남는 테니스 경기에 대해 말해 주세요. 경기가 어떻게 진행되었나요?)",
+            modelAnswer: "Last autumn, I played a grueling three-set match against a seasoned veteran club player. His heavy slices and drop shots tested my stamina to the absolute limit. After losing the first set, I adjusted my strategy to play aggressively towards his backhand. Coming back from behind to win the tiebreaker in the third set taught me mental resilience under pressure."
+        }
+    },
+
+    // 운동: 배드민턴 (badminton)
+    badminton: {
+        name: "운동: 배드민턴",
+        q1: {
+            question: "You indicated playing badminton in your survey. Describe the badminton court or facility where you usually play. What is it like?",
+            kor: "(배드민턴을 선택하셨습니다. 주로 배드민턴을 치는 코트나 체육 시설을 묘사해 주세요.)",
+            modelAnswer: "I play at an indoor dedicated badminton center with eight professional green vinyl courts. Since badminton is sensitive to air currents, the facility has indirect ventilation with zero drafts. The bright anti-glare LED lighting allows us to track the high-speed shuttlecock clearly from any angle."
+        },
+        q2: {
+            question: "Who do you play badminton with, and what is your typical routine during a practice session?",
+            kor: "(주로 누구와 배드민턴을 치며, 연습할 때의 일반적인 루틴은 어떤가요?)",
+            modelAnswer: "I play doubles matches with my coworkers and club members every Tuesday and Thursday evening. We start by hitting high clears and drop shots to loosen our wrists and shoulders. Then, we practice rapid front-court net kills and drive rallies before competing in best-of-three 21-point competitive games."
+        },
+        q3: {
+            question: "Tell me about a memorable badminton rally or match you experienced. What happened, and why was it unforgettable?",
+            kor: "(기억에 남는 배드민턴 랠리나 경기에 대해 이야기해 주세요. 어떤 일이 있었고 왜 잊지 못할 경험인가요?)",
+            modelAnswer: "During a doubles tournament match last year, my partner and I were locked in a continuous 40-shot rally at match point! Both sides scrambled across the court diving and retrieving smashes. Finally, I executed a deceptive cross-court drop that caught our opponents off guard. Collapsing on the court in exhausted celebration was pure ecstasy."
+        }
+    },
+
+    // 운동: 탁구 (table_tennis)
+    table_tennis: {
+        name: "운동: 탁구",
+        q1: {
+            question: "You indicated playing table tennis in the survey. Describe the table tennis club or room where you usually play. What equipment is available there?",
+            kor: "(탁구를 선택하셨습니다. 주로 탁구를 치는 탁구장이나 시설을 설명해 주세요. 어떤 장비가 갖추어져 있나요?)",
+            modelAnswer: "I frequent a neighborhood table tennis club located near my subway station. It is equipped with eight competition-grade tables, non-slip red rubber flooring, and automatic ball-feeding robot machines for solo practice. The club has air conditioning and ample spacing between tables to allow wide defensive footwork."
+        },
+        q2: {
+            question: "What is your routine when practicing table tennis, and what kind of paddle or rubber do you prefer?",
+            kor: "(탁구를 연습할 때 루틴은 어떠하며, 어떤 라켓이나 러버를 선호하시나요?)",
+            modelAnswer: "I play with a shakehand carbon blade fitted with high-tension inverted rubber on both sides for heavy topspin. My routine starts with 15 minutes of forehand and backhand cross-court counter-drives to find my rhythm, followed by practicing short pendulum serves and third-ball attack patterns."
+        },
+        q3: {
+            question: "Tell me about an exciting or memorable table tennis match you played with a friend or club member. How did it end?",
+            kor: "(친구나 동호회 회원과 치렀던 흥미진진하고 기억에 남는 탁구 경기에 대해 말해 주세요. 경기가 어떻게 끝났나요?)",
+            modelAnswer: "Last month, I played an epic five-game match against the top-ranked player in our club. His heavy backspin chops were frustratingly difficult to lift. In the deciding fifth game at 10-all deuce, I took a risk by attacking down the line with full power and clinched the victory. Winning against a much higher-rated player gave me immense satisfaction."
+        }
+    },
+
+    // 운동: 수영 (swimming)
+    swimming: {
+        name: "운동: 수영",
+        q1: {
+            question: "You indicated swimming in your survey. Describe the swimming pool you usually go to. What facilities and amenities does it have?",
+            kor: "(수영을 선택하셨습니다. 주로 이용하는 수영장을 묘사해 주세요. 어떤 시설과 편의시설이 있나요?)",
+            modelAnswer: "I swim at an Olympic-sized municipal sports complex that features a 50-meter indoor pool with eight lanes. The water is treated with an eco-friendly ozone purification system, so it doesn't irritate my eyes with strong chlorine. It also has a warm jacuzzi spa, modern locker rooms, and dry saunas for relaxing after workouts."
+        },
+        q2: {
+            question: "How often do you go swimming, and what is your typical routine from entering the pool until you finish?",
+            kor: "(얼마나 자주 수영을 가며, 수영장에 들어가서 마칠 때까지의 전형적인 루틴은 어떤가요?)",
+            modelAnswer: "I swim three mornings a week before heading to work. I always spend five minutes doing poolside joint rotations and stretching before diving into the water. My workout consists of 500 meters of freestyle warm-up, followed by breaststroke and butterfly interval laps. I wrap up with a gentle backstroke cool-down to normalize my heart rate."
+        },
+        q3: {
+            question: "Tell me about how you first learned how to swim, or a memorable experience you had in the water.",
+            kor: "(처음 수영을 배웠던 기억이나, 물속에서 겪었던 잊지 못할 경험에 대해 이야기해 주세요.)",
+            modelAnswer: "I vividly remember learning to swim during elementary school summer camp. Initially, I was terrified of putting my head underwater. But our instructor patiently taught me breathing techniques with a kickboard. The moment I let go of the board and floated across the pool unaided for the first time was an unforgettable milestone of overcoming fear."
+        }
+    },
+
+    // 운동: 자전거 / 라이딩 (bicycle)
+    bicycle: {
+        name: "운동: 자전거 / 라이딩",
+        q1: {
+            question: "You indicated cycling or riding a bicycle in your survey. Describe the bicycle path or scenic route you usually ride on. What does it look like?",
+            kor: "(자전거/라이딩을 선택하셨습니다. 주로 달리는 자전거 도로나 코스를 묘사해 주세요. 어떤 풍경인가요?)",
+            modelAnswer: "I usually cycle along an extensive riverside dedicated bike path that stretches for tens of kilometers through the city. The trail is completely separated from motor vehicles, smoothly paved with asphalt, and lined with weeping willows and seasonal flower gardens. Riding alongside the sparkling water on breezy mornings is pure therapy."
+        },
+        q2: {
+            question: "What safety gear and accessories do you equip when you ride a bicycle, and what is your routine before starting a ride?",
+            kor: "(자전거를 탈 때 어떤 안전 장비와 용품을 갖추며, 라이딩 전 준비 루틴은 어떤가요?)",
+            modelAnswer: "Safety is my top priority, so I always wear an aerodynamic certified helmet, UV-blocking cycling sunglasses, and padded gloves. Before embarking on a ride, I thoroughly check tire pressure, test both front and rear disc brakes, lubricate the chain, and mount front headlights and rear flashing lights for visibility."
+        },
+        q3: {
+            question: "Tell me about an unforgettable cycling trip or an unexpected challenge you experienced while riding your bicycle.",
+            kor: "(자전거를 타며 겪었던 잊지 못할 장거리 라이딩이나 예상치 못한 난관에 대해 말해 주세요.)",
+            modelAnswer: "Last autumn, my friends and I completed an ambitious 100-kilometer cross-country cycling route. Around the 70-kilometer mark, my rear tire got punctured by a sharp rock! Fortunately, I carried a portable repair kit and mini pump. We replaced the inner tube together in twenty minutes and finished the journey just in time to watch a spectacular sunset over the lake."
+        }
+    },
+
+    // 운동: 골프 / 스크린 골프 (golf)
+    golf: {
+        name: "운동: 골프 / 스크린 골프",
+        q1: {
+            question: "You indicated playing golf in your survey. Describe the golf course, driving range, or screen golf facility you frequently visit. What is it like?",
+            kor: "(골프를 선택하셨습니다. 자주 방문하는 골프장, 인도어 연습장, 또는 스크린 골프장을 설명해 주세요.)",
+            modelAnswer: "I frequently visit an advanced indoor screen golf center located near my office on weekdays, and outdoor driving ranges on weekends. The screen golf simulator uses high-speed dual camera sensors to track club angle, ball speed, and spin rate in ultra-realistic 4K graphic simulation. The private booths are comfortable and equipped with modern refreshments."
+        },
+        q2: {
+            question: "What is your typical routine when you practice golf or play a round on the course? What clubs do you use most?",
+            kor: "(골프를 연습하거나 라운딩할 때의 일반적인 루틴은 무엇이며, 어떤 클럽을 가장 많이 사용하시나요?)",
+            modelAnswer: "I begin every practice session with ten minutes of rotational torso stretches to prevent back strain. I warm up starting with my sand wedge for short chip shots, gradually move up through 7-iron approach shots, and finish with full driver swings. On the course, I pay meticulous attention to course management and pre-shot alignment routines."
+        },
+        q3: {
+            question: "Tell me about a memorable round of golf or your best shot on the green. What made that moment so special?",
+            kor: "(기억에 남는 골프 라운딩이나 필드에서의 인생 샷에 대해 이야기해 주세요. 왜 그 순간이 특별했나요?)",
+            modelAnswer: "During a round at a scenic mountainous golf course last spring, I faced a daunting par-3 hole surrounded by a deep water hazard. Fighting a stiff crosswind, I selected my 8-iron and hit a pure, crisp shot. The ball landed softly on the green just three feet from the pin, and I sank the putt for a sweet birdie! That pure strike was pure bliss."
+        }
+    },
+
+    // 운동: 헬스 / 웨이트 트레이닝 (fitness)
+    fitness: {
+        name: "운동: 헬스 / 웨이트 트레이닝",
+        q1: {
+            question: "You indicated working out at a fitness center in the survey. Describe the gym you go to and the equipment available there. What does it look like?",
+            kor: "(헬스/웨이트 트레이닝을 선택하셨습니다. 다니시는 헬스장과 구비된 운동 기구를 묘사해 주세요.)",
+            modelAnswer: "I work out at a modern 24-hour fitness center situated just five minutes from my home. It features a spacious free-weight zone with power racks, dumbbells ranging up to 40 kilograms, and cutting-edge cable machines. It also has a dedicated cardio zone overlooking panoramic city skyline views and clean shower facilities."
+        },
+        q2: {
+            question: "What is your typical workout routine when you go to the gym? Describe your exercises from warm-up to cool-down.",
+            kor: "(헬스장에 갔을 때의 전형적인 운동 루틴은 무엇인가요? 준비 운동부터 마무리까지 설명해 주세요.)",
+            modelAnswer: "I follow a four-day upper and lower body split routine. I kick off with foam rolling and dynamic mobility drills for ten minutes. Then, I focus on heavy compound lifts like squats, bench presses, and deadlifts, followed by isolated dumbbell exercises. I always conclude with twenty minutes of incline treadmill cardio and drink a whey protein shake."
+        },
+        q3: {
+            question: "Tell me about a time when you set a personal fitness goal or achieved a significant milestone in your workouts. How did it impact your life?",
+            kor: "(피트니스 목표를 세우고 의미 있는 성과를 달성했던 경험에 대해 말해 주세요. 그 경험이 삶에 어떤 변화를 주었나요?)",
+            modelAnswer: "At the beginning of last year, my goal was to bench press 100 kilograms, which had been a psychological plateau for me. Through consistent progressive overload, disciplined nutrition, and adequate sleep over six months, I finally locked out a clean 100-kilogram repetition! Breaking that personal barrier gave me tremendous confidence that transcended into my professional work."
+        }
+    },
+
+    // 운동: 하이킹 / 등산 (hiking)
+    hiking: {
+        name: "운동: 하이킹 / 등산",
+        q1: {
+            question: "You indicated hiking in your survey. Describe a mountain or hiking trail you frequently visit. What does the scenery look like?",
+            kor: "(등산/하이킹을 선택하셨습니다. 자주 찾는 산이나 등산로를 묘사해 주세요. 경치는 어떤가요?)",
+            modelAnswer: "I frequently hike Mount Bukhan located on the northern perimeter of Seoul. The trail features rugged granite peaks, crystal-clear valley streams, and lush pine forests. As you climb higher, the trail offers breathtaking panoramic vistas overlooking the entire metropolitan cityscape nestled against nature."
+        },
+        q2: {
+            question: "How do you prepare for a hike, and what essential gear and food do you pack in your backpack?",
+            kor: "(등산을 어떻게 준비하며, 배낭에 어떤 필수 장비와 음식을 챙기나요?)",
+            modelAnswer: "Before heading out, I check the mountain weather forecast carefully. I lace up supportive Gore-Tex hiking boots and use adjustable trekking poles to protect my knees. In my backpack, I pack plenty of water, electrolyte tablets, energy bars, seasonal fruits like kimbap and apples, and a compact windbreaker jacket."
+        },
+        q3: {
+            question: "Tell me about a memorable or challenging hiking experience you had on a mountain. What was the most memorable moment?",
+            kor: "(산에서 겪었던 기억에 남거나 힘들었던 등산 경험에 대해 이야기해 주세요. 가장 인상적인 순간은 무엇이었나요?)",
+            modelAnswer: "Last autumn, I embarked on a sunrise hike to the summit of Mount Seorak. We began trekking at 3 AM under a pitch-black sky using headlamps. The steep rock scrambles were physically exhausting, but when the brilliant golden sun burst through the rolling sea of clouds at the peak, all exhaustion vanished. It was an awe-inspiring, spiritual spectacle."
         }
     },
 
@@ -885,22 +1105,22 @@ const SURVEY_TOPICS = {
         }
     },
 
-    // 운동: 태권도 / 무술 / 낚시 (taekwondo)
+    // 운동: 태권도 / 무술 (taekwondo)
     taekwondo: {
-        name: "운동: 태권도 / 무술 / 낚시",
+        name: "운동: 태권도 / 무술",
         q1: {
-            question: "You indicated interest in martial arts like Taekwondo or outdoor sports like fishing. Describe the training dojang or outdoor spot you usually go to.",
-            kor: "(태권도/무술 또는 낚시를 선택하셨습니다. 주로 수련하는 도장이나 낚시를 즐기는 장소를 묘사해 주세요.)",
+            question: "You indicated interest in martial arts like Taekwondo. Describe the training dojang or martial arts academy you usually go to. What does it look like?",
+            kor: "(태권도/무술을 선택하셨습니다. 주로 수련하는 도장을 묘사해 주세요. 어떤 시설이 갖추어져 있나요?)",
             modelAnswer: "I regularly practice Taekwondo at a traditional martial arts dojang located in my neighborhood. The gym is fitted with high-density shock-absorbing mats, wooden training dummies, and kicking pads mounted along the mirrored walls. Training in an authentic uniform with a crisp belt gives me a deep sense of discipline and mental focus."
         },
         q2: {
-            question: "What is your typical training or sporting routine from warm-up exercises to sparring or catching fish?",
-            kor: "(준비 운동부터 겨루기 또는 낚시 활동까지의 전형적인 루틴을 설명해 주세요.)",
+            question: "What is your typical training routine from warm-up exercises to sparring or form practice?",
+            kor: "(준비 운동부터 품새 또는 겨루기까지의 전형적인 수련 루틴을 설명해 주세요.)",
             modelAnswer: "A typical training session begins with a rigorous twenty-minute warm-up consisting of dynamic high kicks, jump rope, and core conditioning. Then, we practice fundamental form patterns called Poomsae, followed by controlled sparring drills wearing chest protectors. We always finish with respectful bow salutations and meditative breathing."
         },
         q3: {
-            question: "Tell me about a memorable milestone, a belt promotion test, or an exciting catch you experienced while practicing your sport.",
-            kor: "(승급 심사나 낚시 중 대어를 낚았던 기억에 남는 특별한 경험에 대해 이야기해 주세요.)",
+            question: "Tell me about a memorable milestone, a belt promotion test, or an exciting match you experienced while practicing Taekwondo.",
+            kor: "(승급 심사나 대회 경기 중 기억에 남는 특별한 경험에 대해 이야기해 주세요.)",
             modelAnswer: "A defining milestone in my journey was testing for my first-degree black belt after years of relentless practice. During the final breaking demonstration, I had to execute a jumping spinning heel kick to shatter a thick pine board in mid-air. When the board split cleanly with a loud snap, the entire hall erupted in applause. The feeling of perseverance paying off was deeply gratifying."
         }
     }

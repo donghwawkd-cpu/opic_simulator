@@ -10,7 +10,7 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>OPIC AI Master - 실전 오픽 음성 스피킹 시뮬레이터 v7.1</title>
+    <title>OPIC AI Master - 실전 오픽 음성 스피킹 시뮬레이터 v7.2</title>
     <meta name="description" content="AI 기반 OPIc 실전 음성 인터뷰 시뮬레이터. 실시간 음성 인식, AL/IH 등급 평가, 피드백 및 모범 답변 제공">
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -20,7 +20,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- JSZip for Bulk Recording Download -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <link rel="stylesheet" href="style.css?v=7.1">
+    <link rel="stylesheet" href="style.css?v=7.2">
 </head>
 <body>
     <div class="app-background">
@@ -34,7 +34,7 @@
             <div class="logo">
                 <i class="fa-solid fa-microphone-lines logo-icon"></i>
                 <span class="logo-text">OPIC <span class="accent-text">AI Master</span></span>
-                <span class="version-badge" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; font-weight: 800;">v7.1 (카페 실전 기출: 첫 방문 & 과거비교 콤보 반영)</span>
+                <span class="version-badge" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; font-weight: 800;">v7.2 (실전 서베이 스포츠 17종 전면 탑재)</span>
             </div>
             <nav class="nav-links">
                 <button id="nav-survey" class="nav-btn active"><i class="fa-solid fa-sliders"></i> 백그라운드 서베이</button>
@@ -151,11 +151,22 @@
                 <div class="form-group">
                     <label class="group-label">6. 귀하는 주로 어떤 운동을 즐기십니까? (한 개 이상 선택)</label>
                     <div class="topic-grid">
-                        <label class="topic-checkbox"><input type="checkbox" value="basketball"><i class="fa-solid fa-basketball"></i><span>농구 / 배드민턴</span></label>
-                        <label class="topic-checkbox checked"><input type="checkbox" value="walking" checked><i class="fa-solid fa-person-walking"></i><span>★ 걷기</span></label>
-                        <label class="topic-checkbox"><input type="checkbox" value="yoga"><i class="fa-solid fa-person-dots-from-line"></i><span>요가</span></label>
+                        <label class="topic-checkbox"><input type="checkbox" value="soccer"><i class="fa-solid fa-futbol"></i><span>축구</span></label>
+                        <label class="topic-checkbox"><input type="checkbox" value="baseball"><i class="fa-solid fa-baseball-bat-ball"></i><span>야구 / 소프트볼</span></label>
+                        <label class="topic-checkbox"><input type="checkbox" value="basketball"><i class="fa-solid fa-basketball"></i><span>농구</span></label>
+                        <label class="topic-checkbox"><input type="checkbox" value="volleyball"><i class="fa-solid fa-volleyball"></i><span>배구</span></label>
+                        <label class="topic-checkbox"><input type="checkbox" value="tennis"><i class="fa-solid fa-table-tennis-paddle-ball"></i><span>테니스</span></label>
+                        <label class="topic-checkbox"><input type="checkbox" value="badminton"><i class="fa-solid fa-feather"></i><span>배드민턴</span></label>
+                        <label class="topic-checkbox"><input type="checkbox" value="table_tennis"><i class="fa-solid fa-table-tennis-paddle-ball"></i><span>탁구</span></label>
+                        <label class="topic-checkbox"><input type="checkbox" value="swimming"><i class="fa-solid fa-person-swimming"></i><span>수영</span></label>
+                        <label class="topic-checkbox"><input type="checkbox" value="bicycle"><i class="fa-solid fa-bicycle"></i><span>자전거 / 라이딩</span></label>
+                        <label class="topic-checkbox"><input type="checkbox" value="golf"><i class="fa-solid fa-golf-ball-tee"></i><span>골프</span></label>
+                        <label class="topic-checkbox"><input type="checkbox" value="fitness"><i class="fa-solid fa-dumbbell"></i><span>헬스 / 웨이트</span></label>
                         <label class="topic-checkbox checked"><input type="checkbox" value="jogging" checked><i class="fa-solid fa-person-running"></i><span>★ 조깅</span></label>
-                        <label class="topic-checkbox"><input type="checkbox" value="taekwondo"><i class="fa-solid fa-hand-fist"></i><span>태권도 / 낚시</span></label>
+                        <label class="topic-checkbox checked"><input type="checkbox" value="walking" checked><i class="fa-solid fa-person-walking"></i><span>★ 걷기</span></label>
+                        <label class="topic-checkbox"><input type="checkbox" value="yoga"><i class="fa-solid fa-person-dots-from-line"></i><span>요가 / 필라테스</span></label>
+                        <label class="topic-checkbox"><input type="checkbox" value="hiking"><i class="fa-solid fa-person-hiking"></i><span>하이킹 / 등산</span></label>
+                        <label class="topic-checkbox"><input type="checkbox" value="taekwondo"><i class="fa-solid fa-hand-fist"></i><span>태권도 / 무술</span></label>
                         <label class="topic-checkbox checked"><input type="checkbox" value="no_exercise" checked><i class="fa-solid fa-bed"></i><span>★ 운동을 전혀 하지 않음</span></label>
                     </div>
                 </div>
@@ -481,6 +492,6 @@
     </main>
 
     <!-- Scripts -->
-    <script src="app.js?v=7.1"></script>
+    <script src="app.js?v=7.2"></script>
 </body>
 </html>
