@@ -23,14 +23,14 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- JSZip for Bulk Recording Download -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
-    <link rel="stylesheet" href="style.css?v=8.1.1">
+    <link rel="stylesheet" href="style.css?v=8.1.2">
 </head>
 <body>
     <!-- Update Verification Notice Toast (업데이트 즉시 확인 배너) -->
     <div id="update-toast" class="update-toast">
         <div class="toast-content">
-            <span class="toast-tag">v8.1 최신 배포</span>
-            <span><i class="fa-solid fa-circle-check text-green"></i> <strong>서베이 12개 실시간 플로팅독 &amp; 스크롤 고정</strong>이 성공적으로 반영되었습니다!</span>
+            <span class="toast-tag">v8.2 최신 배포</span>
+            <span><i class="fa-solid fa-circle-check text-green"></i> <strong>서베이 12개 실시간 플로팅독이 스크롤 시 화면에 고정되어 완벽히 따라옵니다!</strong></span>
         </div>
         <button type="button" class="toast-close-btn" id="toast-close-btn" aria-label="닫기">&times;</button>
     </div>
@@ -46,7 +46,7 @@
             <div class="logo">
                 <i class="fa-solid fa-microphone-lines logo-icon"></i>
                 <span class="logo-text">OPIC <span class="accent-text">AI Master</span></span>
-                <span class="version-badge" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; font-weight: 800;"><i class="fa-solid fa-sparkles"></i> v8.1 (서베이 실시간 플로팅독 &amp; 스크롤 고정 적용됨)</span>
+                <span class="version-badge" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; font-weight: 800;"><i class="fa-solid fa-sparkles"></i> v8.2 (서베이 플로팅독 스크롤 100% 고정 추적 적용)</span>
             </div>
             <nav class="nav-links">
                 <button id="nav-survey" class="nav-btn active"><i class="fa-solid fa-sliders"></i> 백그라운드 서베이</button>
@@ -65,40 +65,6 @@
                 <h1 class="hero-title">실전 <span class="gradient-text">OPIc AL/IH</span> 등급 정복 시뮬레이터</h1>
                 <p class="hero-sub">실제 오픽 시험장과 동일한 환경에서 AI 인터뷰어와 음성으로 대화하고 실시간 등급 평가를 받으세요.</p>
             </div>
-
-            <!-- Floating Side Survey Tracker (PC / 태블릿 우측 고정 실시간 플로팅 바) -->
-            <aside class="survey-floating-dock" id="survey-floating-dock" aria-label="서베이 실시간 플로팅 현황">
-                <div class="dock-inner">
-                    <div class="dock-header">
-                        <i class="fa-solid fa-clipboard-check text-blue"></i>
-                        <span>서베이 선택 현황</span>
-                    </div>
-                    <div class="dock-count-display">
-                        <span class="dock-count-num" id="dock-checked-count">12</span>
-                        <span class="dock-count-divider">/</span>
-                        <span class="dock-count-target">12개</span>
-                    </div>
-                    <div class="dock-status-msg valid" id="dock-status-msg">
-                        <i class="fa-solid fa-circle-check text-green"></i> 12개 충족 완료!
-                    </div>
-                    <div class="dock-btn-group">
-                        <button type="button" class="dock-action-btn preset" id="dock-preset-btn" title="오픽 AL/IH 수험생들이 가장 선호하는 빈출 핵심 항목을 한 번에 자동 세팅합니다.">
-                            <i class="fa-solid fa-wand-magic-sparkles text-purple"></i> AL 전략 1클릭 세팅
-                        </button>
-                        <button type="button" class="dock-action-btn start" id="dock-start-btn">
-                            <i class="fa-solid fa-play"></i> 시험 바로 시작하기
-                        </button>
-                    </div>
-                    <div class="dock-scroll-controls">
-                        <button type="button" id="dock-scroll-top" class="dock-scroll-btn" title="페이지 맨 위로 이동">
-                            <i class="fa-solid fa-arrow-up"></i> TOP
-                        </button>
-                        <button type="button" id="dock-scroll-bottom" class="dock-scroll-btn" title="서베이 맨 아래로 이동">
-                            <i class="fa-solid fa-arrow-down"></i> DOWN
-                        </button>
-                    </div>
-                </div>
-            </aside>
 
             <div class="survey-card glass-card">
                 <div class="card-header">
@@ -599,7 +565,41 @@
         </div>
     </div>
 
+    <!-- Floating Side Survey Tracker (화면 스크롤 시 100% 뷰포트 고정 추적 플로팅 독) -->
+    <aside class="survey-floating-dock" id="survey-floating-dock" aria-label="서베이 실시간 플로팅 현황">
+        <div class="dock-inner">
+            <div class="dock-header">
+                <i class="fa-solid fa-clipboard-check text-blue"></i>
+                <span>서베이 선택 현황</span>
+            </div>
+            <div class="dock-count-display">
+                <span class="dock-count-num" id="dock-checked-count">12</span>
+                <span class="dock-count-divider">/</span>
+                <span class="dock-count-target">12개</span>
+            </div>
+            <div class="dock-status-msg valid" id="dock-status-msg">
+                <i class="fa-solid fa-circle-check text-green"></i> 12개 충족 완료!
+            </div>
+            <div class="dock-btn-group">
+                <button type="button" class="dock-action-btn preset" id="dock-preset-btn" title="오픽 AL/IH 수험생들이 가장 선호하는 빈출 핵심 항목을 한 번에 자동 세팅합니다.">
+                    <i class="fa-solid fa-wand-magic-sparkles text-purple"></i> AL 전략 1클릭 세팅
+                </button>
+                <button type="button" class="dock-action-btn start" id="dock-start-btn">
+                    <i class="fa-solid fa-play"></i> 시험 바로 시작하기
+                </button>
+            </div>
+            <div class="dock-scroll-controls">
+                <button type="button" id="dock-scroll-top" class="dock-scroll-btn" title="페이지 맨 위로 이동">
+                    <i class="fa-solid fa-arrow-up"></i> TOP
+                </button>
+                <button type="button" id="dock-scroll-bottom" class="dock-scroll-btn" title="서베이 맨 아래로 이동">
+                    <i class="fa-solid fa-arrow-down"></i> DOWN
+                </button>
+            </div>
+        </div>
+    </aside>
+
     <!-- Scripts -->
-    <script src="app.js?v=8.1.1"></script>
+    <script src="app.js?v=8.1.2"></script>
 </body>
 </html>

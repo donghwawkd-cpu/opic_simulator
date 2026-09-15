@@ -255,12 +255,12 @@ body {
 
 .view-section.active {
     display: block;
-    animation: fadeIn 0.4s ease forwards;
+    animation: fadeIn 0.25s ease-out;
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: none; }
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
 /* Hero Section */
@@ -1759,14 +1759,24 @@ body {
     }
 }
 
-/* Floating Side Survey Dock for Desktop (우측 고정 실시간 플로팅 바) */
+/* Floating Side Survey Dock for Desktop (뷰포트 100% 고정 실시간 플로팅 바) */
 .survey-floating-dock {
-    position: fixed;
-    right: 24px;
-    top: 100px;
+    position: fixed !important;
+    right: max(16px, calc(50% - 680px));
+    top: 90px;
     width: 200px;
-    z-index: 90;
+    z-index: 999;
     animation: dockSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    transition: opacity 0.25s ease;
+}
+
+/* Visibility Control: 백그라운드 서베이 탭에서만 화면에 노출 */
+.survey-floating-dock.hidden-dock {
+    display: none !important;
+}
+
+body:not(:has(#survey-section.active)) .survey-floating-dock {
+    display: none !important;
 }
 
 @keyframes dockSlideIn {
@@ -1941,14 +1951,14 @@ body {
 /* Responsive Survey Floating Dock: On screens < 1180px, morph into bottom floating action capsule */
 @media (max-width: 1179px) {
     .survey-floating-dock {
-        position: fixed;
-        bottom: 18px;
-        top: auto;
-        right: auto;
-        left: 50%;
-        transform: translateX(-50%);
+        position: fixed !important;
+        bottom: 18px !important;
+        top: auto !important;
+        right: auto !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
         width: min(94vw, 560px);
-        z-index: 950;
+        z-index: 999 !important;
         animation: dockSlideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
     }
 

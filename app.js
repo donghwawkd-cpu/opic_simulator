@@ -1750,6 +1750,17 @@ class OpicSimulatorApp {
         this.initVoices();
         this.initRealExamMode();
         this.updateSurveyCounter();
+
+        // Initial Floating Dock Visibility
+        const floatingDock = document.getElementById('survey-floating-dock');
+        const surveySec = document.getElementById('survey-section');
+        if (floatingDock) {
+            if (surveySec && surveySec.classList.contains('active')) {
+                floatingDock.classList.remove('hidden-dock');
+            } else {
+                floatingDock.classList.add('hidden-dock');
+            }
+        }
     }
 
     bindEvents() {
@@ -2343,6 +2354,16 @@ class OpicSimulatorApp {
 
         this.ui.navBtns.forEach(b => b.classList.remove('active'));
         if (activeBtn) activeBtn.classList.add('active');
+
+        // Toggle Floating Dock Visibility
+        const floatingDock = document.getElementById('survey-floating-dock');
+        if (floatingDock) {
+            if (normalizedId === 'survey-section') {
+                floatingDock.classList.remove('hidden-dock');
+            } else {
+                floatingDock.classList.add('hidden-dock');
+            }
+        }
     }
 
     initVoices() {
@@ -3618,5 +3639,5 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 7000);
     }
 
-    console.log("🚀 OPIc AI Master Simulator v8.1.1 (Survey Floating Dock & Responsive Capsule) loaded successfully!");
+    console.log("🚀 OPIc AI Master Simulator v8.2 (Survey Floating Dock Viewport Fixed Follow) loaded successfully!");
 });
